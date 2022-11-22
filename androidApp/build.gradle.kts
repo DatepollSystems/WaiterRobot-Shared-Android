@@ -3,16 +3,18 @@ plugins {
     kotlin("android")
 }
 
+version = Versions.androidAppVersionName
+
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
-    compileSdk = Versions.compileSdk
+    compileSdk = Versions.androidCompileSdk
     defaultConfig {
         applicationId = "org.datepollsystems.waiterrobot.android"
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = Versions.androidMinSdk
+        targetSdk = Versions.androidTargetSdk
         versionCode = Versions.androidAppVersionCode
         versionName = Versions.androidAppVersionName
-        buildToolsVersion = Versions.buildTools
+        buildToolsVersion = Versions.androidBuildTools
         vectorDrawables {
             useSupportLibrary = true
         }

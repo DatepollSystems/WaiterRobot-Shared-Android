@@ -1,7 +1,14 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
+    id("co.touchlab.faktory.kmmbridge") version "0.3.2"
 }
+
+// keep patch always on 0 for shared module (patch is managed by kmmbridge for spm releases)
+version = "0.1.0"
 
 kotlin {
     android()
@@ -11,7 +18,7 @@ kotlin {
     iosSimulatorArm64()
 
     // needed to export kotlin documentation in objective-c headers
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+    targets.withType<KotlinNativeTarget> {
         compilations["main"].kotlinOptions.freeCompilerArgs += "-Xexport-kdoc"
     }
 
@@ -44,13 +51,34 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+
+    // Needed for kmmbrigde to create swift package
+    cocoapods {
+        name = "WaiterRobotShared"
+        summary = "Shared KMM iOS-module of the WaiterRobot app"
+        homepage = "https://github.com/DatepollSystems/waiterrobot-mobile_android-shared"
+        authors = "DatepollSystems"
+        ios.deploymentTarget = "15"
+
+        framework {
+            isStatic = true
+        }
+    }
 }
 
 android {
     namespace = "org.datepollsystems.waiterrobot"
-    compileSdk = 33
+    compileSdk = Versions.androidCompileSdk
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        minSdk = Versions.androidMinSdk
+        targetSdk = Versions.androidTargetSdk
     }
+}
+
+kmmbridge {
+    githubReleaseArtifacts()
+    githubReleaseVersions()
+    spm()
+    // Remove patch as this will be set by the GitHubReleaseVersion manager
+    versionPrefix.set((version as String).substringBeforeLast("."))
 }
