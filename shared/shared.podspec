@@ -1,14 +1,14 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'shared'
     spec.version                  = '0.1.0'
-    spec.homepage                 = ''
+    spec.homepage                 = 'https://github.com/DatepollSystems/waiterrobot-mobile_android-shared'
     spec.source                   = { :http=> ''}
-    spec.authors                  = ''
+    spec.authors                  = 'DatepollSystems'
     spec.license                  = ''
-    spec.summary                  = 'shared'
+    spec.summary                  = 'Shared KMM iOS-module of the WaiterRobot app'
     spec.vendored_frameworks      = 'build/cocoapods/framework/shared.framework'
     spec.libraries                = 'c++'
-    spec.ios.deployment_target = '15.0'
+    spec.ios.deployment_target = '15'
                 
                 
     spec.pod_target_xcconfig = {
