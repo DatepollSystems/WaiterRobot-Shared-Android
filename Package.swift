@@ -1,8 +1,8 @@
 // swift-tools-version:5.3
 import PackageDescription
 
-let remoteKotlinUrl = "https://api.github.com/repos/DatepollSystems/waiterrobot-mobile_android-shared/releases/assets/85548387.zip"
-let remoteKotlinChecksum = "3c8ba49567a6c6824bc295a0f14b00499d936271107ab6d39a46bc1b12216525"
+let remoteKotlinUrl = "https://api.github.com/repos/DatepollSystems/waiterrobot-mobile_android-shared/releases/assets/85595136.zip"
+let remoteKotlinChecksum = "ec79ab6b76098ca5d304cdea1c084f120644787e0c467f4775434eec03855d7a"
 let packageName = "shared"
 
 let package = Package(
