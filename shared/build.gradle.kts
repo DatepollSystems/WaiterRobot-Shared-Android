@@ -54,7 +54,7 @@ kotlin {
 
     // Needed for kmmbrigde to create swift package
     cocoapods {
-        name = "WaiterRobotShared"
+        name = "shared"
         summary = "Shared KMM iOS-module of the WaiterRobot app"
         homepage = "https://github.com/DatepollSystems/waiterrobot-mobile_android-shared"
         authors = "DatepollSystems"
