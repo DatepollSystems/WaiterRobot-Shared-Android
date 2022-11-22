@@ -8,4 +8,5 @@ The Android App depends on the shared module directly through a gradle project d
 
 The shared module is also published as an SPM Package directly in this repo with a Package.swift in
 the repo root. Therefore [KMMBridge](https://github.com/touchlab/KMMBridge) is used. The SPM Package
-can be published by running `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx`.
+can be published by running the `KMM Bridge Publish Release` GitHub-Action (or locally
+using `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx`).

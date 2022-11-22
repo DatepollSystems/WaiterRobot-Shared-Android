@@ -1,0 +1,8 @@
+name: KMM Bridge Publish Release
+on:
+  workflow_dispatch:
+  #TODO trigger automatically on tag?
+
+jobs:
+  call-kmmbridge-publish:
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.3
