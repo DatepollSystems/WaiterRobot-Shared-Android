@@ -155,9 +155,11 @@ tasks {
                     ?.filter { it.isDirectory && it.name == "${kmmbridge.frameworkName.get()}.framework" }
                     ?: emptyList()
 
-                copy {
-                    from("$generatedLocalizationRoot/commonMain/resources/ios")
-                    targetDirectories.forEach { into(it) }
+                targetDirectories.forEach {
+                    copy {
+                        from("$generatedLocalizationRoot/commonMain/resources/ios")
+                        into(it)
+                    }
                 }
             }
         }
