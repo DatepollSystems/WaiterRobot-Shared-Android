@@ -30,6 +30,10 @@ kotlin {
 
                 // Dependency injection
                 implementation("io.insert-koin:koin-core:${Versions.koinDi}")
+
+                // Architecture
+                api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
+                api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
             }
         }
         val commonTest by getting {

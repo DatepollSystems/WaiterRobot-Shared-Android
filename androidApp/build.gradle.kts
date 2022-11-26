@@ -68,4 +68,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:${Versions.compose}")
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
+    // Architecture (MVI)
+    implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 }

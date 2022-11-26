@@ -2,6 +2,8 @@ object Versions {
     // Shared
     const val kermitLogger = "1.2.2"
     const val koinDi = "3.2.2"
+    const val orbitMvi = "4.4.0"
+    const val mokoMvvm = "0.14.0"
 
     // Android
     const val androidMinSdk = 24

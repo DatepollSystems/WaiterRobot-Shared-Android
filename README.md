@@ -18,6 +18,8 @@ using `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx`).
 - [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
 - [Koin](https://insert-koin.io/) Dependency injection
 - [Kermit](https://github.com/touchlab/Kermit) Logger
+- [Orbit MVI](https://orbit-mvi.org/) MVI implementation
+- [Moko MVVM](https://github.com/icerockdev/moko-mvvm) shared viewModelScope
 
 # Further Resources and References
 
