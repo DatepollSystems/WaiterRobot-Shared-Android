@@ -23,7 +23,7 @@ fun initKoin(appModule: Module = module { }) = startKoin {
     )
 }
 
-internal fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }
+fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }
 internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })
 }
