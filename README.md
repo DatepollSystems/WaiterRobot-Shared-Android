@@ -11,6 +11,21 @@ the repo root. Therefore [KMMBridge](https://github.com/touchlab/KMMBridge) is u
 can be published by running the `KMM Bridge Publish Release` GitHub-Action (or locally
 using `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx`).
 
+## iOS dev with local KMM module version
+
+For a guide to use a local version of the KMM module
+see [KMMBridge local dev spm](https://touchlab.github.io/KMMBridge/spm/IOS_LOCAL_DEV_SPM)
+
+The main branch contains the `Package.swift` file ready for local dev.
+
+### Short version
+
+1. `./gradlew spmDevBuild` (must be run after each change in the KMM module)
+2. Drag the whole KMM project folder (top level git folder) into the WaiterRobot project in Xcode
+3. Start programming :)
+4. When finished delete folder, make sure to select "Remove References"!!! (otherwise the whole KMM
+   project will be deleted locally)
+
 # Language, libraries and tools
 
 - [Kotlin](https://kotlinlang.org/)
