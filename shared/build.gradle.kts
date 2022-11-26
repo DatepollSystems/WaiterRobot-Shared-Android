@@ -14,6 +14,7 @@ version = "0.1.0"
 val sharedNamespace = "org.datepollsystems.waiterrobot.shared"
 val generatedLocalizationRoot: String =
     File(project.buildDir, "generated/localizations").absolutePath
+val iosFrameworkName = "shared"
 
 kotlin {
     android()
@@ -86,14 +87,15 @@ kotlin {
 
     // Needed for kmmbrigde to create swift package
     cocoapods {
-        name = "shared"
+        name = iosFrameworkName
         summary = "Shared KMM iOS-module of the WaiterRobot app"
         homepage = "https://github.com/DatepollSystems/waiterrobot-mobile_android-shared"
         authors = "DatepollSystems"
         ios.deploymentTarget = "15"
 
         framework {
-            isStatic = true
+            isStatic =
+                false // Must be set to false for shared localization (otherwise resources are not availabel)
         }
     }
 }
@@ -142,23 +144,19 @@ tasks {
     }
 
     afterEvaluate {
-        named("zipXCFramework") {
-            // Copy the generated iOS localizations to the framework before zipping
-            doFirst {
-                val targetDirectories = file(
-                    "${project.buildDir}/XCFrameworks/" +
-                        "${kmmbridge.buildType.get().getName()}/" +
-                        "${kmmbridge.frameworkName.get()}.xcframework"
-                ).listFiles()
-                    ?.filter { it.isDirectory }
-                    ?.flatMap { it.listFiles()?.toList() ?: emptyList() }
-                    ?.filter { it.isDirectory && it.name == "${kmmbridge.frameworkName.get()}.framework" }
-                    ?: emptyList()
-
-                targetDirectories.forEach {
-                    copy {
-                        from("$generatedLocalizationRoot/commonMain/resources/ios")
-                        into(it)
+        // Copy the generated iOS localizations to the framework
+        listOf("Release", "Debug").forEach { buildType ->
+            named("assembleShared${buildType}XCFramework") {
+                doLast {
+                    // TODO can we get this names from somewhere?
+                    listOf("ios-arm64", "ios-arm64_x86_64-simulator").forEach { arch ->
+                        copy {
+                            from("$generatedLocalizationRoot/commonMain/resources/ios")
+                            into(
+                                "${project.buildDir}/XCFrameworks/${buildType.toLowerCase()}/" +
+                                    "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
+                            )
+                        }
                     }
                 }
             }
