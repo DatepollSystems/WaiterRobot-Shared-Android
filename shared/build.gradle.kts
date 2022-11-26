@@ -25,6 +25,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                // Logger
+                api("co.touchlab:kermit:${Versions.kermitLogger}")
+
                 // Dependency injection
                 implementation("io.insert-koin:koin-core:${Versions.koinDi}")
             }
