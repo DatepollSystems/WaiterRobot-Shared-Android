@@ -68,6 +68,12 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:${Versions.compose}")
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
+    // Compose helpers
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
+
     // Architecture (MVI)
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
+
+    // Dependency injection
+    implementation("io.insert-koin:koin-androidx-compose:${Versions.koinDi}")
 }
