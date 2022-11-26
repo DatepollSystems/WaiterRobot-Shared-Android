@@ -1,4 +1,8 @@
 object Versions {
+    // Shared
+    const val kermitLogger = "1.2.2"
+    const val koinDi = "3.2.2"
+
     // Android
     const val androidMinSdk = 24
     const val androidTargetSdk = 31
@@ -13,7 +17,7 @@ object Versions {
             parts[0] * 10_000 + parts[1] * 100 + parts[2]
         }
 
-    const val compose = "1.3.0-rc01"
+    const val compose = "1.3.1"
     const val composeCompiler = "1.3.2"
-    const val material = "1.3.0-rc01"
+    const val androidxLifecycle = "2.5.1"
 }

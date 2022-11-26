@@ -23,13 +23,24 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                // Dependency injection
+                implementation("io.insert-koin:koin-core:${Versions.koinDi}")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
-        val androidMain by getting
+
+        val androidMain by getting {
+            dependencies {
+                // Dependency injection
+                api("io.insert-koin:koin-android:${Versions.koinDi}")
+            }
+        }
         val androidTest by getting
 
         val iosX64Main by getting

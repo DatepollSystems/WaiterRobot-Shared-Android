@@ -16,12 +16,17 @@ using `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx`).
 - [Kotlin](https://kotlinlang.org/)
 - [Kotlin Multiplatform (Mobile)](https://kotlinlang.org/lp/mobile/)
 - [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
+- [Koin](https://insert-koin.io/) Dependency injection
 
 # Further Resources and References
 
 - [Kotlin/kmm-sample](https://github.com/Kotlin/kmm-sample)
+- [KaMPKit](https://github.com/touchlab/KaMPKit) Collection of code and tools for getting stated
+  with KMP/KMM
 - [KMMBridge SPM sample (android + shared)](https://github.com/touchlab/KMMBridgeSampleKotlin)
 - [KMMBridge SPM sample (iOS)](https://github.com/touchlab/KMMBridgeSampleSpm)
-- [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) Minimal KMM project using
+- [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) Minimal KMP project using
   SwiftUI, Jetpack Compose, SQLDelight, Koin (also includes many other platforms)
-- [Multiplatform-Libraries](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)
+- [KMP library/tool collection 1](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)
+- [KMP library/tool collection 2](https://github.com/terrakok/kmm-awesome)
+- [Koin for KMP](https://insert-koin.io/docs/reference/koin-mp/kmp)
