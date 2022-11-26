@@ -35,6 +35,7 @@ The main branch contains the `Package.swift` file ready for local dev.
 - [Kermit](https://github.com/touchlab/Kermit) Logger
 - [Orbit MVI](https://orbit-mvi.org/) MVI implementation
 - [Moko MVVM](https://github.com/icerockdev/moko-mvvm) shared viewModelScope
+- [KMM Resources](https://github.com/jcraane/kmm-resources) shared localization
 
 # Further Resources and References
 

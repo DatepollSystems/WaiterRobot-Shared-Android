@@ -16,6 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
 import org.koin.androidx.compose.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -44,7 +46,7 @@ fun TableListScreen(vm: TableListViewModel = getViewModel()) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No Tables", /* TODO */
+                        text = L.tableList.noTableFound(),
                         textAlign = TextAlign.Center
                     )
                 }

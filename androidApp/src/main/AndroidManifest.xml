@@ -5,6 +5,7 @@
         android:name=".WaiterRobotApp"
         android:icon="@mipmap/icon"
         android:roundIcon="@mipmap/icon_round"
+        android:label="@string/l.app.name"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

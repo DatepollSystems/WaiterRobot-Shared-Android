@@ -5,6 +5,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.di.injectLogger
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.message
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.core.component.KoinComponent
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -29,7 +32,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 logger.w(exception) { "Unhandled exception in intent. Exceptions should be handled directly in the intent!" }
 
-                intent { reduceError("Error", "Something went wrong") }
+                intent { reduceError(L.app.genericError.title(), L.app.genericError.message()) }
             }
         }
     )
