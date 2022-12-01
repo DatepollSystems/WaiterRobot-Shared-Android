@@ -14,16 +14,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
+import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListEffect
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
 import org.koin.androidx.compose.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun TableListScreen(vm: TableListViewModel = getViewModel()) {
+fun TableListScreen(navigator: NavController, vm: TableListViewModel = getViewModel()) {
     val state = vm.collectAsState().value
+
+    vm.collectSideEffect { handleSideEffects(it, navigator) }
 
     Scaffold(
         topBar = {
@@ -67,5 +73,11 @@ fun TableListScreen(vm: TableListViewModel = getViewModel()) {
                 }
             }
         }
+    }
+}
+
+private fun handleSideEffects(effect: TableListEffect, navigator: NavController) {
+    when (effect) {
+        is TableListEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }

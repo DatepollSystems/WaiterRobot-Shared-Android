@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
 }
 
 version = Versions.androidAppVersionName
@@ -43,6 +44,22 @@ android {
             applicationIdSuffix = ".debug"
         }
     }
+
+    // Include the generated navigation sources
+    applicationVariants.all {
+        kotlin.sourceSets {
+            getByName(name) {
+                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
+            }
+        }
+    }
+}
+
+ksp {
+    arg(
+        "compose-destinations.codeGenPackageName",
+        "org.datepollsystems.waiterrobot.android.generated.navigation"
+    )
 }
 
 dependencies {
@@ -76,4 +93,8 @@ dependencies {
 
     // Dependency injection
     implementation("io.insert-koin:koin-androidx-compose:${Versions.koinDi}")
+
+    // SafeCompose Navigation Args
+    implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
+    ksp("io.github.raamcosta.compose-destinations:ksp:${Versions.composeDestinations}")
 }

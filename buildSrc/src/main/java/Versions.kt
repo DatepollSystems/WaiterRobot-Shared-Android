@@ -22,4 +22,5 @@ object Versions {
     const val compose = "1.3.1"
     const val composeCompiler = "1.3.2"
     const val androidxLifecycle = "2.5.1"
+    const val composeDestinations = "1.7.27-beta"
 }

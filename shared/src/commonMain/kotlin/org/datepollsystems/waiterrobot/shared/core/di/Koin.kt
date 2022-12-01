@@ -3,6 +3,7 @@ package org.datepollsystems.waiterrobot.shared.core.di
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.di.tableModule
+import org.datepollsystems.waiterrobot.shared.root.di.rootModule
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.startKoin
@@ -19,6 +20,7 @@ fun initKoin(appModule: Module = module { }) = startKoin {
         appModule,
         platformModule,
         coreModule,
+        rootModule,
         tableModule
     )
 }
