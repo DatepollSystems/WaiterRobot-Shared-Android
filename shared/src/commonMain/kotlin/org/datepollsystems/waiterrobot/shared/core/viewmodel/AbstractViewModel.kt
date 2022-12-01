@@ -49,7 +49,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
     }
 
     // Default implementation
-    open fun onCreate(state: S): Unit = Unit
+    protected open fun onCreate(state: S): Unit = Unit
 
     protected suspend fun SimpleSyntax<S, E>.reduceError(
         errorTitle: String,
