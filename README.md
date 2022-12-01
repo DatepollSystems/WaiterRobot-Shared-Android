@@ -36,6 +36,8 @@ The main branch contains the `Package.swift` file ready for local dev.
 
 # Language, libraries and tools
 
+## Shared
+
 - [Kotlin](https://kotlinlang.org/)
 - [Kotlin Multiplatform (Mobile)](https://kotlinlang.org/lp/mobile/)
 - [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
@@ -44,6 +46,12 @@ The main branch contains the `Package.swift` file ready for local dev.
 - [Orbit MVI](https://orbit-mvi.org/) MVI implementation
 - [Moko MVVM](https://github.com/icerockdev/moko-mvvm) shared viewModelScope
 - [KMM Resources](https://github.com/jcraane/kmm-resources) shared localization
+
+## Android
+
+- [Jetpack Compose](https://developer.android.com/jetpack/compose) Declarative UI
+- [Compose Destinations](https://composedestinations.rafaelcosta.xyz/) Typesafe navigation for
+  Jetpack Compose
 
 # Further Resources and References
 
