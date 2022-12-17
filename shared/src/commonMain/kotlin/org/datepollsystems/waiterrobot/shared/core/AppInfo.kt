@@ -1,6 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core
 
-import org.datepollsystems.waiterrobot.shared.core.extensions.truncate
+import org.datepollsystems.waiterrobot.shared.utils.extensions.truncate
 
 object AppInfo {
     lateinit var appVersion: String

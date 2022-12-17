@@ -24,6 +24,10 @@ internal sealed class ApiException : Exception() {
     class Generic : ApiException()
 
     @Serializable
+    @SerialName("CREDENTIALS_INCORRECT")
+    class CredentialsIncorrect : ApiException()
+
+    @Serializable
     @SerialName("NOT_FOUND")
     class NotFound(val entityId: Long? = null) : ApiException()
 

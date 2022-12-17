@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
 
@@ -34,8 +35,17 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
 
     protected suspend fun post(
         endpoint: String = "",
+        body: RequestBodyDto? = null,
         block: (HttpRequestBuilder.() -> Unit)? = null
     ): HttpResponse = client.post(endpoint.toFullUrl()) {
+        if (body != null) {
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }
+
         block?.invoke(this)
     }
 }
+
+// Marker interface
+internal interface RequestBodyDto

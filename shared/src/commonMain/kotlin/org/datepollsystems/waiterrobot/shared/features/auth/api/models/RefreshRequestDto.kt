@@ -2,9 +2,10 @@ package org.datepollsystems.waiterrobot.shared.features.auth.api.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.datepollsystems.waiterrobot.shared.core.api.RequestBodyDto
 
 @Serializable
-internal class RefreshDto(val sessionToken: String, val sessionName: String)
+internal class RefreshRequestDto(val sessionToken: String, val sessionName: String) : RequestBodyDto
 
 @Serializable
 internal class RefreshResponseDto(

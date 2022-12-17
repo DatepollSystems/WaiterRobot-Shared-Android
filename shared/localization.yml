@@ -9,7 +9,74 @@ app:
     title:
       en: Error
       de: Fehler
+dialog:
+  cancel:
+    en: Cancel
+    de: Abbrechen
+deepLink:
+  invalid:
+    en: Invalid link.
+    de: Ungültiger link.
+  alreadyLoggedIn:
+    en: Already logged in.
+    de: Bereits angemeldet.
 tableList:
   noTableFound:
     en: There are no tables for this event.
     de: Für dieses Event sind keinen Tische verfügbar.
+login:
+  title:
+    en: Waiter login
+    de: Anmeldung Kellner
+  desc:
+    en: Authentication is provided via QR-Code. You should get one from your organization administrator. Scan the code to Login.
+    de: Du kannst dich mittels eines QR-Codes anmelden. Diesen solltes du von deinem Organisationsadministrator bekommen. Scanne den Code um dich anzumelden.
+  withQrCode:
+    en: Login with Qr-Code
+    de: Mittels Qr-Code anmelden
+  scanner:
+    desc:
+      en: To login scan the QR-Code you got from your organization administrator.
+      de: Um dich anzumelden musst du den QR-Code welchen du von deinem Organisationsadministrator bekommen hast scannen.
+    title:
+      en: Scan login QR-Code
+      de: Scanne einen login QR-Code
+  invalidCode:
+    title:
+      en: Invalid code
+      de: ungültiger Code
+    desc:
+      en: The code is not valid. Ask your oganisation admin for a new one.
+      de: Der Login link ist ungültig. Bitte deinen Organisationsadministrator um einen neuen.
+qrScanner:
+  cameraPermissionRequired:
+    en: For QR-Code scanning the Camera permission is required!
+    de: Zum scannen eines QR codes wird die Kameraberechtigung benötigt!
+  noCameraFound:
+    en: Could not find a camera which supports Qr-Code scanning. Please aks your organisation admin for a login link.
+    de: Es konnte keine Kamera die QR-Codes scannen kann gefunden werden. Bitte deinen Organisationsadministrator dir einen Anmeldelink auszustellen.
+  errorOpeningCamera:
+    en: Could not open camera.
+    de: Kamera konnte nicht geöffnet werden.
+root:
+  invalidLoginLink:
+    title:
+      en: Invalid login link.
+      de: Ungültiger login link.
+    desc:
+      en: The login link is not valid. Ask your oganisation admin for a new one.
+      de: Der Login link ist ungültig. Bitte deinen Organisationsadministrator um einen neuen.
+register:
+  name:
+    desc:
+      en: Please provide your full name, to register as a waiter for the event.
+      de: Bitte gib deinen vollen Namen ein, um dich als Kellner beim Event zu registrieren.
+    title:
+      en: Your name
+      de: Dein Name
+  alreadyRegisteredInfo:
+    en: If you have already registered as a waiter for the event, cancel and ask your organisation administrator for a login code.
+    de: Falls du bereits als Kellner für das Event registriert bist, brich ab und frage deinen Organisationsadministrator nach einem Anmeldecode.
+  login:
+    en: Login
+    de: Anmelden

@@ -4,7 +4,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.di.injectLogger
+import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.message
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
@@ -23,7 +23,7 @@ private val updateViewModel: MutableSharedFlow<String> = MutableSharedFlow()
 abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initialState: S) :
     ViewModel(), ContainerHost<S, E>, KoinComponent {
 
-    protected val logger by injectLogger(this::class.simpleName!!)
+    protected val logger by injectLoggerForClass()
 
     final override val container: Container<S, E> = viewModelScope.container(
         initialState = initialState,

@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.api
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
@@ -17,13 +18,15 @@ internal fun HttpClientConfig<*>.installApiClientExceptionTransformer(json: Json
             // Get as string and do custom serialization here, so we can fallback to a generic error
             // with the basic error information if the client does not know the codeName.
             val jsonString = clientException.response.bodyAsText()
-            println(jsonString)
             throw try {
                 json.decodeFromString<ApiException>(jsonString)
             } catch (e: SerializationException) {
-                println("Could not serialize ClientError using fallback: $e")
+                Logger.withTag("ApiClientExceptionTransformer").w(e) {
+                    "Could not serialize ClientError using fallback"
+                }
                 json.decodeFromString<ApiException.Generic>(jsonString)
             }
+            // TODO handle complete invalid response (which can not be decoded as a Generic ApiException)
         }
     }
 }

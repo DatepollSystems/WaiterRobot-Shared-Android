@@ -13,6 +13,7 @@ object Versions {
     const val androidCompileSdk = 33
     const val androidBuildTools = "33.0.0"
     const val androidAppVersionName = "0.1.0"
+    const val camera = "1.2.0-beta02"
 
     // Generate VersionCode from VersionName (e.g. 1.2.3 -> 10203, 1.23.45 -> 12345)
     val androidAppVersionCode: Int

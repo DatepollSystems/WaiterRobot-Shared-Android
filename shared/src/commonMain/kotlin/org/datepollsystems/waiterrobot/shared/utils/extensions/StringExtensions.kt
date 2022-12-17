@@ -1,4 +1,8 @@
-package org.datepollsystems.waiterrobot.shared.core.extensions
+package org.datepollsystems.waiterrobot.shared.utils.extensions
+
+import io.ktor.http.*
+
+fun String.toUrl() = Url(this)
 
 fun String.truncate(maxLength: Int, end: String = "..."): String {
     require(maxLength > end.length) { "maxLength must be grater than the length of end (${end.length})" }
