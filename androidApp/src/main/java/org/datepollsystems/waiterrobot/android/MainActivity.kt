@@ -3,7 +3,10 @@ package org.datepollsystems.waiterrobot.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
@@ -30,8 +33,9 @@ class MainActivity : ComponentActivity() {
 
             val navEngine = rememberNavHostEngine()
             val navController = navEngine.rememberNavController()
+            val scaffoldState = rememberScaffoldState()
 
-            vm.collectSideEffect { handleSideEffects(it, navController) }
+            vm.collectSideEffect { handleSideEffects(it, navController, scaffoldState) }
 
             WaiterRobotTheme {
                 DestinationsNavHost(
@@ -43,15 +47,29 @@ class MainActivity : ComponentActivity() {
                         dependency(RootScreenDestination) {
                             dependency(vm)
                         }
+
+                        // Provide the scaffoldState to all screens so that we can show the snackBar
+                        dependency(scaffoldState)
                     }
                 )
             }
         }
+
+        // TODO this probably trigger an relogin if the app gets resumed (as the intent is still there)?
+        intent?.data?.let {
+            Logger.d("Started with intent: $it") // TODO inject logger
+            vm.onDeepLink(it.toString())
+        }
     }
 
-    private fun handleSideEffects(effect: RootEffect, navigator: NavController) {
+    private suspend fun handleSideEffects(
+        effect: RootEffect,
+        navigator: NavController,
+        scaffoldState: ScaffoldState
+    ) {
         when (effect) {
             is RootEffect.Navigate -> navigator.handleNavAction(effect.action)
+            is RootEffect.ShowSnackBar -> scaffoldState.snackbarHostState.showSnackbar(effect.message)
         }
     }
 }

@@ -6,6 +6,8 @@ import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.spec.Route
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.LoginScannerScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RegisterScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -13,11 +15,15 @@ import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 val Screen.direction
     get(): Direction = when (this) {
         Screen.RootScreen -> RootScreenDestination
+        Screen.LoginScannerScreen -> LoginScannerScreenDestination
+        is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
     }
 
 val Screen.route
     get(): Route = when (this) {
         Screen.RootScreen -> RootScreenDestination
+        Screen.LoginScannerScreen -> LoginScannerScreenDestination
+        is Screen.RegisterScreen -> RegisterScreenDestination
     }
 
 fun NavController.handleNavAction(navAction: NavAction) {

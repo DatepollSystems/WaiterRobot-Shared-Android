@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,12 +27,17 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun TableListScreen(navigator: NavController, vm: TableListViewModel = getViewModel()) {
+fun TableListScreen(
+    vm: TableListViewModel = getViewModel(),
+    scaffoldState: ScaffoldState,
+    navigator: NavController,
+) {
     val state = vm.collectAsState().value
 
     vm.collectSideEffect { handleSideEffects(it, navigator) }
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = { Text("TableList" /* TODO */) },

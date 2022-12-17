@@ -87,6 +87,7 @@ dependencies {
 
     // Compose helpers
     implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.25.1")
 
     // Architecture (MVI)
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
@@ -97,4 +98,12 @@ dependencies {
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
     ksp("io.github.raamcosta.compose-destinations:ksp:${Versions.composeDestinations}")
+
+    // CameraX
+    implementation("androidx.camera:camera-camera2:${Versions.camera}")
+    implementation("androidx.camera:camera-view:${Versions.camera}")
+    implementation("androidx.camera:camera-lifecycle:${Versions.camera}")
+
+    // QrCode Scanning
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
 }
