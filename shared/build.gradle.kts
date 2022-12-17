@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization")
     id("com.android.library")
     id("co.touchlab.faktory.kmmbridge") version "0.3.2"
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
@@ -43,6 +44,17 @@ kotlin {
                 // Architecture
                 api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
                 api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
+
+                // Ktor
+                implementation("io.ktor:ktor-client-core:${Versions.ktor}")
+                implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
+                implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
+                implementation("io.ktor:ktor-client-logging:${Versions.ktor}")
+
+                // SharedSettings
+                implementation("com.russhwolf:multiplatform-settings:${Versions.settings}")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}")
             }
         }
         val commonTest by getting {
@@ -58,6 +70,9 @@ kotlin {
             dependencies {
                 // Dependency injection
                 api("io.insert-koin:koin-android:${Versions.koinDi}")
+
+                // Ktor
+                implementation("io.ktor:ktor-client-cio:${Versions.ktor}")
             }
         }
         val androidTest by getting
@@ -73,6 +88,11 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                // Ktor
+                implementation("io.ktor:ktor-client-darwin:${Versions.ktor}")
+            }
         }
         val iosX64Test by getting
         val iosArm64Test by getting
@@ -97,6 +117,10 @@ kotlin {
             isStatic =
                 false // Must be set to false for shared localization (otherwise resources are not availabel)
         }
+    }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlin.RequiresOptIn")
     }
 }
 
@@ -128,6 +152,7 @@ kmmResourcesConfig {
     output.set(project.projectDir)
     srcFolder.set(generatedLocalizationRoot) // place the generated files in the build folder
 }
+
 
 tasks {
     // Plutil generates the localizations for ios

@@ -4,6 +4,8 @@ object Versions {
     const val koinDi = "3.2.2"
     const val orbitMvi = "4.4.0"
     const val mokoMvvm = "0.14.0"
+    const val ktor = "2.2.1"
+    const val settings = "1.0.0-RC"
 
     // Android
     const val androidMinSdk = 24

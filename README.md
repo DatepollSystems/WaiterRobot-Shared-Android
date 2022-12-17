@@ -16,7 +16,7 @@ only possible on OSX). Before running the command make sure to be on latest comm
 The switch to a new branch and push it to remote. After that run the command. When finished you
 delete the temporary created branch. This is done because while publishing the Package.swift file is
 newly generated and committed to the repository. This can lead to conflicts and is constantly
-changing the `Package.swift`file for local dev and releasing. (
+changing the `Package.swift` file for local dev and releasing. (
 see [here](https://touchlab.github.io/KMMBridge/ciconfig/GITHUB_ACTIONS#workflow-options))
 
 ## iOS dev with local KMM module version

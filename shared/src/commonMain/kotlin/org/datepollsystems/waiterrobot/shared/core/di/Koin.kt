@@ -2,6 +2,7 @@ package org.datepollsystems.waiterrobot.shared.core.di
 
 import co.touchlab.kermit.Logger
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import org.datepollsystems.waiterrobot.shared.features.auth.di.loginModule
 import org.datepollsystems.waiterrobot.shared.features.table.di.tableModule
 import org.datepollsystems.waiterrobot.shared.root.di.rootModule
 import org.koin.core.component.KoinComponent
@@ -21,11 +22,15 @@ fun initKoin(appModule: Module = module { }) = startKoin {
         platformModule,
         coreModule,
         rootModule,
+        loginModule,
         tableModule
     )
 }
 
 internal fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }
+internal fun KoinComponent.injectLoggerForClass(): Lazy<Logger> =
+    injectLogger(this::class.simpleName!!)
+
 internal inline fun <reified T> Scope.getWith(vararg params: Any?): T {
     return get(parameters = { parametersOf(*params) })
 }
