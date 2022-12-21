@@ -55,6 +55,9 @@ kotlin {
                 // SharedSettings
                 implementation("com.russhwolf:multiplatform-settings:${Versions.settings}")
                 implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}")
+
+                // Helper
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val commonTest by getting {

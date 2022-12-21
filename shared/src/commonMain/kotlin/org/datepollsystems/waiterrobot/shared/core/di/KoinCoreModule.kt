@@ -4,12 +4,18 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
+import io.ktor.client.*
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.api.createApiClient
 import org.koin.core.qualifier.named
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
-internal val apiClientQualifier = named("apiClient")
+private val apiClientQualifier = named("apiClient")
+
+fun Scope.getApiClient(): HttpClient {
+    return get(HttpClient::class, apiClientQualifier)
+}
 
 internal val coreModule = module {
     val baseLogger = Logger(

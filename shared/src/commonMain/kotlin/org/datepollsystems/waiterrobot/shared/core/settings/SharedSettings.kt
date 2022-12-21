@@ -1,7 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
 import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.coroutines.getLongFlow
 import com.russhwolf.settings.coroutines.getStringOrNullFlow
+import com.russhwolf.settings.long
 import com.russhwolf.settings.set
 import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
@@ -35,9 +37,15 @@ class SharedSettings {
             tokenString?.let { it -> Json.decodeFromString(Tokens.serializer(), it) }
         }
 
-    var organisationName: String by settings.string(defaultValue = "My Organisation")
+    internal var selectedEventId: Long by settings.long("selectedEventId", defaultValue = -1L)
+    internal val selectedEventIdFlow: Flow<Long> =
+        settings.getLongFlow(key = "selectedEventId", defaultValue = -1)
+
+    var eventName: String by settings.string(defaultValue = "Unknown")
         internal set
-    var waiterName: String by settings.string(defaultValue = "")
+    var organisationName: String by settings.string(defaultValue = "Unknown")
+        internal set
+    var waiterName: String by settings.string(defaultValue = "Unknown")
         internal set
 }
 

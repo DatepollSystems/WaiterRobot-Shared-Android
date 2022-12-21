@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,11 +19,13 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 
 @Composable
 fun Table(table: Table, onClick: (Table) -> Unit) {
+    val cardShape = RoundedCornerShape(10)
     Card(
-        shape = RoundedCornerShape(10),
+        shape = cardShape,
         backgroundColor = Color.Blue,
         modifier = Modifier
             .aspectRatio(1f)
+            .clip(cardShape)
             .clickable { onClick(table) }
     ) {
         Box(

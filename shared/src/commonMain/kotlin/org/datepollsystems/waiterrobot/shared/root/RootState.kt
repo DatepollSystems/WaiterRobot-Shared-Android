@@ -5,7 +5,8 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 
 data class RootState(
-    val isLoggedIn: Boolean = CommonApp.isLoggedIn,
+    val isLoggedIn: Boolean = CommonApp.isLoggedIn.value,
+    val hasEventSelected: Boolean = CommonApp.hasEventSelected.value,
     override val viewState: ViewState = ViewState.Idle
 ) : ViewModelState() {
     override fun withViewState(viewState: ViewState): RootState = copy(viewState = viewState)

@@ -5,12 +5,14 @@ import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.auth.api.WaiterApi
+import org.datepollsystems.waiterrobot.shared.features.switchevent.repository.SwitchEventRepository
 import org.koin.core.component.inject
 
 internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository() {
 
     // Use inject for lazy loading to prevent circular init dependency (apiClient -> AuthRepo -> apiClient -> ...)
     private val waiterApi: WaiterApi by inject()
+    private val eventRepository: SwitchEventRepository by inject()
 
     suspend fun loginWithToken(token: String) {
         val tokens = Tokens.fromLoginResponse(
@@ -18,6 +20,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         )
 
         store(tokens)
+        autoSelectEvent()
     }
 
     suspend fun createWithToken(token: String, waiterName: String) {
@@ -26,6 +29,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         )
 
         store(tokens)
+        autoSelectEvent()
     }
 
     suspend fun refreshTokens(): Tokens? {
@@ -45,6 +49,17 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
 
     fun getTokens(): Tokens? {
         return CommonApp.settings.tokens
+    }
+
+    private suspend fun autoSelectEvent() {
+        try {
+            // Auto select event when there is only one available
+            eventRepository.getEvents().singleOrNull()?.let {
+                eventRepository.switchToEvent(it)
+            }
+        } catch (e: Exception) {
+            logger.w(e) { "Autos-selecting event failed" }
+        }
     }
 
     private suspend fun store(tokens: Tokens) {

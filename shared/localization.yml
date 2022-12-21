@@ -80,3 +80,13 @@ register:
   login:
     en: Login
     de: Anmelden
+switchEvent:
+  title:
+    en: Switch event
+    de: Event wechseln
+  desc:
+    en: As waiter you can be part of multiple events/locations. Please select which event/location you want to start with.
+    de: Als Kellner kannst du teil von mehreren Events/Standorten sein. Bitte wähle mit welchem Event/Standort du fortfahren möchtest.
+  noEventFound:
+    en: Could not find any events. Ask your organisation admin to add you to an event
+    de: Es konnten keine Events gefunden werden. Bitte deinen Organisationsadministrator dich zu Events hinzuzufügen.

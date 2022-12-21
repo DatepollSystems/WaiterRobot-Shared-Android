@@ -55,10 +55,12 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // TODO this probably trigger an relogin if the app gets resumed (as the intent is still there)?
-        intent?.data?.let {
-            Logger.d("Started with intent: $it") // TODO inject logger
-            vm.onDeepLink(it.toString())
+        // Only handle the deep-links when the app is created the first time (but not when it gets recreated)
+        if (savedInstanceState == null) {
+            intent?.data?.let {
+                Logger.d("Started with intent: $it") // TODO inject logger
+                vm.onDeepLink(it.toString())
+            }
         }
     }
 

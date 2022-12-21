@@ -3,6 +3,8 @@ package org.datepollsystems.waiterrobot.shared.core.navigation
 sealed class Screen {
     object RootScreen : Screen()
     object LoginScannerScreen : Screen()
+    object SwitchEventScreen : Screen()
+
     data class RegisterScreen(val createToken: String) : Screen()
 }
 

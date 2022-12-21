@@ -9,6 +9,7 @@ import com.ramcosta.composedestinations.spec.Route
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.LoginScannerScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RegisterScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SwitchEventScreenDestination
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 
@@ -16,6 +17,7 @@ val Screen.direction
     get(): Direction = when (this) {
         Screen.RootScreen -> RootScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
+        Screen.SwitchEventScreen -> SwitchEventScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
     }
 
@@ -23,6 +25,7 @@ val Screen.route
     get(): Route = when (this) {
         Screen.RootScreen -> RootScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
+        Screen.SwitchEventScreen -> SwitchEventScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination
     }
 

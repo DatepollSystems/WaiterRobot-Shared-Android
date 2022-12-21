@@ -5,6 +5,7 @@ import org.datepollsystems.waiterrobot.shared.core.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
 import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
@@ -19,6 +20,7 @@ class RootViewModel internal constructor(
 
     override fun onCreate(state: RootState) {
         watchLoginState()
+        watchSelectedEventState()
     }
 
     fun onDeepLink(url: String) = intent {
@@ -35,10 +37,12 @@ class RootViewModel internal constructor(
     }
 
     private suspend fun SimpleSyntax<RootState, RootEffect>.onAuthDeeplink(deepLink: DeepLink.Auth) {
-        if (CommonApp.isLoggedIn) {
+        if (CommonApp.isLoggedIn.value) {
             postSideEffect(RootEffect.ShowSnackBar(L.deepLink.alreadyLoggedIn()))
             return
         }
+
+        reduce { state.withViewState(ViewState.Loading) }
 
         try {
             when (deepLink) {
@@ -49,15 +53,25 @@ class RootViewModel internal constructor(
                     )
                 }
             }
+            reduce { state.withViewState(ViewState.Idle) }
         } catch (e: ApiException.CredentialsIncorrect) {
             reduceError(L.root.invalidLoginLink.title(), L.root.invalidLoginLink.desc())
         }
     }
 
     private fun watchLoginState() = intent {
-        CommonApp.isLoggedInFlow.collect { loggedIn ->
+        CommonApp.isLoggedIn.collect { loggedIn ->
             reduce { state.copy(isLoggedIn = loggedIn) }
             if (!loggedIn) {
+                postSideEffect(RootEffect.Navigate(NavAction.popUpToRoot))
+            }
+        }
+    }
+
+    private fun watchSelectedEventState() = intent {
+        CommonApp.hasEventSelected.collect { hasEventSelected ->
+            reduce { state.copy(hasEventSelected = hasEventSelected) }
+            if (!hasEventSelected) {
                 postSideEffect(RootEffect.Navigate(NavAction.popUpToRoot))
             }
         }
