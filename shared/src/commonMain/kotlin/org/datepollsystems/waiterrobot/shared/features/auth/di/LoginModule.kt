@@ -7,6 +7,7 @@ import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.auth.api.WaiterApi
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewModel
+import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -27,4 +28,5 @@ internal val loginModule: Module = module {
     single { AuthRepository(get()) }
     sharedViewModel { LoginViewModel() }
     sharedViewModel { LoginScannerViewModel(get()) }
+    sharedViewModel { RegisterViewModel(get()) }
 }

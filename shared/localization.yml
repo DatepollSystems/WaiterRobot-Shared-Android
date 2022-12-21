@@ -38,9 +38,6 @@ login:
     desc:
       en: To login scan the QR-Code you got from your organization administrator.
       de: Um dich anzumelden musst du den QR-Code welchen du von deinem Organisationsadministrator bekommen hast scannen.
-    title:
-      en: Scan login QR-Code
-      de: Scanne einen login QR-Code
   invalidCode:
     title:
       en: Invalid code

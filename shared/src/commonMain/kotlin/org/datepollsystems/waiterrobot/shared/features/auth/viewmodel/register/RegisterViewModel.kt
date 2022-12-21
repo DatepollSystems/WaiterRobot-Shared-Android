@@ -18,6 +18,7 @@ class RegisterViewModel internal constructor(
         try {
             // TODO check name
             authRepository.createWithToken(createToken, name)
+            postSideEffect(RegisterEffect.Navigate(NavAction.popUpToRoot))
         } catch (e: ApiException.CredentialsIncorrect) {
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())
         }

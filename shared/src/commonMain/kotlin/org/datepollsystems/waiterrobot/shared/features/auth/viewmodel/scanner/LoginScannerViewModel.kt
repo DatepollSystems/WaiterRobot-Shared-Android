@@ -15,7 +15,10 @@ class LoginScannerViewModel internal constructor(
     fun onCode(code: String) = intent {
         try {
             when (val deepLink = DeepLink.createFromUrl(code)) {
-                is DeepLink.Auth.LoginLink -> authRepository.loginWithToken(deepLink.token)
+                is DeepLink.Auth.LoginLink -> {
+                    authRepository.loginWithToken(deepLink.token)
+                    postSideEffect(LoginScannerEffect.Navigate(NavAction.popUpToRoot))
+                }
                 is DeepLink.Auth.RegisterLink -> {
                     postSideEffect(
                         LoginScannerEffect.Navigate(NavAction.Push(Screen.RegisterScreen(deepLink.token)))
