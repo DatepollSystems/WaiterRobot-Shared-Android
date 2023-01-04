@@ -1,23 +1,23 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListEffect
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -40,7 +40,7 @@ fun TableListScreen(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
-                title = { Text("TableList" /* TODO */) },
+                title = { Text(CommonApp.settings.eventName) },
             )
         }
     ) { contentPadding ->
@@ -50,18 +50,7 @@ fun TableListScreen(
             onRefresh = vm::loadTables
         ) {
             if (state.tables.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp)
-                        .verticalScroll(rememberScrollState()), // Body of View must be scrollable
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = L.tableList.noTableFound(),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                CenteredText(text = L.tableList.noTableFound())
             } else {
                 LazyVerticalGrid(
                     modifier = Modifier.fillMaxSize(),
@@ -73,7 +62,7 @@ fun TableListScreen(
                     items(state.tables, key = { it.id }) { table ->
                         Table(
                             table = table,
-                            onClick = { /* TODO */ }
+                            onClick = { vm.onTableClick(table) }
                         )
                     }
                 }

@@ -5,6 +5,8 @@ import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewM
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
+import org.datepollsystems.waiterrobot.shared.features.table.models.Table
+import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
 import org.koin.core.component.KoinComponent
@@ -23,4 +25,5 @@ object IosKoinComponent : KoinComponent {
     fun loginScannerVM() = get<LoginScannerViewModel>()
     fun switchEventVM() = get<SwitchEventViewModel>()
     fun tableListVM() = get<TableListViewModel>()
+    fun tableDetailVM(table: Table) = get<TableDetailViewModel> { parametersOf(table) }
 }

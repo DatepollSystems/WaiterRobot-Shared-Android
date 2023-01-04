@@ -24,6 +24,13 @@ tableList:
   noTableFound:
     en: There are no tables for this event.
     de: Für dieses Event sind keinen Tische verfügbar.
+tableDetail:
+  title:
+    en: Table %1$s
+    de: Tisch %1$s
+  noOrder:
+    en: There is currently no open order for table %1$s
+    de: Für den Tisch %1$s gibt es zurzeit keine offene Bestellung
 login:
   title:
     en: Waiter login
