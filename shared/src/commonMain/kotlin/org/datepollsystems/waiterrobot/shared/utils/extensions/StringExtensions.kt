@@ -10,3 +10,5 @@ fun String.truncate(maxLength: Int, end: String = "..."): String {
 
     return this.take(maxLength - end.length) + end
 }
+
+fun String?.emptyToNull(): String? = if (this?.isEmpty() == true) null else this

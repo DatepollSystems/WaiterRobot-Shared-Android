@@ -13,12 +13,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CenteredText(text: String) {
+fun CenteredText(text: String, scrollAble: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .verticalScroll(rememberScrollState()), // Body of View must be scrollable
+            .let {
+                if (scrollAble) {
+                    it.verticalScroll(rememberScrollState())
+                } else {
+                    it
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(

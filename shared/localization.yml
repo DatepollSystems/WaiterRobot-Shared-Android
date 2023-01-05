@@ -13,6 +13,15 @@ dialog:
   cancel:
     en: Cancel
     de: Abbrechen
+  closeAnyway:
+    en: Close anyway
+    de: Trotzdem schließen
+  clear:
+    en: Clear
+    de: Löschen
+  save:
+    en: Save
+    de: Speichern
 deepLink:
   invalid:
     en: Invalid link.
@@ -94,3 +103,44 @@ switchEvent:
   noEventFound:
     en: Could not find any events. Ask your organisation admin to add you to an event
     de: Es konnten keine Events gefunden werden. Bitte deinen Organisationsadministrator dich zu Events hinzuzufügen.
+order:
+  keepOrder:
+    en: Keep order
+    de: Bestellung behalte
+  notSent:
+    title:
+      en: Order not sent
+      de: Bestellung nicht gesendet
+    desc:
+      en: You have selected items but not sent the order. Do you really want to go back?
+      de: Du hast Artikel ausgewählt aber die Bestellung nicht gesendet. Willst du wirklich zurückgehen?
+  title:
+    en: Order for table %1$s
+    de: Bestellung für Tisch %1$s
+  addProduct:
+    en: Add a product to the order
+    de: Füge ein Produkt zur Bestellung hinzu
+  productSoldOut:
+    title:
+      en: Product sold out
+      de: Produkt ausverkauft
+    desc:
+      en: \"%1$s\" is sold out. It get's removed from the order. You can edit the order again.
+      de: \"%1$s\" ist ausverkauft. Es wird von der Bestellung entfernt und du kannst die Bestellung noch einmal bearbeiten.
+  addNoteDialog:
+    title:
+      de: Notiz für %1$s
+      en: Note for %1$s
+    inputLabel:
+      de: Produktnotiz
+      en: Product note
+    inputPlaceholder:
+      de: 1x ohne Tomaten
+      en: 1x without tomato
+productSearch:
+  title:
+    en: Product search
+    de: Produkt suche
+  placeholder:
+    en: Search for a product
+    de: Suche nach einem Produkt

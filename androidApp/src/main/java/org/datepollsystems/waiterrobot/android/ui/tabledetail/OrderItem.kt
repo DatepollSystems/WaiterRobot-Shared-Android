@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.tabledetail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,11 +10,12 @@ import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.shared.features.table.models.OrderItem
 
 @Composable
-fun OrderItem(item: OrderItem) {
+fun OrderItem(item: OrderItem, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(10.dp)
+            .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

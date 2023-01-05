@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
+import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
@@ -26,4 +27,6 @@ object IosKoinComponent : KoinComponent {
     fun switchEventVM() = get<SwitchEventViewModel>()
     fun tableListVM() = get<TableListViewModel>()
     fun tableDetailVM(table: Table) = get<TableDetailViewModel> { parametersOf(table) }
+    fun orderVM(table: Table, initialItemId: Long?) =
+        get<OrderViewModel> { parametersOf(table, initialItemId) }
 }

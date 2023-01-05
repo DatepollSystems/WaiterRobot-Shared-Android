@@ -50,7 +50,7 @@ fun TableListScreen(
             onRefresh = vm::loadTables
         ) {
             if (state.tables.isEmpty()) {
-                CenteredText(text = L.tableList.noTableFound())
+                CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
             } else {
                 LazyVerticalGrid(
                     modifier = Modifier.fillMaxSize(),

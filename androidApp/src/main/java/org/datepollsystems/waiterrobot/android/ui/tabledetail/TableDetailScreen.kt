@@ -65,7 +65,7 @@ fun TableDetailScreen(
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
-                FloatingActionButton(onClick = { /* TODO */ }) {
+                FloatingActionButton(onClick = vm::openOrderScreen) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Order")
                 }
             }
@@ -77,13 +77,18 @@ fun TableDetailScreen(
             onRefresh = vm::loadOrder
         ) {
             if (state.products.isEmpty()) {
-                CenteredText(text = L.tableDetail.noOrder(table.number.toString()))
+                CenteredText(
+                    text = L.tableDetail.noOrder(table.number.toString()),
+                    scrollAble = true
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(state.products, key = OrderItem::id) { item ->
-                        OrderItem(item = item)
+                        OrderItem(item = item) {
+                            vm.openOrderScreen(item.id)
+                        }
                     }
                 }
             }
