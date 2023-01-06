@@ -8,7 +8,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
+import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
 
 @Composable
 fun OrderListItem(
@@ -47,5 +49,19 @@ fun OrderListItem(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun OrderListItemPreview() {
+    WaiterRobotTheme {
+        OrderListItem(
+            id = 1,
+            name = "Beer",
+            amount = 10,
+            note = "test Note",
+            addAction = { _, _ -> },
+            onLongClick = {})
     }
 }

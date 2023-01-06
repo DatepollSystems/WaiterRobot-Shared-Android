@@ -144,3 +144,7 @@ productSearch:
   placeholder:
     en: Search for a product
     de: Suche nach einem Produkt
+navigation:
+  back:
+    en: Back
+    de: Zurück
