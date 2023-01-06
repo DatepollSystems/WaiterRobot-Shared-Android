@@ -17,7 +17,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
-import org.datepollsystems.waiterrobot.shared.features.table.models.OrderItem
+import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailEffect
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
@@ -55,7 +55,7 @@ fun TableDetailScreen(
         },
         floatingActionButton = {
             Column {
-                if (state.products.isNotEmpty()) {
+                if (state.orderedItems.isNotEmpty()) {
                     FloatingActionButton(
                         modifier = Modifier.scale(0.85f),
                         backgroundColor = MaterialTheme.colors.secondaryVariant,
@@ -76,7 +76,7 @@ fun TableDetailScreen(
             state = state,
             onRefresh = vm::loadOrder
         ) {
-            if (state.products.isEmpty()) {
+            if (state.orderedItems.isEmpty()) {
                 CenteredText(
                     text = L.tableDetail.noOrder(table.number.toString()),
                     scrollAble = true
@@ -85,8 +85,8 @@ fun TableDetailScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(state.products, key = OrderItem::id) { item ->
-                        OrderItem(item = item) {
+                    items(state.orderedItems, key = OrderedItem::id) { item ->
+                        OrderedItem(item = item) {
                             vm.openOrderScreen(item.id)
                         }
                     }

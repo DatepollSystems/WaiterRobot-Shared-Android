@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.datepollsystems.waiterrobot.shared.features.table.models.OrderItem
+import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 
 @Composable
-fun OrderItem(item: OrderItem, onClick: () -> Unit) {
+fun OrderedItem(item: OrderedItem, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

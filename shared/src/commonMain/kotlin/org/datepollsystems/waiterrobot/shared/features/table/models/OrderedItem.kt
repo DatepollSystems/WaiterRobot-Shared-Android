@@ -1,6 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.table.models
 
-data class OrderItem(
+data class OrderedItem(
     val id: Long,
     val name: String,
     val amount: Int

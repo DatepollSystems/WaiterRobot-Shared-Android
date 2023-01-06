@@ -24,7 +24,7 @@ class TableDetailViewModel internal constructor(
 
         val items = tableRepository.getUnpaidItemsForTable(table)
 
-        reduce { state.copy(products = items, viewState = ViewState.Idle) }
+        reduce { state.copy(orderedItems = items, viewState = ViewState.Idle) }
     }
 
     override fun update() = loadOrder()
