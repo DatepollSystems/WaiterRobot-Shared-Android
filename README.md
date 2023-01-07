@@ -41,17 +41,30 @@ The main branch contains the `Package.swift` file ready for local dev.
 - [Kotlin](https://kotlinlang.org/)
 - [Kotlin Multiplatform (Mobile)](https://kotlinlang.org/lp/mobile/)
 - [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
+- [Ktor](https://ktor.io/) Http client
+  - [Content Negotiation](https://ktor.io/docs/serialization-client.html) Body serialization
+  - [Client Auth](https://ktor.io/docs/auth.html) Authentication (Bearer)
+  - [Client Logging](https://ktor.io/docs/client-logging.html) Logging
 - [Koin](https://insert-koin.io/) Dependency injection
 - [Kermit](https://github.com/touchlab/Kermit) Logger
 - [Orbit MVI](https://orbit-mvi.org/) MVI implementation
 - [Moko MVVM](https://github.com/icerockdev/moko-mvvm) shared viewModelScope
 - [KMM Resources](https://github.com/jcraane/kmm-resources) shared localization
+- [KotlinX DateTime](https://github.com/Kotlin/kotlinx-datetime) Multiplatform DateTime
+- [KotlinX Serialization (Json)](https://github.com/Kotlin/kotlinx.serialization) JSON serialization
 
 ## Android
 
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) Declarative UI
-- [Compose Destinations](https://composedestinations.rafaelcosta.xyz/) Typesafe navigation for
-  Jetpack Compose
+  - [Material](https://developer.android.com/jetpack/androidx/releases/compose-material) Material UI
+  - [Material Icons](https://developer.android.com/reference/kotlin/androidx/compose/material/icons/package-summary)
+    Material UI Icons (extended)
+  - [Compose Destinations](https://composedestinations.rafaelcosta.xyz/) Typesafe navigation for
+    Jetpack Compose
+  - [Accompanist Permissions](https://google.github.io/accompanist/permissions/) Helper for
+    permission management in JetpackCompose
+- [Barcode-Scanning](https://developers.google.com/ml-kit/vision/barcode-scanning/android)
+  QR/Barcode scanner
 
 # Further Resources and References
 
