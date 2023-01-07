@@ -1,10 +1,13 @@
 package org.datepollsystems.waiterrobot.android.ui.core.view
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 /**
  * [content] must be vertical scrollable
@@ -13,19 +16,19 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
  *
  * Also make sure that the [content] fills the whole screen/view height
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RefreshableView(
     loading: Boolean,
     modifier: Modifier = Modifier,
-    onRefresh: (() -> Unit),
+    onRefresh: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    SwipeRefresh(
-        state = rememberSwipeRefreshState(loading),
-        onRefresh = onRefresh,
-        swipeEnabled = true,
-        modifier = modifier.fillMaxWidth()
-    ) {
+    val pullRefreshState = rememberPullRefreshState(loading, onRefresh)
+
+    Box(modifier.pullRefresh(pullRefreshState)) {
         content()
+
+        PullRefreshIndicator(loading, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
 }

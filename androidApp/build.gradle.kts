@@ -86,7 +86,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-swiperefresh:0.25.1")
     implementation("com.google.accompanist:accompanist-permissions:0.25.1")
 
     // Architecture (MVI)

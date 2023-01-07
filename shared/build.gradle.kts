@@ -58,7 +58,7 @@ kotlin {
 
                 // Helper
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1") // Also needed by android for ComposeDestination parameter serialization
             }
         }
         val commonTest by getting {
