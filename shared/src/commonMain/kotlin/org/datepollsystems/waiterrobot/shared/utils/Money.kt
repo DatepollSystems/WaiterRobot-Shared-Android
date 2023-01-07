@@ -72,3 +72,5 @@ fun Iterable<Money>.sum(): Money {
     }
     return sum
 }
+
+operator fun Int.times(other: Money) = other.times(this)

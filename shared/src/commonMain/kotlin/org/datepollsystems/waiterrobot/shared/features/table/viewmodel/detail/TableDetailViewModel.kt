@@ -36,4 +36,8 @@ class TableDetailViewModel internal constructor(
             )
         )
     }
+
+    fun openBillingScreen() = intent {
+        postSideEffect(TableDetailEffect.Navigate(NavAction.Push(Screen.BillingScreen(table))))
+    }
 }

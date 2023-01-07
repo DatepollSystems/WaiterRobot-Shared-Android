@@ -59,7 +59,7 @@ fun TableDetailScreen(
                     FloatingActionButton(
                         modifier = Modifier.scale(0.85f),
                         backgroundColor = MaterialTheme.colors.secondaryVariant,
-                        onClick = { /* TODO */ }
+                        onClick = vm::openBillingScreen
                     ) {
                         Icon(Icons.Filled.CreditCard, contentDescription = "Pay")
                     }

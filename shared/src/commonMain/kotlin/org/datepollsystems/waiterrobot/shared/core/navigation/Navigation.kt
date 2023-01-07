@@ -10,6 +10,7 @@ sealed class Screen {
     data class RegisterScreen(val createToken: String) : Screen()
     data class TableDetailScreen(val table: Table) : Screen()
     data class OrderScreen(val table: Table, val initialItemId: Long?) : Screen()
+    data class BillingScreen(val table: Table) : Screen()
 }
 
 sealed class NavAction {

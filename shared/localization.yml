@@ -148,3 +148,29 @@ navigation:
   back:
     en: Back
     de: Zurück
+billing:
+  keepBill:
+    en: Keep Bill
+    de: Rechnung behalten
+  notSent:
+    title:
+      en: Bill not sent
+      de: Rechnung nicht gesendet
+    desc:
+      en: You have selected items but not sent the bill. Do you really want to go back?
+      de: Du hast Artikel ausgewählt aber die Rechnung nicht gesendet. Willst du wirklich zurückgehen?
+  total:
+    en: Total
+    de: Summe
+  change:
+    en: Change
+    de: Rückgeld
+  pay:
+    en: Pay
+    de: Bezahlen
+  title:
+    en: Bill for table %1$s
+    de: Rechnung für Tisch %1$s
+  noOpenBill:
+    en: There is currently no open bill for table %1$s
+    de: Es gibt derzeit keine offene Rechnung für den Tisch %1$s

@@ -18,6 +18,7 @@ val Screen.direction
         is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
         is Screen.TableDetailScreen -> TableDetailScreenDestination(this.table)
         is Screen.OrderScreen -> OrderScreenDestination(this.table, this.initialItemId)
+        is Screen.BillingScreen -> BillingScreenDestination(this.table)
     }
 
 val Screen.route
@@ -28,6 +29,7 @@ val Screen.route
         is Screen.RegisterScreen -> RegisterScreenDestination
         is Screen.TableDetailScreen -> TableDetailScreenDestination
         is Screen.OrderScreen -> OrderScreenDestination
+        is Screen.BillingScreen -> BillingScreenDestination
     }
 
 fun NavController.handleNavAction(navAction: NavAction) {

@@ -18,9 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderEffect
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
@@ -72,7 +74,7 @@ fun OrderScreen(
 
     if (state.showConfirmationDialog) {
         AlertDialog(
-            onDismissRequest = { },
+            onDismissRequest = vm::keepOrder,
             confirmButton = {
                 TextButton(onClick = vm::abortOrder) {
                     Text(L.dialog.closeAnyway())
@@ -135,6 +137,7 @@ fun OrderScreen(
                     if (state.currentOrder.isNotEmpty()) {
                         FloatingActionButton(
                             modifier = Modifier.scale(0.85f),
+                            enabled = state.viewState == ViewState.Idle,
                             backgroundColor = MaterialTheme.colors.secondaryVariant,
                             onClick = vm::sendOrder
                         ) {
@@ -142,14 +145,16 @@ fun OrderScreen(
                         }
                         Spacer(modifier = Modifier.height(5.dp))
                     }
-                    FloatingActionButton(onClick = {
-                        if (!bottomSheetState.isAnimationRunning && !bottomSheetState.isVisible) {
-                            coroutineScope.launch {
-                                // Do not use state.show() here as we want to expand to full size
-                                bottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                    FloatingActionButton(
+                        onClick = {
+                            if (!bottomSheetState.isAnimationRunning && !bottomSheetState.isVisible) {
+                                coroutineScope.launch {
+                                    // Do not use state.show() here as we want to expand to full size
+                                    bottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                                }
                             }
                         }
-                    }) {
+                    ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Product")
                     }
                 }
