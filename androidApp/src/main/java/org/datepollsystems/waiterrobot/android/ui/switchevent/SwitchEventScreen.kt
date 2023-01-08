@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
@@ -40,22 +41,27 @@ fun SwitchEventScreen(
 
     Scaffold(scaffoldState = scaffoldState) {
         Column {
-            Icon(
-                imageVector = Icons.Outlined.Groups,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth(0.3f)
-                    .aspectRatio(1f)
-                    .align(Alignment.CenterHorizontally)
-            )
-            Text(
-                text = L.switchEvent.desc(),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            )
-            Divider()
+            // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be on top of this part of the view
+            Surface(modifier = Modifier.zIndex(1f)) {
+                Column {
+                    Icon(
+                        imageVector = Icons.Outlined.Groups,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth(0.3f)
+                            .aspectRatio(1f)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        text = L.switchEvent.desc(),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    )
+                    Divider()
+                }
+            }
 
             View(
                 state = state,
