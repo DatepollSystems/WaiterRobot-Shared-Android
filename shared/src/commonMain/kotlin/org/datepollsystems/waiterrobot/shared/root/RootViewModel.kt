@@ -21,6 +21,7 @@ class RootViewModel internal constructor(
     override fun onCreate(state: RootState) {
         watchLoginState()
         watchSelectedEventState()
+        watchAppTheme()
     }
 
     fun onDeepLink(url: String) = intent {
@@ -74,6 +75,12 @@ class RootViewModel internal constructor(
             if (!hasEventSelected) {
                 postSideEffect(RootEffect.Navigate(NavAction.popUpToRoot))
             }
+        }
+    }
+
+    private fun watchAppTheme() = intent {
+        CommonApp.appTheme.collect {
+            reduce { state.copy(selectedTheme = it) }
         }
     }
 }

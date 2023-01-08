@@ -8,17 +8,11 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun WaiterRobotTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        darkColors
-    } else {
-        lightColors
-    }
-
     MaterialTheme(
-        colors = colors,
+        colors = if (useDarkTheme) darkColors else lightColors,
         content = content
     )
 }

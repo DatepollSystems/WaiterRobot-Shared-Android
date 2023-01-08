@@ -3,6 +3,7 @@ package org.datepollsystems.waiterrobot.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.navigation.NavController
@@ -14,9 +15,11 @@ import org.datepollsystems.waiterrobot.android.generated.navigation.NavGraphs
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
 import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
+import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.root.RootEffect
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 class MainActivity : ComponentActivity() {
@@ -35,9 +38,16 @@ class MainActivity : ComponentActivity() {
             val navController = navEngine.rememberNavController()
             val scaffoldState = rememberScaffoldState()
 
+            val state = vm.collectAsState().value
             vm.collectSideEffect { handleSideEffects(it, navController, scaffoldState) }
 
-            WaiterRobotTheme {
+            val useDarkTheme = when (state.selectedTheme) {
+                AppTheme.SYSTEM -> isSystemInDarkTheme()
+                AppTheme.LIGHT -> false
+                AppTheme.DARK -> true
+            }
+
+            WaiterRobotTheme(useDarkTheme) {
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
                     engine = navEngine,

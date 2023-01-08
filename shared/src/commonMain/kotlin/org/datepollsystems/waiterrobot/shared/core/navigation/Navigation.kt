@@ -6,6 +6,7 @@ sealed class Screen {
     object RootScreen : Screen()
     object LoginScannerScreen : Screen()
     object SwitchEventScreen : Screen()
+    object SettingsScreen : Screen()
 
     data class RegisterScreen(val createToken: String) : Screen()
     data class TableDetailScreen(val table: Table) : Screen()

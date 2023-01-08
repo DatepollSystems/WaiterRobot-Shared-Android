@@ -5,6 +5,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.di.loginModule
 import org.datepollsystems.waiterrobot.shared.features.billing.di.billingModule
 import org.datepollsystems.waiterrobot.shared.features.order.di.orderModule
+import org.datepollsystems.waiterrobot.shared.features.settings.di.settingsModule
 import org.datepollsystems.waiterrobot.shared.features.switchevent.di.switchEventModule
 import org.datepollsystems.waiterrobot.shared.features.table.di.tableModule
 import org.datepollsystems.waiterrobot.shared.root.di.rootModule
@@ -29,7 +30,8 @@ fun initKoin(appModule: Module = module { }) = startKoin {
         switchEventModule,
         tableModule,
         orderModule,
-        billingModule
+        billingModule,
+        settingsModule
     )
 }
 

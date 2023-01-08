@@ -11,10 +11,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LoginResponseDto
+import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 
 @OptIn(ExperimentalSettingsApi::class)
 class SharedSettings {
     private val settings by lazy { settingsFactory.create() }
+
+    var eventName: String by settings.string(defaultValue = "Unknown")
+        internal set
+    var organisationName: String by settings.string(defaultValue = "Unknown")
+        internal set
+    var waiterName: String by settings.string(defaultValue = "Unknown")
+        internal set
 
     // Can not use the settings "native" serialization as this currently can not be combined with settings flow
     internal var tokens: Tokens?
@@ -41,12 +49,12 @@ class SharedSettings {
     internal val selectedEventIdFlow: Flow<Long> =
         settings.getLongFlow(key = "selectedEventId", defaultValue = -1)
 
-    var eventName: String by settings.string(defaultValue = "Unknown")
-        internal set
-    var organisationName: String by settings.string(defaultValue = "Unknown")
-        internal set
-    var waiterName: String by settings.string(defaultValue = "Unknown")
-        internal set
+    internal var appTheme: AppTheme
+        get() = AppTheme.fromSettings(settings.getStringOrNull("appTheme"))
+        set(value) = settings.set("appTheme", value.name)
+
+    internal val appThemeFlow: Flow<AppTheme> = settings.getStringOrNullFlow("appTheme")
+        .map { AppTheme.fromSettings(it) }
 }
 
 @Serializable

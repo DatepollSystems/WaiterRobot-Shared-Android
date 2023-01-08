@@ -12,11 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
+import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.koin.core.component.KoinComponent
 
 object CommonApp : KoinComponent {
-    val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val settings = SharedSettings()
+
+    const val privacyPolicyUrl: String = "https://my.kellner.team/info/mobile-privacypolicy"
 
     internal val isLoggedIn: StateFlow<Boolean> = settings.tokenFlow
         .map { it != null }
@@ -26,7 +29,10 @@ object CommonApp : KoinComponent {
         .map { it != -1L }
         .stateIn(appScope, started = SharingStarted.Lazily, settings.selectedEventId != -1L)
 
-    fun logout() {
+    internal val appTheme: StateFlow<AppTheme> = settings.appThemeFlow
+        .stateIn(appScope, started = SharingStarted.Lazily, settings.appTheme)
+
+    internal fun logout() {
         settings.tokens = null // This also triggers a change to the isLoggedInFlow
         settings.selectedEventId = -1
         settings.eventName = ""

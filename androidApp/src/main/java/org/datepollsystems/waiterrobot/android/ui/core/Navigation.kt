@@ -15,6 +15,7 @@ val Screen.direction
         Screen.RootScreen -> RootScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
+        Screen.SettingsScreen -> SettingsScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
         is Screen.TableDetailScreen -> TableDetailScreenDestination(this.table)
         is Screen.OrderScreen -> OrderScreenDestination(this.table, this.initialItemId)
@@ -26,6 +27,7 @@ val Screen.route
         Screen.RootScreen -> RootScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
+        Screen.SettingsScreen -> SettingsScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination
         is Screen.TableDetailScreen -> TableDetailScreenDestination
         is Screen.OrderScreen -> OrderScreenDestination

@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.core
 
 import org.datepollsystems.waiterrobot.shared.utils.extensions.truncate
+import kotlin.properties.Delegates
 
 object AppInfo {
     lateinit var appVersion: String
@@ -9,15 +10,18 @@ object AppInfo {
         private set
     lateinit var os: OS
         private set
+    var appBuild by Delegates.notNull<Int>()
+        private set
 
-    fun init(appVersion: String, phoneModel: String, os: OS) {
+    fun init(appVersion: String, appBuild: Int, phoneModel: String, os: OS) {
         this.appVersion = appVersion
+        this.appBuild = appBuild
         this.phoneModel = phoneModel
         this.os = os
     }
 
     val sessionName: String by lazy {
-        "WaiterRobot-${appVersion}; ${phoneModel}; $os".truncate(60)
+        "WaiterRobot-${appVersion} ($appBuild); ${phoneModel}; $os".truncate(60)
     }
 }
 

@@ -31,5 +31,9 @@ class TableListViewModel internal constructor(
         postSideEffect(TableListEffect.Navigate(NavAction.Push(Screen.TableDetailScreen(table))))
     }
 
+    fun openSettings() = intent {
+        postSideEffect(TableListEffect.Navigate(NavAction.Push(Screen.SettingsScreen)))
+    }
+
     override fun update() = loadTables(true)
 }

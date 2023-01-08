@@ -6,6 +6,7 @@ import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.R
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
+import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
@@ -32,4 +33,5 @@ object IosKoinComponent : KoinComponent {
         get<OrderViewModel> { parametersOf(table, initialItemId) }
 
     fun billingVM(table: Table) = get<BillingViewModel> { parametersOf(table) }
+    fun settingsVM() = get<SettingsViewModel>()
 }

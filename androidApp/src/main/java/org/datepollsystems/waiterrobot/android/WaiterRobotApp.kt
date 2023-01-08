@@ -22,6 +22,7 @@ class WaiterRobotApp : Application() {
         AppInfo.init(
             os = OS.Android(Build.VERSION.RELEASE),
             appVersion = BuildConfig.VERSION_NAME.substringBefore("-"),
+            appBuild = BuildConfig.VERSION_CODE,
             phoneModel = phoneModel
         )
 
