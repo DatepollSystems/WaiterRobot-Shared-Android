@@ -13,8 +13,9 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
     protected val logger: Logger by injectLoggerForClass()
 
     // Make sure that the baseUrl ends with a "/"
+    // TODO use host from the login code
     private val baseUrl =
-        "https://lava.kellner.team/api/v1/${basePath.removePrefix("/").removeSuffix("/")}/"
+        "https://my.kellner.team/api/v1/${basePath.removePrefix("/").removeSuffix("/")}/"
 
     /**
      * prepend string (endpoint) with base and make sure that endpoint does not start with "/"
