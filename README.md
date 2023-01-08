@@ -13,7 +13,7 @@ can be published by running the `KMM Bridge Publish Release` GitHub-Action.
 If you want to build and publish the SPM locally you can do so with the
 command `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx` (personal github token is needed and
 only possible on OSX). Before running the command make sure to be on latest commit on main branch.
-The switch to a new branch and push it to remote. After that run the command. When finished you
+Then switch to a new branch and push it to remote. After that run the command. When finished you
 delete the temporary created branch. This is done because while publishing the Package.swift file is
 newly generated and committed to the repository. This can lead to conflicts and is constantly
 changing the `Package.swift` file for local dev and releasing. (
