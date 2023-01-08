@@ -12,11 +12,11 @@ can be published by running the `KMM Bridge Publish Release` GitHub-Action.
 
 If you want to build and publish the SPM locally you can do so with the
 command `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx` (personal github token is needed and
-only possible on OSX). Before running the command make sure to be on latest commit on main branch.
-Then switch to a new branch and push it to remote. After that run the command. When finished you
-delete the temporary created branch. This is done because while publishing the Package.swift file is
-newly generated and committed to the repository. This can lead to conflicts and is constantly
-changing the `Package.swift` file for local dev and releasing. (
+only possible on OSX). Before running create a new branch from the remote main branch (make sure to
+commit or stash all local changes before) and push the new branch to remote. After that run the
+command. When finished you delete the temporary created branch. This is done because while
+publishing the Package.swift file is newly generated and committed to the repository. This can lead
+to conflicts and is constantly changing the `Package.swift` file for local dev and releasing. (
 see [here](https://touchlab.github.io/KMMBridge/ciconfig/GITHUB_ACTIONS#workflow-options))
 
 ## iOS dev with local KMM module version
@@ -42,9 +42,9 @@ The main branch contains the `Package.swift` file ready for local dev.
 - [Kotlin Multiplatform (Mobile)](https://kotlinlang.org/lp/mobile/)
 - [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
 - [Ktor](https://ktor.io/) Http client
-  - [Content Negotiation](https://ktor.io/docs/serialization-client.html) Body serialization
-  - [Client Auth](https://ktor.io/docs/auth.html) Authentication (Bearer)
-  - [Client Logging](https://ktor.io/docs/client-logging.html) Logging
+    - [Content Negotiation](https://ktor.io/docs/serialization-client.html) Body serialization
+    - [Client Auth](https://ktor.io/docs/auth.html) Authentication (Bearer)
+    - [Client Logging](https://ktor.io/docs/client-logging.html) Logging
 - [Koin](https://insert-koin.io/) Dependency injection
 - [Kermit](https://github.com/touchlab/Kermit) Logger
 - [Orbit MVI](https://orbit-mvi.org/) MVI implementation
@@ -56,13 +56,14 @@ The main branch contains the `Package.swift` file ready for local dev.
 ## Android
 
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) Declarative UI
-  - [Material](https://developer.android.com/jetpack/androidx/releases/compose-material) Material UI
-  - [Material Icons](https://developer.android.com/reference/kotlin/androidx/compose/material/icons/package-summary)
-    Material UI Icons (extended)
-  - [Compose Destinations](https://composedestinations.rafaelcosta.xyz/) Typesafe navigation for
-    Jetpack Compose
-  - [Accompanist Permissions](https://google.github.io/accompanist/permissions/) Helper for
-    permission management in JetpackCompose
+    - [Material](https://developer.android.com/jetpack/androidx/releases/compose-material) Material
+      UI
+    - [Material Icons](https://developer.android.com/reference/kotlin/androidx/compose/material/icons/package-summary)
+      Material UI Icons (extended)
+    - [Compose Destinations](https://composedestinations.rafaelcosta.xyz/) Typesafe navigation for
+      Jetpack Compose
+    - [Accompanist Permissions](https://google.github.io/accompanist/permissions/) Helper for
+      permission management in JetpackCompose
 - [Barcode-Scanning](https://developers.google.com/ml-kit/vision/barcode-scanning/android)
   QR/Barcode scanner
 
