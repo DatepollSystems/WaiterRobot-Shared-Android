@@ -9,5 +9,6 @@ internal class RefreshRequestDto(val sessionToken: String, val sessionName: Stri
 
 @Serializable
 internal class RefreshResponseDto(
-    @SerialName("token") val accessToken: String
+    @SerialName("token") val accessToken: String,
+    val sessionToken: String? = null
 )
