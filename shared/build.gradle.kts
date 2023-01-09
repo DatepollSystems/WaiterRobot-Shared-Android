@@ -10,6 +10,7 @@ plugins {
 }
 
 // keep patch always on 0 for shared module (patch is managed by kmmbridge for spm releases)
+// TODO rework versioning (major -> common prefix, minor -> shared version, patch -> app version -> shared always 0)
 version = "0.1.0"
 
 val sharedNamespace = "org.datepollsystems.waiterrobot.shared"
@@ -118,8 +119,8 @@ kotlin {
         ios.deploymentTarget = "15"
 
         framework {
-            isStatic =
-                false // Must be set to false for shared localization (otherwise resources are not availabel)
+            // Must be set to false for shared localization (otherwise resources are not available)
+            isStatic = false
         }
     }
 

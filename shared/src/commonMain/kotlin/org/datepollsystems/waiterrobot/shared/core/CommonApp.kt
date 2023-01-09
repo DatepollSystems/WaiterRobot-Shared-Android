@@ -21,6 +21,13 @@ object CommonApp : KoinComponent {
 
     const val privacyPolicyUrl: String = "https://my.kellner.team/info/mobile-privacypolicy"
 
+    lateinit var appInfo: AppInfo
+        private set
+
+    fun init(appVersion: String, appBuild: Int, phoneModel: String, os: OS, apiBaseUrl: String) {
+        this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, apiBaseUrl)
+    }
+
     internal val isLoggedIn: StateFlow<Boolean> = settings.tokenFlow
         .map { it != null }
         .stateIn(appScope, SharingStarted.Lazily, settings.tokens != null)

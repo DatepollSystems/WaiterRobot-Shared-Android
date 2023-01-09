@@ -5,6 +5,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
 
@@ -14,7 +15,7 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
 
     // Make sure that the baseUrl ends with a "/"
     private val baseUrl =
-        "https://lava.kellner.team/api/v1/${basePath.removePrefix("/").removeSuffix("/")}/"
+        "${CommonApp.appInfo.apiBaseUrl}api/v1/${basePath.removePrefix("/").removeSuffix("/")}/"
 
     /**
      * prepend string (endpoint) with base and make sure that endpoint does not start with "/"

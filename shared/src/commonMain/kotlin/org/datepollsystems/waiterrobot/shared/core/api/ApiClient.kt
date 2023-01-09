@@ -9,7 +9,6 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.datepollsystems.waiterrobot.shared.core.AppInfo
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
@@ -65,8 +64,8 @@ fun HttpClientConfig<*>.commonConfig(
     }
 
     defaultRequest {
-        header("X-App-Version", AppInfo.appVersion)
-        header("X-App-Os", AppInfo.os.toString())
+        header("X-App-Version", CommonApp.appInfo.appVersion)
+        header("X-App-Os", CommonApp.appInfo.os.toString())
     }
 
     installApiClientExceptionTransformer(json)
