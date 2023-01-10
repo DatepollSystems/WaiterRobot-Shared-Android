@@ -18,11 +18,11 @@ import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
-import org.koin.dsl.module
+import org.koin.dsl.KoinAppDeclaration
 
-fun initKoin(appModule: Module = module { }) = startKoin {
+fun initKoin(appDeclaration: KoinAppDeclaration = { }) = startKoin {
+    appDeclaration()
     modules(
-        appModule,
         platformModule,
         coreModule,
         rootModule,

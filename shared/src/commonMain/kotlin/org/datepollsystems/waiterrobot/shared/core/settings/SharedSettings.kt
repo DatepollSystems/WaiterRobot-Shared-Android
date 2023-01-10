@@ -1,21 +1,20 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
-import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.*
 import com.russhwolf.settings.coroutines.getLongFlow
 import com.russhwolf.settings.coroutines.getStringOrNullFlow
-import com.russhwolf.settings.long
-import com.russhwolf.settings.set
-import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LoginResponseDto
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 @OptIn(ExperimentalSettingsApi::class)
-class SharedSettings {
-    private val settings by lazy { settingsFactory.create() }
+class SharedSettings : KoinComponent {
+    private val settings: ObservableSettings by inject()
 
     var eventName: String by settings.string(defaultValue = "Unknown")
         internal set

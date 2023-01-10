@@ -5,8 +5,6 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -14,10 +12,11 @@ import kotlinx.coroutines.flow.stateIn
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 object CommonApp : KoinComponent {
-    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    val settings = SharedSettings()
+    private val coroutineScope: CoroutineScope by inject()
+    val settings by lazy { SharedSettings() }
 
     const val privacyPolicyUrl: String = "https://my.kellner.team/info/mobile-privacypolicy"
 
@@ -28,16 +27,26 @@ object CommonApp : KoinComponent {
         this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, apiBaseUrl)
     }
 
-    internal val isLoggedIn: StateFlow<Boolean> = settings.tokenFlow
-        .map { it != null }
-        .stateIn(appScope, SharingStarted.Lazily, settings.tokens != null)
+    internal val isLoggedIn: StateFlow<Boolean> by lazy {
+        settings.tokenFlow
+            .map { it != null }
+            .stateIn(coroutineScope, SharingStarted.Lazily, settings.tokens != null)
+    }
 
-    internal val hasEventSelected: StateFlow<Boolean> = settings.selectedEventIdFlow
-        .map { it != -1L }
-        .stateIn(appScope, started = SharingStarted.Lazily, settings.selectedEventId != -1L)
+    internal val hasEventSelected: StateFlow<Boolean> by lazy {
+        settings.selectedEventIdFlow
+            .map { it != -1L }
+            .stateIn(
+                coroutineScope,
+                started = SharingStarted.Lazily,
+                settings.selectedEventId != -1L
+            )
+    }
 
-    internal val appTheme: StateFlow<AppTheme> = settings.appThemeFlow
-        .stateIn(appScope, started = SharingStarted.Lazily, settings.appTheme)
+    internal val appTheme: StateFlow<AppTheme> by lazy {
+        settings.appThemeFlow
+            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.appTheme)
+    }
 
     internal fun logout() {
         settings.tokens = null // This also triggers a change to the isLoggedInFlow

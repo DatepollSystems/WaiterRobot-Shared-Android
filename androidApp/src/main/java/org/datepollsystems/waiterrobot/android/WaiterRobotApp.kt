@@ -5,14 +5,13 @@ import android.os.Build
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.OS
 import org.datepollsystems.waiterrobot.shared.core.di.initKoin
-import org.datepollsystems.waiterrobot.shared.core.settings.context
 import org.datepollsystems.waiterrobot.shared.generated.localization.localizationContext
+import org.koin.android.ext.koin.androidContext
 
 class WaiterRobotApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        context = this
         localizationContext = this
 
         val phoneModel = Build.MANUFACTURER.replaceFirstChar { it.uppercaseChar() } + " " +
@@ -27,6 +26,8 @@ class WaiterRobotApp : Application() {
             apiBaseUrl = "https://my.kellner.team/"
         )
 
-        initKoin()
+        initKoin {
+            androidContext(this@WaiterRobotApp)
+        }
     }
 }

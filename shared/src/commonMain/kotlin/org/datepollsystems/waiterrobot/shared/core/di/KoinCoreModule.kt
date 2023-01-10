@@ -5,6 +5,9 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
 import io.ktor.client.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.api.createApiClient
 import org.koin.core.qualifier.named
@@ -34,6 +37,8 @@ internal val coreModule = module {
             enableNetworkLogs = true
         )
     }
+
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }
 
 private fun createJson() = Json { ignoreUnknownKeys = true }

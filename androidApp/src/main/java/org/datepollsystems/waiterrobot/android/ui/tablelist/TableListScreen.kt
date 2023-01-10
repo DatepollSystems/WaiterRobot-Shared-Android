@@ -51,7 +51,7 @@ fun TableListScreen(
         View(
             state = state,
             paddingValues = contentPadding,
-            onRefresh = vm::loadTables
+            onRefresh = { vm.loadTables(forceUpdate = true) }
         ) {
             if (state.tables.isEmpty()) {
                 CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
