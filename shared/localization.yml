@@ -130,9 +130,12 @@ order:
     title:
       en: Product sold out
       de: Produkt ausverkauft
-    desc:
+    descOrderSent:
       en: \"%1$s\" is sold out. It get's removed from the order. You can edit the order again.
       de: \"%1$s\" ist ausverkauft. Es wird von der Bestellung entfernt und du kannst die Bestellung noch einmal bearbeiten.
+    descOrderAdd:
+      en: \"%1$s\" is sold out. It is not added to the order.
+      de: \"%1$s\" ist ausverkauft. Es wird der Bestellung nicht hinzugefügt.
   addNoteDialog:
     title:
       de: Notiz für %1$s
@@ -143,6 +146,13 @@ order:
     inputPlaceholder:
       de: 1x ohne Tomaten
       en: 1x without tomato
+  couldNotFindProduct:
+    title:
+      de: Produkt nicht gefunden.
+      en: Product not found.
+    desc:
+      de: Das Produkt konnte der Bestellung nicht hinzugefügt werden, da es nicht gefunden werden konnte.
+      en: The product could not be added to the order, as it could not be found.
 productSearch:
   title:
     en: Product search

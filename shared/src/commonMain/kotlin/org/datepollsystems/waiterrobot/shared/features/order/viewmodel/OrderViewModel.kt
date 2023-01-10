@@ -11,9 +11,7 @@ import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRep
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -27,34 +25,22 @@ class OrderViewModel internal constructor(
 ) : AbstractViewModel<OrderState, OrderEffect>(OrderState()) {
 
     override fun onCreate(state: OrderState) {
-        intent {
-            reduce { state.withViewState(ViewState.Loading) }
-
-            val allProducts = productRepository.getProducts(true)
-            // TODO handle initial product is sold out
-            val order = runCatching {
-                initialItemId
-                    ?.let {
-                        productRepository.getProductById(it)?.toNewOrderItem()?.copy(amount = 1)
-                    }
-                    ?.let { mapOf(it.product.id to it) }
-            }.getOrNull()
-
-            reduce {
-                state.copy(
-                    _products = allProducts,
-                    viewState = ViewState.Idle,
-                    _currentOrder = order ?: emptyMap()
-                )
+        if (initialItemId == null) {
+            intent {
+                reduce { state.withViewState(ViewState.Loading) }
+                val allProducts = productRepository.getProducts()
+                reduce { state.copy(_products = allProducts, viewState = ViewState.Idle) }
             }
+        } else {
+            addItem(initialItemId, 1)
         }
     }
 
     fun addItem(id: Long, amount: Int) =
-        addItem(id, amount) { productRepository.getProductById(id)?.toNewOrderItem() }
+        addItem(id, amount) { productRepository.getProductById(id) }
 
     fun addItem(product: Product, amount: Int) =
-        addItem(product.id, amount) { product.toNewOrderItem() }
+        addItem(product.id, amount) { product }
 
     fun addItemNote(item: OrderItem, note: String?) = intent {
         @Suppress("NAME_SHADOWING")
@@ -86,7 +72,7 @@ class OrderViewModel internal constructor(
             val soldOutProduct = order.first { it.product.id == e.productId }.product
             reduceError(
                 L.order.productSoldOut.title(),
-                L.order.productSoldOut.desc(soldOutProduct.name)
+                L.order.productSoldOut.descOrderSent(soldOutProduct.name)
             ) {
                 removeAllOfProduct(soldOutProduct.id)
                 dismissError()
@@ -116,11 +102,23 @@ class OrderViewModel internal constructor(
         reduce { state.copy(showConfirmationDialog = false) }
     }
 
-    private fun addItem(id: Long, amount: Int, fallback: suspend () -> OrderItem?) = intent {
-        val item = state._currentOrder[id] ?: fallback()
+    private fun addItem(id: Long, amount: Int, fallback: suspend () -> Product?) = intent {
+        val item = state._currentOrder[id] ?: run {
+            val item = fallback() ?: return@run null
+            if (item.soldOut) {
+                logger.w("Tried to add product (id: $id) which is already sold out.")
+                reduceError(
+                    L.order.productSoldOut.title(),
+                    L.order.productSoldOut.descOrderAdd(item.name)
+                )
+                return@intent
+            }
+            return@run item.toNewOrderItem()
+        }
 
         if (item == null) {
-            logger.e("Tried to add product with id '$id' but could not find the product.")
+            logger.w("Tried to add product with id '$id' but could not find the product.")
+            reduceError(L.order.couldNotFindProduct.title(), L.order.couldNotFindProduct.desc())
             return@intent
         }
 
