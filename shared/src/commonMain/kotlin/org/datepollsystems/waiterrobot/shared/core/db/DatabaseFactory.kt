@@ -3,12 +3,16 @@ package org.datepollsystems.waiterrobot.shared.core.db
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.types.RealmObject
+import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEntry
 import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableEntry
 import kotlin.reflect.KClass
 
 fun createRealmDB(): Realm {
     val schema: Set<KClass<out RealmObject>> = setOf(
         TableEntry::class,
+        ProductEntry::class,
+        ProductEntry.Allergen::class,
+        ProductEntry.ProductGroup::class,
     )
 
     val config = RealmConfiguration.Builder(schema)

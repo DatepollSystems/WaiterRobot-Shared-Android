@@ -4,6 +4,7 @@ import org.datepollsystems.waiterrobot.shared.core.di.getApiClient
 import org.datepollsystems.waiterrobot.shared.core.di.sharedViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.api.OrderApi
 import org.datepollsystems.waiterrobot.shared.features.order.api.ProductApi
+import org.datepollsystems.waiterrobot.shared.features.order.db.ProductDatabase
 import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRepository
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
@@ -14,6 +15,7 @@ internal val orderModule: Module = module {
     single { OrderApi(getApiClient()) }
     single { OrderRepository(get()) }
     single { ProductApi(getApiClient()) }
-    single { ProductRepository(get()) }
+    single { ProductRepository() }
+    single { ProductDatabase() }
     sharedViewModel { params -> OrderViewModel(get(), get(), params.get(), params.getOrNull()) }
 }
