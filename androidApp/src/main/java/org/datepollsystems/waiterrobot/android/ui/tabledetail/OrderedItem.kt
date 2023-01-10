@@ -13,9 +13,9 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 fun OrderedItem(item: OrderedItem, onClick: () -> Unit) {
     Row(
         modifier = Modifier
+            .clickable(onClick = onClick)
             .fillMaxWidth()
-            .padding(10.dp)
-            .clickable(onClick = onClick),
+            .padding(10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
