@@ -6,6 +6,7 @@ object Versions {
     const val mokoMvvm = "0.14.0"
     const val ktor = "2.2.1"
     const val settings = "1.0.0-RC"
+    const val realm = "1.5.2"
 
     // Android
     const val androidMinSdk = 24

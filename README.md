@@ -16,8 +16,8 @@ only possible on OSX). Before running create a new branch from the remote main b
 commit or stash all local changes before) and push the new branch to remote. After that run the
 command. When finished you delete the temporary created branch. This is done because while
 publishing the Package.swift file is newly generated and committed to the repository. This can lead
-to conflicts and is constantly changing the `Package.swift` file for local dev and releasing. (
-see [here](https://touchlab.github.io/KMMBridge/ciconfig/GITHUB_ACTIONS#workflow-options))
+to conflicts and is constantly changing the `Package.swift` file for local dev and releasing.
+(see [here](https://touchlab.github.io/KMMBridge/ciconfig/GITHUB_ACTIONS#workflow-options))
 
 ## iOS dev with local KMM module version
 
@@ -45,6 +45,7 @@ The main branch contains the `Package.swift` file ready for local dev.
     - [Content Negotiation](https://ktor.io/docs/serialization-client.html) Body serialization
     - [Client Auth](https://ktor.io/docs/auth.html) Authentication (Bearer)
     - [Client Logging](https://ktor.io/docs/client-logging.html) Logging
+- [Realm (Kotlin)](https://github.com/realm/realm-kotlin) Database
 - [Koin](https://insert-koin.io/) Dependency injection
 - [Kermit](https://github.com/touchlab/Kermit) Logger
 - [Orbit MVI](https://orbit-mvi.org/) MVI implementation

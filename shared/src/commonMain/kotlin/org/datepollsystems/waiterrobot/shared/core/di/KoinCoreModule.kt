@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.api.createApiClient
+import org.datepollsystems.waiterrobot.shared.core.db.createRealmDB
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
@@ -37,6 +38,8 @@ internal val coreModule = module {
             enableNetworkLogs = true
         )
     }
+
+    single { createRealmDB() }
 
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }

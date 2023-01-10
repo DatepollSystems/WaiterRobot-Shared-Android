@@ -7,6 +7,7 @@ plugins {
     id("com.android.library")
     id("co.touchlab.faktory.kmmbridge") version "0.3.2"
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
+    id("io.realm.kotlin") version "1.5.2"
 }
 
 // keep patch always on 0 for shared module (patch is managed by kmmbridge for spm releases)
@@ -46,12 +47,15 @@ kotlin {
                 api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
                 api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
 
-                // Ktor
+                // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-core:${Versions.ktor}")
                 implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
                 implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
                 implementation("io.ktor:ktor-client-logging:${Versions.ktor}")
+
+                // Realm (Database)
+                implementation("io.realm.kotlin:library-base:${Versions.realm}")
 
                 // SharedSettings
                 implementation("com.russhwolf:multiplatform-settings:${Versions.settings}")
@@ -76,7 +80,7 @@ kotlin {
                 // Dependency injection
                 api("io.insert-koin:koin-android:${Versions.koinDi}")
 
-                // Ktor
+                // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-cio:${Versions.ktor}")
             }
         }
@@ -95,7 +99,7 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
-                // Ktor
+                // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-darwin:${Versions.ktor}")
             }
         }
