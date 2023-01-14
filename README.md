@@ -80,3 +80,7 @@ The main branch contains the `Package.swift` file ready for local dev.
 - [KMP library/tool collection 1](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)
 - [KMP library/tool collection 2](https://github.com/terrakok/kmm-awesome)
 - [Koin for KMP](https://insert-koin.io/docs/reference/koin-mp/kmp)
+- Converting Kotlin Flow to Swift Combine Publisher
+    - [John O'Reilly - Wrapping Kotlin Flow with Swift Combine Publisher in a Kotlin Multiplatform project](https://johnoreilly.dev/posts/kotlinmultiplatform-swift-combine_publisher-flow)
+    - [Guilherme Delgado - Kotlin Multiplatform Mobile — sharing the UI State management](https://proandroiddev.com/kotlin-multiplatform-mobile-sharing-the-ui-state-management-a67bd9a49882)
+    - [Orbit MVI - Swift Gradle Plugin](https://github.com/orbit-mvi/orbit-swift-gradle-plugin/blob/main/src/main/resources/Publisher.swift.mustache)
