@@ -34,6 +34,18 @@ The main branch contains the `Package.swift` file ready for local dev.
 4. When finished delete folder, make sure to select "Remove References"!!! (otherwise the whole KMM
    project will be deleted locally)
 
+## Releasing Android
+
+### Pre requirements:
+
+- `.keys` directory in `androidApp` folder with the keystore named `app_sign.jks`
+- Added `keyPassword` property to the root `local.properties`.
+
+1. Increase `androidAppVersionName` in [Versions](buildSrc/src/main/java/Versions.kt)
+2. Run `./gradlew androidApp:bundleRelease`
+3. Upload the generated [bundle](androidApp/build/outputs/bundle/release/androidApp-release.aab) to
+   the google play console
+
 # Language, libraries and tools
 
 ## Shared

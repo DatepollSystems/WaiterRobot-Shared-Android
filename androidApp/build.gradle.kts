@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -20,29 +22,50 @@ android {
             useSupportLibrary = true
         }
     }
+
+    signingConfigs {
+        val key: String? = gradleLocalProperties(rootDir).getProperty("keyPassword", null)
+        val keyStoreFile = file(".keys/app_sign.jks")
+        if (key != null && keyStoreFile.exists()) { // Allow build also when signing key is not defined
+            create("release") {
+                keyAlias = "WaiterRobot"
+                storeFile = keyStoreFile
+                keyPassword = key
+                storePassword = key
+            }
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("release")
+            ndk.debugSymbolLevel =
+                com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel.FULL.name
+        }
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+        }
+    }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.composeCompiler
     }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
         isCoreLibraryDesugaringEnabled = true
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
-        }
     }
 
     // Include the generated navigation sources
