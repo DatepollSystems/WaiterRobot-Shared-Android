@@ -1,11 +1,13 @@
 package org.datepollsystems.waiterrobot.android
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -22,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val vm: RootViewModel by viewModel()
 
@@ -45,6 +47,15 @@ class MainActivity : ComponentActivity() {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
                 AppTheme.LIGHT -> false
                 AppTheme.DARK -> true
+            }
+
+            LaunchedEffect(state.selectedTheme) {
+                when (state.selectedTheme) {
+                    AppTheme.SYSTEM -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+                    AppTheme.LIGHT -> setDefaultNightMode(MODE_NIGHT_NO)
+                    AppTheme.DARK -> setDefaultNightMode(MODE_NIGHT_YES)
+                }
+                delegate.applyDayNight()
             }
 
             WaiterRobotTheme(useDarkTheme) {
