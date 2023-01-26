@@ -17,9 +17,9 @@ object Versions {
 
     // Generate VersionCode from VersionName (e.g. 1.2.3 -> 10203, 1.23.45 -> 12345)
     val androidAppVersionCode: Int
-        get() = run {
-            val parts = androidAppVersionName.split(".").map(String::toInt)
-            parts[0] * 10_000 + parts[1] * 100 + parts[2]
+        get() {
+            val (major, minor, patch) = androidAppVersionName.split(".").map(String::toInt)
+            return major * 10_000 + minor * 100 + patch
         }
 
     const val compose = "1.3.1"

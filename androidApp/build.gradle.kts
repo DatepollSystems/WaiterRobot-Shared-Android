@@ -1,7 +1,10 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 
 plugins {
     id("com.android.application")
+    id("com.github.triplet.play") version "3.6.0"
     kotlin("android")
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
@@ -45,8 +48,7 @@ android {
         release {
             isMinifyEnabled = false // TODO enable proguard
             signingConfig = signingConfigs.findByName("release")
-            ndk.debugSymbolLevel =
-                com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel.FULL.name
+            ndk.debugSymbolLevel = DebugSymbolLevel.FULL.name
         }
     }
 
@@ -101,7 +103,7 @@ android {
     applicationVariants.all {
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/${name}/kotlin")
+                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
             }
         }
     }
@@ -112,6 +114,13 @@ ksp {
         "compose-destinations.codeGenPackageName",
         "org.datepollsystems.waiterrobot.android.generated.navigation"
     )
+}
+
+play {
+    defaultToAppBundles.set(true)
+    serviceAccountCredentials.set(file(".keys/service-account.json"))
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
 }
 
 dependencies {
