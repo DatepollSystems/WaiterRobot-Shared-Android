@@ -15,12 +15,12 @@ internal class AuthApi(client: HttpClient) : AbstractApi("waiter/auth", client) 
     ).body<RefreshResponseDto>()
 
     suspend fun loginWithToken(token: String) = post(
-        endpoint = "signIn",
+        endpoint = "login",
         body = LoginRequestDto(token, CommonApp.appInfo.sessionName)
     ).body<LoginResponseDto>()
 
     suspend fun createWithToken(token: String, waiterName: String) = post(
-        endpoint = "signInViaCreateToken",
+        endpoint = "loginWithCreateToken",
         body = CreateLoginRequestDto(waiterName, token, CommonApp.appInfo.sessionName)
     ).body<LoginResponseDto>()
 
