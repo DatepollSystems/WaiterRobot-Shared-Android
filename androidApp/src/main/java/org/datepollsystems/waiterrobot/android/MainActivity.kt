@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Switch from SplashScreenTheme to AppTheme
-        setTheme(R.style.AppTheme)
+        setTheme(R.style.Theme_WaiterRobot_Main)
 
         super.onCreate(savedInstanceState)
 

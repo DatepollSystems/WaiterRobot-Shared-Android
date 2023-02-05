@@ -40,7 +40,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.spacedBy(25.dp, Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_round),
+                painter = painterResource(R.drawable.logo_round),
                 contentDescription = "WaiterRobot icon",
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
