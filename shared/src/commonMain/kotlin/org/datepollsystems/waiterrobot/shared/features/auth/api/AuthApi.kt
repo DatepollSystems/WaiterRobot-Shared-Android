@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.api.AbstractApi
+import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.*
 
 internal class AuthApi(client: HttpClient) : AbstractApi("waiter/auth", client) {
@@ -22,4 +23,8 @@ internal class AuthApi(client: HttpClient) : AbstractApi("waiter/auth", client) 
         endpoint = "signInViaCreateToken",
         body = CreateLoginRequestDto(waiterName, token, CommonApp.appInfo.sessionName)
     ).body<LoginResponseDto>()
+
+    suspend fun logout(tokens: Tokens) {
+        post(endpoint = "logout", body = LogoutRequestDto(tokens.refreshToken))
+    }
 }
