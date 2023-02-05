@@ -5,7 +5,7 @@ plugins {
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     id("com.android.library")
-    id("co.touchlab.faktory.kmmbridge") version "0.3.2"
+    id("co.touchlab.faktory.kmmbridge") version "0.3.4"
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
     id("io.realm.kotlin") version "1.5.2"
 }
