@@ -15,7 +15,7 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
 
     // Make sure that the baseUrl ends with a "/"
     private val baseUrl =
-        "${CommonApp.appInfo.apiBaseUrl}api/v1/${basePath.removePrefix("/").removeSuffix("/")}/"
+        "${CommonApp.appInfo.apiBaseUrl}v1/${basePath.removePrefix("/").removeSuffix("/")}/"
 
     /**
      * prepend string (endpoint) with base and make sure that endpoint does not start with "/"

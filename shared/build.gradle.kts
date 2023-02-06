@@ -197,7 +197,7 @@ tasks {
         }
     }
 
-    // Make sure that there are always up to date localizations
+    // Make sure that the localizations are always up to date
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
     }

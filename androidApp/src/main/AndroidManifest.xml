@@ -28,10 +28,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="https" />
-                <data android:host="lava.kellner.team" />
-                <data android:host="my.kellner.team" />
-                <data android:pathPrefix="/mobile-link" />
-                <data android:pathPrefix="/ml" />
+                <data android:host="${host}" />
+                <data android:pathPrefix="/mobile-link" /> <!-- legacy link support -->
+                <data android:pathPrefix="/ml" /> <!-- new link format -->
             </intent-filter>
         </activity>
     </application>

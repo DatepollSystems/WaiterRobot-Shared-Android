@@ -23,7 +23,7 @@ class WaiterRobotApp : Application() {
             appVersion = BuildConfig.VERSION_NAME.substringBefore("-"),
             appBuild = BuildConfig.VERSION_CODE,
             phoneModel = phoneModel,
-            apiBaseUrl = "https://my.kellner.team/"
+            apiBaseUrl = BuildConfig.API_BASE
         )
 
         initKoin {
