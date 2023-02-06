@@ -76,12 +76,13 @@ android {
         create("lava") {
             dimension = "environment"
             applicationIdSuffix = ".lava"
-            resValue("string", "l.app.name", "WaiterRobot Lava")
+            resValue("string", "app_name", "WaiterRobot Lava")
             buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
             manifestPlaceholders["host"] = "lava.kellner.team"
         }
         create("prod") {
             dimension = "environment"
+            resValue("string", "app_name", "WaiterRobot")
             buildConfigField("String", "API_BASE", "\"https://my.kellner.team/api\"")
             manifestPlaceholders["host"] = "my.kellner.team"
         }
