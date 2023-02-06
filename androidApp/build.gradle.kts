@@ -79,7 +79,6 @@ android {
             resValue("string", "l.app.name", "WaiterRobot Lava")
             buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
             manifestPlaceholders["host"] = "lava.kellner.team"
-            // TODO use different app_icon
         }
         create("prod") {
             dimension = "environment"
