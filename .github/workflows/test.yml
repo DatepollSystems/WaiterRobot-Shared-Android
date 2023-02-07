@@ -34,9 +34,9 @@ jobs:
       - name: Test shared
         run: ./gradlew shared:test --stacktrace
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
       - name: Test android
         run: ./gradlew androidApp:test --stacktrace
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
