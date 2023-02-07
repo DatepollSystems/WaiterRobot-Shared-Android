@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'shared'
-    spec.version                  = '0.1.0'
+    spec.version                  = '1.0'
     spec.homepage                 = 'https://github.com/DatepollSystems/waiterrobot-mobile_android-shared'
     spec.source                   = { :http=> ''}
     spec.authors                  = 'DatepollSystems'

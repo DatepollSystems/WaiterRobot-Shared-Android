@@ -1,8 +1,12 @@
 name: KMM Bridge Publish Release
 on:
-  workflow_dispatch:
-  #TODO trigger automatically on tag?
+  push:
+    branches:
+      - develop
+      - main
 
 jobs:
   call-kmmbridge-publish:
-    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.3
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.7
+    secrets:
+      gradle_params: "-PGITHUB_BRANCH=${{ env.GITHUB_REF_NAME }}"

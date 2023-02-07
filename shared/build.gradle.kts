@@ -1,4 +1,9 @@
+import co.touchlab.faktory.versionmanager.GithubReleaseVersionManager
+import co.touchlab.faktory.versionmanager.VersionException
+import co.touchlab.faktory.versionmanager.VersionManager
+import groovy.lang.MissingPropertyException
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import java.util.*
 
 plugins {
     kotlin("multiplatform")
@@ -10,9 +15,7 @@ plugins {
     id("io.realm.kotlin") version "1.5.2"
 }
 
-// keep patch always on 0 for shared module (patch is managed by kmmbridge for spm releases)
-// TODO rework versioning (major -> common prefix, minor -> shared version, patch -> app version -> shared always 0)
-version = "0.1.0"
+version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
 
 val sharedNamespace = "org.datepollsystems.waiterrobot.shared"
 val generatedLocalizationRoot: String =
@@ -147,10 +150,36 @@ android {
 
 kmmbridge {
     githubReleaseArtifacts()
-    githubReleaseVersions()
     spm()
-    // Remove patch as this will be set by the GitHubReleaseVersion manager
-    versionPrefix.set((version as String).substringBeforeLast("."))
+    versionPrefix.set(version as String)
+    versionManager.apply {
+        set(object : VersionManager {
+            override fun getVersion(project: Project, versionPrefix: String): String {
+                val baseVersion = GithubReleaseVersionManager.getVersion(project, versionPrefix)
+
+                // Add version suffix for dev releases
+                // e.g. main -> 1.0.1, develop -> 1.0.1-dev-1675772349259
+                return try {
+                    when (val branch = project.property("GITHUB_BRANCH")) {
+                        "main" -> baseVersion
+                        "develop" -> "$baseVersion-dev-${Date().time}"
+                        else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
+                    }
+                } catch (e: MissingPropertyException) {
+                    throw VersionException(
+                        true,
+                        "GITHUB_BRANCH property not set (this is fine for local development)."
+                    )
+                } catch (e: Exception) {
+                    throw VersionException(false, e.message)
+                }
+            }
+
+            override fun recordVersion(project: Project, versionString: String) =
+                GithubReleaseVersionManager.recordVersion(project, versionString)
+        })
+        finalizeValue()
+    }
 }
 
 kmmResourcesConfig {
