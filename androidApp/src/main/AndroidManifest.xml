@@ -8,7 +8,7 @@
         android:name=".WaiterRobotApp"
         android:icon="@mipmap/app_icon"
         android:roundIcon="@mipmap/app_icon_round"
-        android:label="@string/l.app.name"
+        android:label="@string/app_name"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:theme="@style/Theme.WaiterRobot.Splash">
@@ -28,10 +28,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="https" />
-                <data android:host="lava.kellner.team" />
-                <data android:host="my.kellner.team" />
-                <data android:pathPrefix="/mobile-link" />
-                <data android:pathPrefix="/ml" />
+                <data android:host="${host}" />
+                <data android:pathPrefix="/mobile-link" /> <!-- legacy link support -->
+                <data android:pathPrefix="/ml" /> <!-- new link format -->
             </intent-filter>
         </activity>
     </application>

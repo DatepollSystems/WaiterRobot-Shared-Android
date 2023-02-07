@@ -37,14 +37,16 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        debug {
+            applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+        }
+
+        release {
+            isMinifyEnabled = false // TODO enable proguard
             signingConfig = signingConfigs.findByName("release")
             ndk.debugSymbolLevel =
                 com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel.FULL.name
-        }
-        getByName("debug") {
-            applicationIdSuffix = ".debug"
         }
     }
 
@@ -68,11 +70,38 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("lava") {
+            dimension = "environment"
+            applicationIdSuffix = ".lava"
+            resValue("string", "app_name", "WaiterRobot Lava")
+            buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
+            manifestPlaceholders["host"] = "lava.kellner.team"
+        }
+        create("prod") {
+            dimension = "environment"
+            resValue("string", "app_name", "WaiterRobot")
+            buildConfigField("String", "API_BASE", "\"https://my.kellner.team/api\"")
+            manifestPlaceholders["host"] = "my.kellner.team"
+        }
+    }
+
+    androidComponents {
+        beforeVariants { variantBuilder ->
+            // Hide lavaRelease
+            if (variantBuilder.buildType == "release" && variantBuilder.flavorName == "lava") {
+                variantBuilder.enable = false
+            }
+        }
+    }
+
     // Include the generated navigation sources
     applicationVariants.all {
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
+                kotlin.srcDir("${project.buildDir}/generated/ksp/${name}/kotlin")
             }
         }
     }
