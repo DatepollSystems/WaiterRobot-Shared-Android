@@ -9,4 +9,4 @@ jobs:
   call-kmmbridge-publish:
     uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.7
     secrets:
-      gradle_params: "-PGITHUB_BRANCH=${{ env.GITHUB_REF_NAME }}"
+      gradle_params: "-PGITHUB_BRANCH=${{ github.ref_name }}"
