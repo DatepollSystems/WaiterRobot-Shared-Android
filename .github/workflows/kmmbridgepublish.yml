@@ -1,9 +1,19 @@
 name: KMM Bridge Publish Release
 on:
+  workflow_dispatch: # allow manually running the workflow for the dev and main branch
+    branches:
+      - develop
+      - main
   push:
     branches:
       - develop
       - main
+    paths:
+      - 'shared/**'
+      - 'buildSrc/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
 
 jobs:
   call-kmmbridge-publish:
