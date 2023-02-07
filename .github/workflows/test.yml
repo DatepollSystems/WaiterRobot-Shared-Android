@@ -25,8 +25,18 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
 
+      - name: Cache kotlin native build tooling
+        uses: actions/cache@v3
+        with:
+          path: "~/.konan"
+          key: ${{ runner.os }}-v4-${{ hashFiles('*.gradle.kts') }}
+
       - name: Test shared
         run: ./gradlew shared:test --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g
 
       - name: Test android
         run: ./gradlew androidApp:test --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g
