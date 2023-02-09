@@ -18,9 +18,10 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
         "${CommonApp.appInfo.apiBaseUrl}v1/${basePath.removePrefix("/").removeSuffix("/")}/"
 
     /**
-     * prepend string (endpoint) with base and make sure that endpoint does not start with "/"
+     * Prepend string (endpoint) with base and make sure that endpoint does not start with "/".
+     * Also remove the trailing "/" because ".../endpoint" and ".../endpoint/" may be treated as different routes.
      */
-    private fun String.toFullUrl() = baseUrl + this.removePrefix("/")
+    private fun String.toFullUrl() = (baseUrl + this.removePrefix("/")).removeSuffix("/")
 
     protected suspend fun get(
         endpoint: String = "",

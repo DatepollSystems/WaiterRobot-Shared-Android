@@ -63,6 +63,6 @@ internal data class Tokens(
 ) {
     companion object {
         fun fromLoginResponse(response: LoginResponseDto): Tokens =
-            Tokens(response.accessToken, response.sessionToken)
+            Tokens(response.accessToken, response.refreshToken)
     }
 }
