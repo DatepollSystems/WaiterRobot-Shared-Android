@@ -144,7 +144,7 @@ dependencies {
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:${Versions.koinDi}")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.2") // Not aligned with other koin version
 
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")

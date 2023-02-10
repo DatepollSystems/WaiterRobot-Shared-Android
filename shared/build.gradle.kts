@@ -12,7 +12,7 @@ plugins {
     id("com.android.library")
     id("co.touchlab.faktory.kmmbridge") version "0.3.4"
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
-    id("io.realm.kotlin") version "1.5.2"
+    id("io.realm.kotlin") version "1.6.1"
 }
 
 version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
