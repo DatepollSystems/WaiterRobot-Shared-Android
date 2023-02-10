@@ -3,7 +3,7 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
+    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
 
 version = Versions.androidAppVersionName
