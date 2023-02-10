@@ -1,12 +1,12 @@
 object Versions {
     // Shared
     const val kermitLogger = "1.2.2"
-    const val koinDi = "3.2.2"
-    const val orbitMvi = "4.4.0"
-    const val mokoMvvm = "0.14.0"
-    const val ktor = "2.2.1"
-    const val settings = "1.0.0-RC"
-    const val realm = "1.5.2"
+    const val koinDi = "3.3.3"
+    const val orbitMvi = "4.5.0"
+    const val mokoMvvm = "0.15.0"
+    const val ktor = "2.2.3"
+    const val settings = "1.0.0"
+    const val realm = "1.6.1" // Also update belonging plugin in shared/build.gradle.kts
 
     // Android
     const val androidMinSdk = 24
