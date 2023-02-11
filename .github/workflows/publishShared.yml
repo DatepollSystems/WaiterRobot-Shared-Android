@@ -1,4 +1,4 @@
-name: KMM Bridge Publish Release
+name: Publish Shared Swift Package
 on:
   workflow_dispatch: # allow manually running the workflow for the dev and main branch
     branches:

@@ -13,14 +13,6 @@ object Versions {
     const val androidTargetSdk = 31
     const val androidCompileSdk = 33
     const val androidBuildTools = "33.0.0"
-    const val androidAppVersionName = "0.2.1"
-
-    // Generate VersionCode from VersionName (e.g. 1.2.3 -> 10203, 1.23.45 -> 12345)
-    val androidAppVersionCode: Int
-        get() {
-            val (major, minor, patch) = androidAppVersionName.split(".").map(String::toInt)
-            return major * 10_000 + minor * 100 + patch
-        }
 
     const val compose = "1.3.1"
     const val composeCompiler = "1.4.2"
