@@ -119,10 +119,9 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-process:${Versions.androidxLifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
-    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
-    // Update to version 2.0.0 requires AGP (Android Gradle Plugin) version > 7.4.0-alpha10. No stable release yet and also currently not compatible with KMM
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
     // Compose
     runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
@@ -138,7 +137,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-permissions:0.25.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.28.0")
 
     // Architecture (MVI)
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
