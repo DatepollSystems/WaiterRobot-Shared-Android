@@ -37,23 +37,23 @@ jobs:
           cd ..
 
       - name: Release Android
-        if: ${{ github.ref_name == "main" }}
+        if: ${{ github.ref_name == 'main' }}
         run: ./gradlew publishProdReleaseApps --no-daemon -PkeyPassword=${{ secrets.KEY_PASSWORD }} -PstorePassword=${{ secrets.STORE_PASSWORD }}
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
       - name: Release Android Lava
-        if: ${{ github.ref_name == "develop" }}
+        if: ${{ github.ref_name == 'develop' }}
         run: ./gradlew publishLavaReleaseApps --no-daemon -PkeyPassword=${{ secrets.KEY_PASSWORD }} -PstorePassword=${{ secrets.STORE_PASSWORD }}
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
       - name: Create prod version tag
-        if: ${{ github.ref_name == "main" }}
+        if: ${{ github.ref_name == 'main' }}
         run: git tag android-$(cat androidApp/build/prodRelease.version)
 
       - name: Create lava version tag
-        if: ${{ github.ref_name == "develop" }}
+        if: ${{ github.ref_name == 'develop' }}
         run: git tag android-$(cat androidApp/build/lavaRelease.version)
 
       - name: Push version tag
