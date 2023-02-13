@@ -127,9 +127,11 @@ android {
         }
 
         // Write built version to file after creating a bundle (needed for ci, to create the version tag)
-        tasks.findByName("bundle${this.name.capitalizeAsciiOnly()}")!!.doLast {
-            File(project.buildDir, "${this@variant.name}.version")
-                .writeText(this@variant.versionName)
+        if (this.name.endsWith("Release")) {
+            tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
+                File(project.buildDir, "${this@variant.name}.version")
+                    .writeText(this@variant.versionName)
+            }
         }
     }
 }
