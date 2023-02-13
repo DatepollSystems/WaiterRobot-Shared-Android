@@ -1,10 +1,12 @@
 name: Test
 on:
   push:
-    # Push to these branches triggers a release -> tests are run anyway
-    branches-ignore:
-      - develop
-      - main
+    # Push to develop and main branches trigger a release -> tests are run anyway
+    branches:
+      - '!develop'
+      - '!main'
+      - '!build-**' # temporary build branch for kmmbridge
+
 
 jobs:
   test:
