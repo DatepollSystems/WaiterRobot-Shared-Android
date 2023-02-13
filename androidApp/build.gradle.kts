@@ -1,37 +1,58 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.util.*
 
 plugins {
     id("com.android.application")
+    id("com.github.triplet.play") version "3.6.0"
     kotlin("android")
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
 
-version = Versions.androidAppVersionName
+private val versionProperty by lazy {
+    Properties().apply {
+        File(project.projectDir, "version.properties").inputStream().use { load(it) }
+    }
+}
+
+version = versionProperty.getProperty("androidVersion")
 
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
     compileSdk = Versions.androidCompileSdk
+
     defaultConfig {
         applicationId = "org.datepollsystems.waiterrobot.android"
+
         minSdk = Versions.androidMinSdk
         targetSdk = Versions.androidTargetSdk
-        versionCode = Versions.androidAppVersionCode
-        versionName = Versions.androidAppVersionName
         buildToolsVersion = Versions.androidBuildTools
+
+        versionName = version.toString()
+        versionCode = run {
+            // Generate VersionCode from VersionName (e.g. 1.2.3 -> 10203, 1.23.45 -> 12345)
+            val (major, minor, patch) = versionName!!.split(".").map(String::toInt)
+            major * 10_000 + minor * 100 + patch
+        }
+
         vectorDrawables {
             useSupportLibrary = true
         }
     }
 
     signingConfigs {
-        val key: String? = gradleLocalProperties(rootDir).getProperty("keyPassword", null)
+        val keyPassword: String? = project.findProperty("keyPassword")?.toString()
+        val storePassword: String? = project.findProperty("storePassword")?.toString()
         val keyStoreFile = file(".keys/app_sign.jks")
-        if (key != null && keyStoreFile.exists()) { // Allow build also when signing key is not defined
+
+        // Only create signingConfig, when all needed configs are available
+        if (keyPassword != null && storePassword != null && keyStoreFile.exists()) {
             create("release") {
                 keyAlias = "WaiterRobot"
                 storeFile = keyStoreFile
-                keyPassword = key
-                storePassword = key
+                this.keyPassword = keyPassword
+                this.storePassword = storePassword
             }
         }
     }
@@ -45,8 +66,7 @@ android {
         release {
             isMinifyEnabled = false // TODO enable proguard
             signingConfig = signingConfigs.findByName("release")
-            ndk.debugSymbolLevel =
-                com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel.FULL.name
+            ndk.debugSymbolLevel = DebugSymbolLevel.FULL.name
         }
     }
 
@@ -79,7 +99,17 @@ android {
             resValue("string", "app_name", "WaiterRobot Lava")
             buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
             manifestPlaceholders["host"] = "lava.kellner.team"
+
+            // Use time-based versionCode for lava to allow multiple build per "base version"
+            // versionCode is limited to "2100000000" by google play.
+            // If using epochSeconds this would overflow in 2036.
+            // -> use epochMinutes (overflow would be in 5962).
+            // (conversion to int is save as java int is bigger as the max versionCode allowed by google play)
+            val epochMinutes = (Date().toInstant().epochSecond / 60).toInt()
+            versionNameSuffix = "-lava-${epochMinutes}"
+            versionCode = epochMinutes
         }
+
         create("prod") {
             dimension = "environment"
             resValue("string", "app_name", "WaiterRobot")
@@ -88,21 +118,18 @@ android {
         }
     }
 
-    androidComponents {
-        beforeVariants { variantBuilder ->
-            // Hide lavaRelease
-            if (variantBuilder.buildType == "release" && variantBuilder.flavorName == "lava") {
-                variantBuilder.enable = false
-            }
-        }
-    }
-
-    // Include the generated navigation sources
-    applicationVariants.all {
+    applicationVariants.all variant@{
+        // Include the generated navigation sources
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/${name}/kotlin")
+                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
             }
+        }
+
+        // Write built version to file after creating a bundle (needed for ci, to create the version tag)
+        tasks.findByName("bundle${this.name.capitalizeAsciiOnly()}")!!.doLast {
+            File(project.buildDir, "${this@variant.name}.version")
+                .writeText(this@variant.versionName)
         }
     }
 }
@@ -112,6 +139,13 @@ ksp {
         "compose-destinations.codeGenPackageName",
         "org.datepollsystems.waiterrobot.android.generated.navigation"
     )
+}
+
+play {
+    defaultToAppBundles.set(true)
+    serviceAccountCredentials.set(file(".keys/service-account.json"))
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
 }
 
 dependencies {
