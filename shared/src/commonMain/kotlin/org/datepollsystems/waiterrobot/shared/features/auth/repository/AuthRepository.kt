@@ -41,7 +41,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         }
 
         val newTokens = authApi.refreshToken(tokens.refreshToken)
-        tokens = Tokens(newTokens.accessToken, newTokens.sessionToken ?: tokens.refreshToken)
+        tokens = Tokens(newTokens.accessToken, newTokens.refreshToken ?: tokens.refreshToken)
 
         store(tokens)
 
