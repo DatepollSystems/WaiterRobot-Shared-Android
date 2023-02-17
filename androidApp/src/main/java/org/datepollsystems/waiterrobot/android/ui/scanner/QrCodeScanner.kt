@@ -65,7 +65,8 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
         } else if (!cameraPermissionState.status.isGranted) {
             Text(
                 text = L.qrScanner.cameraPermissionRequired(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = Color.Red
             )
         } else {
             var flashLight by remember { mutableStateOf(false) }
@@ -73,7 +74,9 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
 
             AndroidView(
                 factory = { context ->
-                    val previewView = PreviewView(context)
+                    val previewView = PreviewView(context).apply {
+                        clipToOutline = true
+                    }
                     val previewUseCase = Preview.Builder().build()
                         .apply { setSurfaceProvider(previewView.surfaceProvider) }
 
