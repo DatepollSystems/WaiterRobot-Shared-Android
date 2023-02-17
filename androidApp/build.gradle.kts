@@ -147,7 +147,7 @@ play {
     defaultToAppBundles.set(true)
     serviceAccountCredentials.set(file(".keys/service-account.json"))
     track.set("internal")
-    releaseStatus.set(ReleaseStatus.DRAFT) // TODO change to completed once the apps are not in draft state any more
+    releaseStatus.set(ReleaseStatus.COMPLETED)
 }
 
 dependencies {
