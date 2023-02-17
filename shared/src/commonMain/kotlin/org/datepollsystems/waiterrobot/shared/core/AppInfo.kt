@@ -12,7 +12,7 @@ class AppInfo(
     val apiBaseUrl = apiBaseUrl.removeSuffix("/") + "/"
 
     val sessionName =
-        "WaiterRobot-${appVersion} ($appBuild); ${phoneModel}; $os".truncate(60)
+        "$os; $appVersion ($appBuild); $phoneModel".truncate(60)
 }
 
 sealed class OS {
