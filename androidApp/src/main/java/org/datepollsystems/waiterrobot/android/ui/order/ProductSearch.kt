@@ -31,7 +31,7 @@ fun ProductSearch(
 ) {
     var text by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.imePadding()) {
+    Column {
         OutlinedTextField(
             value = text,
             onValueChange = {
