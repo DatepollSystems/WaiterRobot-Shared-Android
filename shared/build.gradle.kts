@@ -12,7 +12,7 @@ plugins {
     id("com.android.library")
     id("co.touchlab.faktory.kmmbridge") version "0.3.4"
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
-    id("io.realm.kotlin") version "1.5.2"
+    id("io.realm.kotlin") version "1.6.1"
 }
 
 version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
@@ -158,11 +158,11 @@ kmmbridge {
                 val baseVersion = GithubReleaseVersionManager.getVersion(project, versionPrefix)
 
                 // Add version suffix for dev releases
-                // e.g. main -> 1.0.1, develop -> 1.0.1-dev-1675772349259
+                // e.g. main -> 1.0.1, develop -> 1.0.1-lava-1676142940
                 return try {
                     when (val branch = project.property("GITHUB_BRANCH")) {
                         "main" -> baseVersion
-                        "develop" -> "$baseVersion-dev-${Date().time}"
+                        "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
                         else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
                     }
                 } catch (e: MissingPropertyException) {
@@ -190,7 +190,6 @@ kmmResourcesConfig {
     output.set(project.projectDir)
     srcFolder.set(generatedLocalizationRoot) // place the generated files in the build folder
 }
-
 
 tasks {
     // Plutil generates the localizations for ios

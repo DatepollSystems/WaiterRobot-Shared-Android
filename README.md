@@ -34,17 +34,31 @@ The main branch contains the `Package.swift` file ready for local dev.
 4. When finished delete folder, make sure to select "Remove References"!!! (otherwise the whole KMM
    project will be deleted locally)
 
-## Releasing Android
+## Releasing
 
-### Pre requirements:
+### Android
 
-- `.keys` directory in `androidApp` folder with the keystore named `app_sign.jks`
-- Added `keyPassword` property to the root `local.properties`.
+Production release is triggered on push to main. The CI then builds the app and deploys it to
+the `internal` Track on Google Play. After testing the app then must be promoted to production
+manually from there. A tag in the form of `android-major.minor.patch` (e.g. android-1.0.0) is
+created. (see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
 
-1. Increase `androidAppVersionName` in [Versions](buildSrc/src/main/java/Versions.kt)
-2. Run `./gradlew androidApp:bundleRelease`
-3. Upload the generated [bundle](androidApp/build/outputs/bundle/release/androidApp-release.aab) to
-   the google play console
+On each push to develop also a lava (dev) build is triggered and published to `internal` track of
+the WaiterRobot Lava app on Google Play. A tag in the form
+of `android-major.minor.patch-lava-epochMinutes` is created (e.g. android-1.0.1-lava-27935730). (
+see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
+
+### Shared
+
+Production release is triggered on push to main (only when shared module changed). The CI then
+builds the Swift Package and releases to GitHub releases. A tag in the form of `major.minor.patch` (
+e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publishAndroid.yml)
+and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
+
+On each push to develop also a dev build is triggered and published to GitHub releases. A tag in the
+form of `major.minor.patch-dev-epochSeconds` (e.g. 1.0.1-dev-1676143102) is created. (
+see [publishShared.yml](.github/workflows/publishAndroid.yml)
+and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
 # Language, libraries and tools
 

@@ -1,37 +1,58 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import java.util.*
 
 plugins {
     id("com.android.application")
+    id("com.github.triplet.play") version "3.6.0"
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.7.20-1.0.8"
+    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
 
-version = Versions.androidAppVersionName
+private val versionProperty by lazy {
+    Properties().apply {
+        File(project.projectDir, "version.properties").inputStream().use { load(it) }
+    }
+}
+
+version = versionProperty.getProperty("androidVersion")
 
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
     compileSdk = Versions.androidCompileSdk
+
     defaultConfig {
         applicationId = "org.datepollsystems.waiterrobot.android"
+
         minSdk = Versions.androidMinSdk
         targetSdk = Versions.androidTargetSdk
-        versionCode = Versions.androidAppVersionCode
-        versionName = Versions.androidAppVersionName
         buildToolsVersion = Versions.androidBuildTools
+
+        versionName = version.toString()
+        versionCode = run {
+            // Generate VersionCode from VersionName (e.g. 1.2.3 -> 10203, 1.23.45 -> 12345)
+            val (major, minor, patch) = versionName!!.split(".").map(String::toInt)
+            major * 10_000 + minor * 100 + patch
+        }
+
         vectorDrawables {
             useSupportLibrary = true
         }
     }
 
     signingConfigs {
-        val key: String? = gradleLocalProperties(rootDir).getProperty("keyPassword", null)
+        val keyPassword: String? = project.findProperty("keyPassword")?.toString()
+        val storePassword: String? = project.findProperty("storePassword")?.toString()
         val keyStoreFile = file(".keys/app_sign.jks")
-        if (key != null && keyStoreFile.exists()) { // Allow build also when signing key is not defined
+
+        // Only create signingConfig, when all needed configs are available
+        if (keyPassword != null && storePassword != null && keyStoreFile.exists()) {
             create("release") {
                 keyAlias = "WaiterRobot"
                 storeFile = keyStoreFile
-                keyPassword = key
-                storePassword = key
+                this.keyPassword = keyPassword
+                this.storePassword = storePassword
             }
         }
     }
@@ -45,8 +66,7 @@ android {
         release {
             isMinifyEnabled = false // TODO enable proguard
             signingConfig = signingConfigs.findByName("release")
-            ndk.debugSymbolLevel =
-                com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel.FULL.name
+            ndk.debugSymbolLevel = DebugSymbolLevel.FULL.name
         }
     }
 
@@ -79,7 +99,17 @@ android {
             resValue("string", "app_name", "WaiterRobot Lava")
             buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
             manifestPlaceholders["host"] = "lava.kellner.team"
+
+            // Use time-based versionCode for lava to allow multiple build per "base version"
+            // versionCode is limited to "2100000000" by google play.
+            // If using epochSeconds this would overflow in 2036.
+            // -> use epochMinutes (overflow would be in 5962).
+            // (conversion to int is save as java int is bigger as the max versionCode allowed by google play)
+            val epochMinutes = (Date().toInstant().epochSecond / 60).toInt()
+            versionNameSuffix = "-lava-${epochMinutes}"
+            versionCode = epochMinutes
         }
+
         create("prod") {
             dimension = "environment"
             resValue("string", "app_name", "WaiterRobot")
@@ -88,20 +118,19 @@ android {
         }
     }
 
-    androidComponents {
-        beforeVariants { variantBuilder ->
-            // Hide lavaRelease
-            if (variantBuilder.buildType == "release" && variantBuilder.flavorName == "lava") {
-                variantBuilder.enable = false
-            }
-        }
-    }
-
-    // Include the generated navigation sources
-    applicationVariants.all {
+    applicationVariants.all variant@{
+        // Include the generated navigation sources
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/${name}/kotlin")
+                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
+            }
+        }
+
+        // Write built version to file after creating a bundle (needed for ci, to create the version tag)
+        if (this.name.endsWith("Release")) {
+            tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
+                File(project.buildDir, "${this@variant.name}.version")
+                    .writeText(this@variant.versionName)
             }
         }
     }
@@ -114,15 +143,21 @@ ksp {
     )
 }
 
+play {
+    defaultToAppBundles.set(true)
+    serviceAccountCredentials.set(file(".keys/service-account.json"))
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
+}
+
 dependencies {
     implementation(project(":shared"))
 
     implementation("androidx.lifecycle:lifecycle-process:${Versions.androidxLifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
-    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
-    // Update to version 2.0.0 requires AGP (Android Gradle Plugin) version > 7.4.0-alpha10. No stable release yet and also currently not compatible with KMM
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 
     // Compose
     runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
@@ -138,13 +173,13 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-permissions:0.25.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.28.0")
 
     // Architecture (MVI)
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:${Versions.koinDi}")
+    implementation("io.insert-koin:koin-androidx-compose:3.4.2") // Not aligned with other koin version
 
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")

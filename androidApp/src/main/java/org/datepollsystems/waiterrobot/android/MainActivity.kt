@@ -8,6 +8,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.Theme_WaiterRobot_Main)
 
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false) // Support ime padding
 
         setContent {
 

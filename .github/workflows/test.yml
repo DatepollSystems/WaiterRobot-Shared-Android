@@ -1,7 +1,12 @@
 name: Test
 on:
   push:
-  pull_request:
+    # Push to develop and main branches trigger a release -> tests are run anyway
+    branches:
+      - '!develop'
+      - '!main'
+      - '!build-**' # temporary build branch for kmmbridge
+
 
 jobs:
   test:

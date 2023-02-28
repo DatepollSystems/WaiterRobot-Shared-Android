@@ -7,18 +7,19 @@ import org.datepollsystems.waiterrobot.shared.core.api.RequestBodyDto
 @Serializable
 internal class LoginRequestDto(
     val token: String,
-    @SerialName("sessionInformation") val sessionName: String
+    val sessionInformation: String,
+    val stayLoggedIn: Boolean = true
 ) : RequestBodyDto
 
 @Serializable
 internal class LoginResponseDto(
-    @SerialName("token") val accessToken: String,
-    val sessionToken: String
+    val accessToken: String,
+    val refreshToken: String
 )
 
 @Serializable
-internal data class CreateLoginRequestDto(
+internal class CreateLoginRequestDto(
     @SerialName("name") val waiterName: String,
     val waiterCreateToken: String,
-    @SerialName("sessionInformation") val sessionName: String
+    val sessionInformation: String
 ) : RequestBodyDto
