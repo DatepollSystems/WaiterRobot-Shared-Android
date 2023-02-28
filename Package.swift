@@ -1,6 +1,8 @@
 // swift-tools-version:5.3
 import PackageDescription
 
+let remoteKotlinUrl = "https://api.github.com/repos/DatepollSystems/waiterrobot-mobile_android-shared/releases/assets/97431754.zip"
+let remoteKotlinChecksum = "3bc8a07a2b09cc55545cef5defc252cec85bcb96a73020059211deea837c8891"
 let packageName = "shared"
 
 let package = Package(
@@ -17,7 +19,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: packageName,
-            path: "./shared/build/XCFrameworks/debug/\(packageName).xcframework"
+            url: remoteKotlinUrl,
+            checksum: remoteKotlinChecksum
         )
         ,
     ]
