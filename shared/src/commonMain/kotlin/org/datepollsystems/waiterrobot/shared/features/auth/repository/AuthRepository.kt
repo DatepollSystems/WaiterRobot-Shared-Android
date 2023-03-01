@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
@@ -32,7 +34,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         autoSelectEvent()
     }
 
-    suspend fun refreshTokens(): Tokens? {
+    suspend fun refreshTokens(userDetailsRefreshScope: CoroutineScope): Tokens? {
         var tokens = getTokens()
 
         if (tokens == null) {
@@ -43,7 +45,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         val newTokens = authApi.refreshToken(tokens.refreshToken)
         tokens = Tokens(newTokens.accessToken, newTokens.refreshToken ?: tokens.refreshToken)
 
-        store(tokens)
+        store(tokens, userDetailsRefreshScope)
 
         return tokens
     }
@@ -63,14 +65,26 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         }
     }
 
-    private suspend fun store(tokens: Tokens) {
-        CommonApp.settings.tokens = tokens
-
-        waiterApi.getMySelf().let {
-            CommonApp.settings.organisationName = it.organisationName
-            CommonApp.settings.waiterName = it.name
+    private suspend fun store(tokens: Tokens, userDetailsRefreshScope: CoroutineScope? = null) {
+        suspend fun refreshUserDetails() {
+            logger.d { "Refreshing user details" }
+            waiterApi.getMySelf().let {
+                CommonApp.settings.organisationName = it.organisationName
+                CommonApp.settings.waiterName = it.name
+            }
         }
 
-        logger.d { "Saved tokens ${CommonApp.settings.tokens}" }
+        CommonApp.settings.tokens = tokens
+
+        if (userDetailsRefreshScope != null) {
+            // Update in the background, as this call will suspend till refreshTokens finish (-> deadlock)
+            userDetailsRefreshScope.launch {
+                refreshUserDetails()
+            }
+        } else {
+            refreshUserDetails()
+        }
+
+        logger.d { "Saved tokens" }
     }
 }
