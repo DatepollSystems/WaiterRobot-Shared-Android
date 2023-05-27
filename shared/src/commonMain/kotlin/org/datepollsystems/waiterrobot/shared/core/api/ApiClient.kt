@@ -8,6 +8,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
@@ -18,7 +19,8 @@ internal fun createApiClient(
     json: Json,
     ktorLogger: KtorLogger,
     authRepository: AuthRepository,
-    enableNetworkLogs: Boolean = false
+    enableNetworkLogs: Boolean = false,
+    scope: CoroutineScope
 ) = HttpClient {
     commonConfig(json, ktorLogger, enableNetworkLogs)
 
@@ -31,7 +33,7 @@ internal fun createApiClient(
             // Function to refresh a token (called when server response with 401 and a WWW-Authenticate header)
             refreshTokens {
                 try {
-                    authRepository.refreshTokens().toBearerTokens()
+                    authRepository.refreshTokens(scope).toBearerTokens()
                 } catch (e: Exception) {
                     // TODO improve request errors handling (-> try again, no connection info)
                     ktorLogger.log(e.message ?: "Error while refreshing token")
