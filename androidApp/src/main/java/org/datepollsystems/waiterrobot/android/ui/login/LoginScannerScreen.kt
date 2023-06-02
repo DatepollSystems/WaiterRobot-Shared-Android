@@ -1,6 +1,10 @@
 package org.datepollsystems.waiterrobot.android.ui.login
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,17 +14,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.android.ui.scanner.QrCodeScanner
-import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerEffect
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.koin.androidx.compose.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 @Destination
@@ -29,7 +31,7 @@ fun LoginScannerScreen(
     navigator: NavController
 ) {
     val state = vm.collectAsState().value
-    vm.collectSideEffect { handleSideEffect(it, navigator) }
+    vm.handleSideEffects(navigator)
 
     View(state) {
         Column(
@@ -60,11 +62,5 @@ fun LoginScannerScreen(
                 Text(text = L.dialog.cancel())
             }
         }
-    }
-}
-
-private fun handleSideEffect(effect: LoginScannerEffect, navigator: NavController) {
-    when (effect) {
-        is LoginScannerEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }

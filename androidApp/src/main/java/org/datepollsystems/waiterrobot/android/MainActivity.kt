@@ -3,27 +3,30 @@ package org.datepollsystems.waiterrobot.android
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.*
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import org.datepollsystems.waiterrobot.android.generated.navigation.NavGraphs
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
+import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.root.RootEffect
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             val scaffoldState = rememberScaffoldState()
 
             val state = vm.collectAsState().value
-            vm.collectSideEffect { handleSideEffects(it, navController, scaffoldState) }
+            vm.handleSideEffects(navController) { handleSideEffects(it, scaffoldState) }
 
             val useDarkTheme = when (state.selectedTheme) {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
@@ -62,20 +65,19 @@ class MainActivity : AppCompatActivity() {
             }
 
             WaiterRobotTheme(useDarkTheme) {
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    engine = navEngine,
-                    navController = navController,
-                    dependenciesContainerBuilder = {
-                        // Provide the viewModel also to the RootScreen
-                        dependency(RootScreenDestination) {
-                            dependency(vm)
+                CompositionLocalProvider(LocalScaffoldState provides scaffoldState) {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        engine = navEngine,
+                        navController = navController,
+                        dependenciesContainerBuilder = {
+                            // Provide the viewModel also to the RootScreen
+                            dependency(RootScreenDestination) {
+                                dependency(vm)
+                            }
                         }
-
-                        // Provide the scaffoldState to all screens so that we can show the snackBar
-                        dependency(scaffoldState)
-                    }
-                )
+                    )
+                }
             }
         }
 
@@ -90,11 +92,9 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun handleSideEffects(
         effect: RootEffect,
-        navigator: NavController,
         scaffoldState: ScaffoldState
     ) {
         when (effect) {
-            is RootEffect.Navigate -> navigator.handleNavAction(effect.action)
             is RootEffect.ShowSnackBar -> scaffoldState.snackbarHostState.showSnackbar(effect.message)
         }
     }

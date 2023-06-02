@@ -1,12 +1,21 @@
 package org.datepollsystems.waiterrobot.android.ui.switchevent
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.runtime.Composable
@@ -17,30 +26,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
+import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
-import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventEffect
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.noEventFound
 import org.koin.androidx.compose.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 @Destination
 fun SwitchEventScreen(
     navigator: NavController,
-    scaffoldState: ScaffoldState,
     vm: SwitchEventViewModel = getViewModel()
 ) {
     val state = vm.collectAsState().value
 
-    vm.collectSideEffect { handleSideEffects(it, navigator) }
+    vm.handleSideEffects(navigator)
 
-    Scaffold(scaffoldState = scaffoldState) {
-        Column {
+    Scaffold(scaffoldState = LocalScaffoldState.current) {
+        Column(modifier = Modifier.padding(it)) {
             // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be on top of this part of the view
             Surface(modifier = Modifier.zIndex(1f)) {
                 Column {
@@ -99,11 +106,5 @@ fun SwitchEventScreen(
                 }
             }
         }
-    }
-}
-
-private fun handleSideEffects(effect: SwitchEventEffect, navigator: NavController) {
-    when (effect) {
-        is SwitchEventEffect.Navigation -> navigator.handleNavAction(effect.action)
     }
 }

@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.navigation
 
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 
 sealed class Screen {
@@ -20,12 +21,9 @@ sealed class NavAction {
     data class PopUpTo(val screen: Screen, val inclusive: Boolean) : NavAction()
     data class PopUpAndPush(val screen: Screen, val popUpTo: Screen, val inclusive: Boolean) :
         NavAction()
-
-    companion object {
-        val popUpToRoot get() = PopUpTo(Screen.RootScreen, inclusive = false)
-    }
 }
 
-interface NavigationEffect {
-    val action: NavAction
+sealed class NavOrViewModelEffect<out E : ViewModelEffect> {
+    class NavEffect<E : ViewModelEffect>(val action: NavAction) : NavOrViewModelEffect<E>()
+    class VMEffect<E : ViewModelEffect>(val effect: E) : NavOrViewModelEffect<E>()
 }

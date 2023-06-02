@@ -2,16 +2,19 @@ package org.datepollsystems.waiterrobot.shared.root
 
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.api.ApiException
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
+import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
-import org.datepollsystems.waiterrobot.shared.generated.localization.*
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyLoggedIn
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.invalid
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class RootViewModel internal constructor(
@@ -37,7 +40,9 @@ class RootViewModel internal constructor(
         }
     }
 
-    private suspend fun SimpleSyntax<RootState, RootEffect>.onAuthDeeplink(deepLink: DeepLink.Auth) {
+    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.onAuthDeeplink(
+        deepLink: DeepLink.Auth
+    ) {
         if (CommonApp.isLoggedIn.value) {
             postSideEffect(RootEffect.ShowSnackBar(L.deepLink.alreadyLoggedIn()))
             return
@@ -49,9 +54,7 @@ class RootViewModel internal constructor(
             when (deepLink) {
                 is DeepLink.Auth.LoginLink -> authRepo.loginWithToken(deepLink.token)
                 is DeepLink.Auth.RegisterLink -> {
-                    postSideEffect(
-                        RootEffect.Navigate(NavAction.Push(Screen.RegisterScreen(deepLink.token)))
-                    )
+                    navigator.push(Screen.RegisterScreen(deepLink.token))
                 }
             }
             reduce { state.withViewState(ViewState.Idle) }
@@ -64,7 +67,7 @@ class RootViewModel internal constructor(
         CommonApp.isLoggedIn.collect { loggedIn ->
             reduce { state.copy(isLoggedIn = loggedIn) }
             if (!loggedIn) {
-                postSideEffect(RootEffect.Navigate(NavAction.popUpToRoot))
+                navigator.popUpToRoot()
             }
         }
     }
@@ -73,7 +76,7 @@ class RootViewModel internal constructor(
         CommonApp.hasEventSelected.collect { hasEventSelected ->
             reduce { state.copy(hasEventSelected = hasEventSelected) }
             if (!hasEventSelected) {
-                postSideEffect(RootEffect.Navigate(NavAction.popUpToRoot))
+                navigator.popUpToRoot()
             }
         }
     }

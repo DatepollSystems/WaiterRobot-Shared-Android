@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
@@ -8,7 +7,6 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.math.max
 import kotlin.math.min
@@ -83,14 +81,14 @@ class BillingViewModel internal constructor(
         if (state.hasSelectedItems) {
             reduce { state.copy(showConfirmationDialog = true) }
         } else {
-            postSideEffect(BillingEffect.Navigate(NavAction.Pop))
+            navigator.pop()
         }
     }
 
     fun abortBill() = intent {
         // Hide the confirmation dialog before navigation away, as otherwise on iOS it would be still shown on the new screen
         reduce { state.copy(showConfirmationDialog = false) }
-        postSideEffect(BillingEffect.Navigate(NavAction.Pop))
+        navigator.pop()
     }
 
     fun keepBill() = intent {

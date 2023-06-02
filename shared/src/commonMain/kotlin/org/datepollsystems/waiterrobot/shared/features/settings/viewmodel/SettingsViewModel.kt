@@ -5,7 +5,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
@@ -13,7 +12,6 @@ import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class SettingsViewModel internal constructor(
@@ -36,7 +34,7 @@ class SettingsViewModel internal constructor(
     }
 
     fun switchEvent() = intent {
-        postSideEffect(SettingsEffect.Navigate(NavAction.Push(Screen.SwitchEventScreen)))
+        navigator.push(Screen.SwitchEventScreen)
     }
 
     fun switchTheme(theme: AppTheme) {

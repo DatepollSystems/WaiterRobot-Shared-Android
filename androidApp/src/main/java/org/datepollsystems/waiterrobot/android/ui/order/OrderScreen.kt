@@ -20,18 +20,16 @@ import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
-import org.datepollsystems.waiterrobot.android.ui.core.view.View
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderEffect
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -43,7 +41,7 @@ fun OrderScreen(
     vm: OrderViewModel = getViewModel(parameters = { parametersOf(table, initialItemId) })
 ) {
     val state = vm.collectAsState().value
-    vm.collectSideEffect { handleSideEffects(it, navigator) }
+    vm.handleSideEffects(navigator)
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -121,16 +119,13 @@ fun OrderScreen(
             )
         }
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = L.order.title(table.number.toString())) },
-                    navigationIcon = {
-                        IconButton(onClick = vm::goBack) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
+        ScaffoldView(
+            state = state,
+            title = L.order.title(table.number.toString()),
+            navigationIcon = {
+                IconButton(onClick = vm::goBack) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                }
             },
             floatingActionButton = {
                 Column {
@@ -159,36 +154,25 @@ fun OrderScreen(
                     }
                 }
             }
-        ) { contentPadding ->
-            View(
-                modifier = Modifier.padding(contentPadding),
-                state = state
-            ) {
-                if (state.currentOrder.isEmpty()) {
-                    CenteredText(text = L.order.addProduct(), scrollAble = false)
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(state.currentOrder, key = { it.product.id }) { orderItem ->
-                            OrderListItem(
-                                id = orderItem.product.id,
-                                name = orderItem.product.name,
-                                amount = orderItem.amount,
-                                note = orderItem.note,
-                                addAction = vm::addItem,
-                                onLongClick = { noteDialogItem = orderItem }
-                            )
-                        }
+        ) {
+            if (state.currentOrder.isEmpty()) {
+                CenteredText(text = L.order.addProduct(), scrollAble = false)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.currentOrder, key = { it.product.id }) { orderItem ->
+                        OrderListItem(
+                            id = orderItem.product.id,
+                            name = orderItem.product.name,
+                            amount = orderItem.amount,
+                            note = orderItem.note,
+                            addAction = vm::addItem,
+                            onLongClick = { noteDialogItem = orderItem }
+                        )
                     }
                 }
             }
         }
-    }
-}
-
-private fun handleSideEffects(effect: OrderEffect, navigator: NavController) {
-    when (effect) {
-        is OrderEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }
