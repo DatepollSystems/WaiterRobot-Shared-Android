@@ -1,16 +1,19 @@
-import co.touchlab.faktory.versionmanager.GithubReleaseVersionManager
-import co.touchlab.faktory.versionmanager.VersionException
+import co.touchlab.faktory.internal.GithubCalls
+import co.touchlab.faktory.versionmanager.GitTagBasedVersionManager
+import co.touchlab.faktory.versionmanager.GitTagVersionManager
+import co.touchlab.faktory.versionmanager.GithubReleaseVersionWriter
 import co.touchlab.faktory.versionmanager.VersionManager
-import groovy.lang.MissingPropertyException
+import co.touchlab.faktory.versionmanager.VersionWriter
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.util.*
+import java.util.Date
 
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     id("com.android.library")
-    id("co.touchlab.faktory.kmmbridge") version "0.3.4"
+    id("co.touchlab.faktory.kmmbridge") version "0.3.7"
+    `maven-publish`
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
     id("io.realm.kotlin") version "1.6.1"
 }
@@ -149,38 +152,14 @@ android {
 }
 
 kmmbridge {
-    githubReleaseArtifacts()
+    mavenPublishArtifacts()
+    /** [co.touchlab.faktory.KmmBridgeExtension.githubReleaseVersions] */
+    versionManager.set(CustomGitVersionManager(GitTagVersionManager))
+    versionWriter.set(GithubReleaseVersionWriter(GithubCalls)) // TODO modify to support draft releases, custom title and generation of release notes (for api see https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#create-a-release)?
     spm()
     versionPrefix.set(version as String)
-    versionManager.apply {
-        set(object : VersionManager {
-            override fun getVersion(project: Project, versionPrefix: String): String {
-                val baseVersion = GithubReleaseVersionManager.getVersion(project, versionPrefix)
-
-                // Add version suffix for dev releases
-                // e.g. main -> 1.0.1, develop -> 1.0.1-lava-1676142940
-                return try {
-                    when (val branch = project.property("GITHUB_BRANCH")) {
-                        "main" -> baseVersion
-                        "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
-                        else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
-                    }
-                } catch (e: MissingPropertyException) {
-                    throw VersionException(
-                        true,
-                        "GITHUB_BRANCH property not set (this is fine for local development)."
-                    )
-                } catch (e: Exception) {
-                    throw VersionException(false, e.message)
-                }
-            }
-
-            override fun recordVersion(project: Project, versionString: String) =
-                GithubReleaseVersionManager.recordVersion(project, versionString)
-        })
-        finalizeValue()
-    }
 }
+addGithubPackagesRepository()
 
 kmmResourcesConfig {
     androidApplicationId.set(sharedNamespace) // appId of the shared module
@@ -228,5 +207,29 @@ tasks {
     // Make sure that the localizations are always up to date
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
+    }
+}
+
+/**
+ * Adds a suffix to the version when a lava/pre release is made
+ * see [co.touchlab.faktory.versionmanager.GitTagVersionManager]
+ */
+class CustomGitVersionManager(
+    private val manager: GitTagBasedVersionManager
+) : VersionManager by manager {
+    override fun getVersion(
+        project: Project,
+        versionPrefix: String,
+        versionWriter: VersionWriter
+    ): String {
+        val baseVersion = manager.getVersion(project, versionPrefix, versionWriter)
+
+        // Add version suffix for dev releases
+        // e.g. main -> 1.0.1, develop -> 1.0.1-lava-1676142940
+        return when (val branch = project.property("GITHUB_BRANCH")) {
+            "main" -> baseVersion
+            "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
+            else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
+        }
     }
 }
