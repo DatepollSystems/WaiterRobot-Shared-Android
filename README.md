@@ -39,8 +39,9 @@ Production release is triggered on push to main. The CI then builds the app and 
 the `internal` Track on Google Play. After testing the app then must be promoted to production
 manually from there. A tag in the form of `android-major.minor.patch` (e.g. android-1.0.0) is
 created. (see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
-Do not forget to bump the android version ([version.properties](androidApp/version.properties)) on
-the dev branch after a production release was made.
+
+> Do not forget to bump the android version ([version.properties](androidApp/version.properties)) on
+> the dev branch after a production release was made.
 
 On each push to develop also a lava (dev) build is triggered and published to `internal` track of
 the WaiterRobot Lava app on Google Play. A tag in the form
