@@ -26,7 +26,7 @@ class SettingsViewModel internal constructor(
     fun refreshAll() = intent {
         coroutineScope {
             listOf(
-                launchCatching { tableRepo.getTables(true) },
+                launchCatching { tableRepo.getTableGroups(true) },
                 launchCatching { productRepo.getProducts(true) }
             ).joinAll()
         }

@@ -31,7 +31,7 @@ class TableListViewModel internal constructor(
             state.copy(
                 viewState = ViewState.Idle,
                 unselectedTableGroups = groups.minus(state.selectedTableGroups),
-                filteredTables = tableGroups.filterGroups(state.selectedTableGroups)
+                filteredTableGroups = tableGroups.filterGroups(state.selectedTableGroups)
             )
         }
     }
@@ -75,11 +75,11 @@ class TableListViewModel internal constructor(
 
     override fun update() = loadTables(true)
 
-    private fun List<TableGroupWithTables>.filterGroups(selectedGroups: Set<TableGroup>): List<Table> {
+    private fun List<TableGroupWithTables>.filterGroups(selectedGroups: Set<TableGroup>): List<TableGroupWithTables> {
         return if (selectedGroups.isEmpty()) {
-            this.flatMap(TableGroupWithTables::tables)
+            this
         } else {
-            this.filter { it.group in selectedGroups }.flatMap(TableGroupWithTables::tables)
+            this.filter { it.group in selectedGroups }
         }
     }
 }

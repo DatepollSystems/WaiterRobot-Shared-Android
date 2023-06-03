@@ -35,6 +35,14 @@ internal class TableRepository : AbstractRepository() {
     suspend fun getTableGroups(forceUpdate: Boolean): List<TableGroupWithTables> {
         val eventId = CommonApp.settings.selectedEventId
 
+        fun <T : Any> Map<TableGroup, List<T>>.mapTableGroupWithTables(
+            mapper: (T) -> Table
+        ): List<TableGroupWithTables> {
+            return this.map { (group, tables) ->
+                TableGroupWithTables(group, tables.map(mapper).sortedBy(Table::number))
+            }.sortedBy { it.group.name }
+        }
+
         fun loadFromDb(): List<TableGroupWithTables>? {
             logger.i { "Fetching tables from DB ..." }
             val dbTables = tableDb.getTablesForEvent(eventId)
@@ -44,9 +52,7 @@ internal class TableRepository : AbstractRepository() {
                 null
             } else {
                 return dbTables.groupBy { TableGroup(it.groupId!!, it.groupName!!) }
-                    .map { (group, tables) ->
-                        TableGroupWithTables(group, tables.map(TableEntry::toModel))
-                    }
+                    .mapTableGroupWithTables(TableEntry::toModel)
             }
         }
 
@@ -64,9 +70,7 @@ internal class TableRepository : AbstractRepository() {
             tableDb.putTables(apiTables.map { it.toEntry(timestamp) })
 
             return apiTables.groupBy { TableGroup(it.groupId, it.groupName) }
-                .map { (group, tables) ->
-                    TableGroupWithTables(group, tables.map(TableResponseDto::toModel))
-                }
+                .mapTableGroupWithTables(TableResponseDto::toModel)
         }
 
         return if (forceUpdate) {
@@ -74,10 +78,6 @@ internal class TableRepository : AbstractRepository() {
         } else {
             loadFromDb() ?: loadFromApiAndStore()
         }
-    }
-
-    suspend fun getTables(forceUpdate: Boolean): List<Table> {
-        return emptyList()
     }
 
     suspend fun getUnpaidItemsForTable(table: Table): List<OrderedItem> {
