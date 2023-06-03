@@ -18,9 +18,11 @@ class TableListViewModel internal constructor(
         loadTables()
     }
 
-    fun loadTables(forceUpdate: Boolean = false) = intent {
+    fun loadTables(forceUpdate: Boolean = false) = loadTables(forceUpdate, showLoading = true)
+
+    private fun loadTables(forceUpdate: Boolean, showLoading: Boolean) = intent {
         logger.d { "Load tables ..." }
-        reduce { state.copy(viewState = ViewState.Loading) }
+        if (showLoading) reduce { state.copy(viewState = ViewState.Loading) }
 
         val tableGroups = tableRepository.getTableGroups(forceUpdate)
         val groups: Set<TableGroup> = tableGroups.mapTo(mutableSetOf()) { it.group }
@@ -49,7 +51,18 @@ class TableListViewModel internal constructor(
             }
         }
 
-        loadTables(forceUpdate = false)
+        loadTables(forceUpdate = false, showLoading = false)
+    }
+
+    fun clearFilter() = intent {
+        reduce {
+            state.copy(
+                selectedTableGroups = emptySet(),
+                unselectedTableGroups = state.unselectedTableGroups.plus(state.selectedTableGroups)
+            )
+        }
+
+        loadTables(forceUpdate = false, showLoading = false)
     }
 
     fun onTableClick(table: Table) = intent {

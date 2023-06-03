@@ -48,7 +48,8 @@ fun TableListScreen(
                 TableGroupFilter(
                     selectedGroups = state.selectedTableGroups,
                     unselectedGroups = state.unselectedTableGroups,
-                    onToggle = vm::toggleFilter
+                    onToggle = vm::toggleFilter,
+                    clearFilter = vm::clearFilter
                 )
             }
             if (state.filteredTables.isEmpty()) {
