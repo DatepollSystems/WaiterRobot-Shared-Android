@@ -13,6 +13,7 @@ import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEnt
 import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
@@ -34,13 +35,28 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
 
     suspend fun getProductById(id: Long): Product? {
         return productDb.getById(id)?.toModel()
-            ?: getProducts(true).find { it.id == id } // TODO limit force update
+            ?: getProductGroups(true) // TODO limit force update
+                .flatMap(ProductGroupWithProducts::products)
+                .find { it.id == id }
     }
 
-    suspend fun getProducts(forceUpdate: Boolean = false): List<Product> {
+    suspend fun getProductGroups(forceUpdate: Boolean = false): List<ProductGroupWithProducts> {
         val eventId = CommonApp.settings.selectedEventId
 
-        fun loadFromDb(): List<Product>? {
+        fun <T : Any> Map<ProductGroup, List<T>>.mapProductGroupWithProducts(
+            mapper: (T) -> Product
+        ): List<ProductGroupWithProducts> {
+            return this.map { (group, products) ->
+                ProductGroupWithProducts(
+                    group = group,
+                    products = products.map(mapper)
+                        .sortedBy { it.name.lowercase() }
+                        .sortedBy(Product::soldOut)
+                )
+            }.sortedBy { it.group.name }
+        }
+
+        fun loadFromDb(): List<ProductGroupWithProducts>? {
             logger.i { "Fetching products from DB ..." }
             val dbProducts = productDb.getForEvent(eventId)
             logger.d { "Found ${dbProducts.count()} products in DB" }
@@ -48,11 +64,12 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
             return if (dbProducts.isEmpty() || dbProducts.any { it.updated.olderThan(maxAge) }) {
                 null
             } else {
-                dbProducts.map(ProductEntry::toModel)
+                dbProducts.groupBy { it.productGroup!!.toModel() }
+                    .mapProductGroupWithProducts(ProductEntry::toModel)
             }
         }
 
-        suspend fun loadFromApiAndStore(): List<Product> {
+        suspend fun loadFromApiAndStore(): List<ProductGroupWithProducts> {
             logger.i { "Loading products from api ..." }
 
             val timestamp = Now()
@@ -71,9 +88,9 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
                 group.products.map { it.toEntry(eventId, entryGroups[group.id]!!, timestamp) }
             })
 
-            return apiProducts.flatMap { group ->
-                group.products.map { it.toModel(modelGroups[group.id]!!) }
-            }
+            return apiProducts.associate { group ->
+                modelGroups[group.id]!! to group.products
+            }.mapProductGroupWithProducts(ProductDto::toModel)
         }
 
         return if (forceUpdate) {
@@ -88,7 +105,7 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
     }
 }
 
-private fun ProductDto.toModel(group: ProductGroup) = Product(
+private fun ProductDto.toModel() = Product(
     id = this.id,
     name = this.name,
     price = this.price.cent,
@@ -96,7 +113,6 @@ private fun ProductDto.toModel(group: ProductGroup) = Product(
     allergens = this.allergens.map { allergen ->
         Allergen(allergen.id, allergen.name, allergen.shortName)
     },
-    productGroup = group
 )
 
 private fun ProductDto.toEntry(
@@ -117,10 +133,14 @@ private fun ProductDto.toEntry(
 )
 
 private fun ProductEntry.toModel() = Product(
-    this.id!!,
-    this.name!!,
-    this.price!!.cent,
-    this.soldOut!!,
-    this.allergens!!.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
-    ProductGroup(this.productGroup?.id!!, this.productGroup?.name!!)
+    id = this.id!!,
+    name = this.name!!,
+    price = this.price!!.cent,
+    soldOut = this.soldOut!!,
+    allergens = this.allergens!!.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
+)
+
+private fun ProductEntry.ProductGroup.toModel() = ProductGroup(
+    id = this.id!!,
+    name = this.name!!
 )

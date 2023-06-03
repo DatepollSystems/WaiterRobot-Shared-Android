@@ -14,9 +14,9 @@ object Versions {
     const val androidCompileSdk = 33
     const val androidBuildTools = "33.0.0"
 
-    const val compose = "1.3.1"
-    const val composeCompiler = "1.4.2"
+    const val compose = "1.5.0-beta01"
+    const val composeCompiler = "1.4.4"
     const val androidxLifecycle = "2.5.1"
-    const val composeDestinations = "1.8.33-beta"
+    const val composeDestinations = "1.9.42-beta"
     const val camera = "1.2.1"
 }

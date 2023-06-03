@@ -52,7 +52,7 @@ fun OrderScreen(
         // When opening the order screen waiter most likely wants to add a new product -> show the product list immediately
         // But don't show it when the screen was opened with an initial item, this feels not nice
         initialValue = if (initialItemId == null) ModalBottomSheetValue.Expanded else ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded } // Not allowed here (TODO Maybe allow but immediately close completely?)
+        skipHalfExpanded = true
     )
 
     LaunchedEffect(bottomSheetState.targetValue) {
@@ -108,14 +108,15 @@ fun OrderScreen(
         sheetShape = RoundedCornerShape(topStartPercent = 5, topEndPercent = 5),
         sheetContent = {
             ProductSearch(
-                products = state.products,
+                productGroups = state.productGroups,
                 onSelect = {
                     vm.addItem(it, 1)
                     coroutineScope.launch {
                         bottomSheetState.hide()
                     }
                 },
-                onFilter = { vm.filterProducts(it) }
+                onFilter = { vm.filterProducts(it) },
+                close = { coroutineScope.launch { bottomSheetState.hide() } }
             )
         }
     ) {
@@ -141,14 +142,7 @@ fun OrderScreen(
                         Spacer(modifier = Modifier.height(5.dp))
                     }
                     FloatingActionButton(
-                        onClick = {
-                            if (!bottomSheetState.isAnimationRunning && !bottomSheetState.isVisible) {
-                                coroutineScope.launch {
-                                    // Do not use state.show() here as we want to expand to full size
-                                    bottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
-                                }
-                            }
-                        }
+                        onClick = { coroutineScope.launch { bottomSheetState.show() } }
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Product")
                     }
