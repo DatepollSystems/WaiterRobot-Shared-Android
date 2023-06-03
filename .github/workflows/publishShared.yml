@@ -8,6 +8,7 @@ on:
     branches:
       - develop
       - main
+      - feature/github-packages # TODO remove
     paths:
       - 'shared/**'
       - 'buildSrc/**'
@@ -17,6 +18,7 @@ on:
 
 jobs:
   call-kmmbridge-publish:
-    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.7
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
     secrets:
       gradle_params: "-PGITHUB_BRANCH=${{ github.ref_name }}"
+      jvmVersion: 11
