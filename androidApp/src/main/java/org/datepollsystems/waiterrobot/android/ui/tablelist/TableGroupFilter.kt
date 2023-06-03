@@ -14,7 +14,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.FilterListOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,8 +63,11 @@ fun TableGroupFilter(
             }
         }
         Box {
-            IconButton(onClick = clearFilter) {
-                Icon(Icons.Outlined.Close, contentDescription = "Clear")
+            IconButton(
+                onClick = clearFilter,
+                enabled = selectedGroups.isNotEmpty()
+            ) {
+                Icon(Icons.Outlined.FilterListOff, contentDescription = "Clear Filter")
             }
         }
     }

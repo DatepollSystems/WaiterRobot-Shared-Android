@@ -83,7 +83,8 @@ fun TableListScreen(
                                 Divider(modifier = Modifier.weight(1f))
                                 Text(
                                     text = group.name,
-                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    maxLines = 1,
                                 )
                                 Divider(modifier = Modifier.weight(1f))
                             }
