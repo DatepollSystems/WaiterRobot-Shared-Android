@@ -55,7 +55,7 @@ e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publishShared
 and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
 On each push to develop also a dev build is triggered and published to GitHub Packages. A tag in the
-form of `major.minor.patch-dev-epochSeconds` (e.g. 1.0.1-dev-1676143102) and a corresponding GitHub
+form of `major.minor.patch-lava-epochSeconds` (e.g. 1.0.1-dev-1676143102) and a corresponding GitHub
 Release is created. (see [publishShared.yml](.github/workflows/publishAndroid.yml)
 and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
