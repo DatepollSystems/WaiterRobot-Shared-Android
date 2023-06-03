@@ -4,16 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -24,7 +19,6 @@ import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
@@ -50,30 +44,12 @@ fun TableListScreen(
         onRefresh = { vm.loadTables(forceUpdate = true) }
     ) {
         Column {
-            LazyRow(
-                contentPadding = PaddingValues(vertical = 10.dp, horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                items(
-                    items = state.selectedTableGroups.toList(),
-                    key = TableGroup::id
-                ) { group ->
-                    Button(
-                        onClick = { vm.toggleFilter(group) },
-                    ) {
-                        Text(group.name)
-                    }
-                }
-                items(
-                    items = state.unselectedTableGroups.toList(),
-                    key = TableGroup::id
-                ) { group ->
-                    OutlinedButton(
-                        onClick = { vm.toggleFilter(group) },
-                    ) {
-                        Text(group.name)
-                    }
-                }
+            if (state.selectedTableGroups.size + state.unselectedTableGroups.size > 1) {
+                TableGroupFilter(
+                    selectedGroups = state.selectedTableGroups,
+                    unselectedGroups = state.unselectedTableGroups,
+                    onToggle = vm::toggleFilter
+                )
             }
             if (state.filteredTables.isEmpty()) {
                 CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
