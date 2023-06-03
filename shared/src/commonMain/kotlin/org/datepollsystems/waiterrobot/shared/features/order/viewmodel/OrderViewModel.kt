@@ -6,6 +6,8 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRepository
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
@@ -26,8 +28,8 @@ class OrderViewModel internal constructor(
         if (initialItemId == null) {
             intent {
                 reduce { state.withViewState(ViewState.Loading) }
-                val allProducts = productRepository.getProducts()
-                reduce { state.copy(_products = allProducts, viewState = ViewState.Idle) }
+                val allProducts = productRepository.getProductGroups()
+                reduce { state.copy(productGroups = allProducts, viewState = ViewState.Idle) }
             }
         } else {
             addItem(initialItemId, 1)
@@ -126,21 +128,26 @@ class OrderViewModel internal constructor(
         }
 
         // Reset products to clear filter
-        val allProducts = productRepository.getProducts()
-        reduce { state.copy(_currentOrder = newOrder, _products = allProducts) }
+        val allProducts = productRepository.getProductGroups()
+        reduce { state.copy(_currentOrder = newOrder, productGroups = allProducts) }
     }
 
     fun filterProducts(filter: String) = intent {
         // TODO do filter on db/repository layer?
-        val allProducts = productRepository.getProducts()
+        val allProducts = productRepository.getProductGroups()
         if (filter.isEmpty()) {
-            reduce { state.copy(_products = allProducts) }
+            reduce { state.copy(productGroups = allProducts) }
         } else {
             reduce {
                 state.copy(
-                    _products = allProducts.filter {
-                        it.name.contains(filter, ignoreCase = true)
-                    }
+                    productGroups = allProducts.map { (group: ProductGroup, products: List<Product>) ->
+                        ProductGroupWithProducts(
+                            group = group,
+                            products = products.filter {
+                                it.name.contains(filter, ignoreCase = true)
+                            }
+                        )
+                    },
                 )
             }
         }

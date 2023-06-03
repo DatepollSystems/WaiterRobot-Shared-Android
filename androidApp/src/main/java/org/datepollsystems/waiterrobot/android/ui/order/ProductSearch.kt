@@ -1,95 +1,124 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductSearch(
-    products: List<Product>,
+    productGroups: List<ProductGroupWithProducts>,
     onSelect: (Product) -> Unit,
-    onFilter: (String) -> Unit
+    onFilter: (String) -> Unit,
+    close: () -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
     Column {
-        OutlinedTextField(
-            value = text,
-            onValueChange = {
-                text = it
-                onFilter(it)
-            },
-            label = { Text(L.productSearch.title()) },
-            placeholder = { Text(L.productSearch.placeholder()) },
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Search, "Search product")
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
-            ),
-            modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth()
-        )
-
-        LazyVerticalGrid(
-            modifier = Modifier.fillMaxWidth(),
-            columns = GridCells.Adaptive(100.dp),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            items(products, key = Product::id) { product ->
-                OutlinedButton(
-                    onClick = { onSelect(product) },
-                    enabled = !product.soldOut,
-                    shape = RoundedCornerShape(10),
-                    contentPadding = PaddingValues(5.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onSurface)
-                    // elevation = ButtonDefaults.elevation() // TODO yes/no?
-                ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+            IconButton(onClick = close) {
+                Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
+            }
+            OutlinedTextField(
+                value = text,
+                onValueChange = {
+                    text = it
+                    onFilter(it)
+                },
+                label = { Text(L.productSearch.title()) },
+                placeholder = { Text(L.productSearch.placeholder()) },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Search, "Search product")
+                },
+                trailingIcon = {
+                    IconButton(
+                        enabled = text.isNotEmpty(),
+                        onClick = {
+                            text = ""
+                            onFilter("")
+                        }
                     ) {
-                        Text(
-                            text = product.name,
-                            style = MaterialTheme.typography.body1,
-                            textAlign = TextAlign.Center,
-                            textDecoration = if (product.soldOut) TextDecoration.LineThrough else null
-                        )
-                        Text(
-                            text = product.allergens.joinToString(", ") { it.shortName }
-                                .ifEmpty { "-" },
-                            style = MaterialTheme.typography.caption,
-                            textAlign = TextAlign.Center,
-                            color = Color.LightGray
-                        )
-                        Text(
-                            text = product.price.toString(),
-                            style = MaterialTheme.typography.body2,
-                            textAlign = TextAlign.Center
+                        Icon(imageVector = Icons.Outlined.Clear, "Clear search")
+                    }
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Search
+                ),
+                modifier = Modifier
+                    .padding(start = 10.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
+                    .fillMaxWidth()
+            )
+        }
+
+        val pagerState = rememberPagerState {
+            productGroups.size + 1 // One all page
+        }
+        val coScope = rememberCoroutineScope()
+        ScrollableTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            backgroundColor = MaterialTheme.colors.surface
+        ) {
+            Tab(
+                selected = pagerState.currentPage == 0,
+                onClick = { coScope.launch { pagerState.scrollToPage(0) } },
+                text = { Text("All") }
+            )
+            productGroups.forEachIndexed { index, productGroupWithProducts ->
+                Tab(
+                    selected = pagerState.currentPage == index + 1,
+                    onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
+                    text = { Text(productGroupWithProducts.group.name) }
+                )
+            }
+        }
+        HorizontalPager(pagerState) { pageIndex ->
+            if (pageIndex == 0) {
+                ProductLazyVerticalGrid {
+                    productGroups.forEach { (group: ProductGroup, products: List<Product>) ->
+                        sectionHeader(key = "group-${group.id}", title = group.name)
+                        items(products, key = Product::id) { product ->
+                            Product(
+                                product = product,
+                                onSelect = { onSelect(product) }
+                            )
+                        }
+                    }
+                }
+            } else {
+                ProductLazyVerticalGrid {
+                    items(productGroups[pageIndex - 1].products, key = Product::id) { product ->
+                        Product(
+                            product = product,
+                            onSelect = { onSelect(product) }
                         )
                     }
                 }
@@ -97,3 +126,15 @@ fun ProductSearch(
         }
     }
 }
+
+@Composable
+private fun ProductLazyVerticalGrid(
+    content: LazyGridScope.() -> Unit
+) = LazyVerticalGrid(
+    modifier = Modifier.fillMaxSize(),
+    columns = GridCells.Adaptive(100.dp),
+    contentPadding = PaddingValues(20.dp),
+    verticalArrangement = Arrangement.spacedBy(10.dp),
+    horizontalArrangement = Arrangement.spacedBy(10.dp),
+    content = content
+)

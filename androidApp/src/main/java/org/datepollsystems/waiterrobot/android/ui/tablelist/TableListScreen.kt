@@ -3,24 +3,19 @@ package org.datepollsystems.waiterrobot.android.ui.tablelist
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.datepollsystems.waiterrobot.android.ui.common.header
+import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
@@ -76,19 +71,7 @@ fun TableListScreen(
                     columns = GridCells.Adaptive(80.dp)
                 ) {
                     state.filteredTableGroups.forEach { (group: TableGroup, tables: List<Table>) ->
-                        header(key = "group-${group.id}") {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Divider(modifier = Modifier.weight(1f))
-                                Text(
-                                    text = group.name,
-                                    modifier = Modifier.padding(horizontal = 10.dp),
-                                    maxLines = 1,
-                                )
-                                Divider(modifier = Modifier.weight(1f))
-                            }
-                        }
+                        sectionHeader(key = "group-${group.id}", title = group.name)
                         items(tables, key = Table::id) { table ->
                             Table(
                                 table = table,

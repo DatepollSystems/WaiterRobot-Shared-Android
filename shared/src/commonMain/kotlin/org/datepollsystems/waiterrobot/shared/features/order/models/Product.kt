@@ -8,5 +8,4 @@ data class Product(
     val price: Money,
     val soldOut: Boolean,
     val allergens: List<Allergen>,
-    val productGroup: ProductGroup,
 )
