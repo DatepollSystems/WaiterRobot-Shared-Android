@@ -17,7 +17,7 @@ fun createRealmDB(): Realm {
 
     val config = RealmConfiguration.Builder(schema)
         .deleteRealmIfMigrationNeeded() // Realm is only used as a persistent cache - so do not care about migrations
-        .schemaVersion(1) // TODO increase with each version of the common code (automate - compute from version in buildScript or app version?)
+        .schemaVersion(2) // TODO increase with each version of the common code (automate - compute from version in buildScript or app version?)
         .build()
 
     return Realm.open(config)

@@ -12,6 +12,8 @@ import org.datepollsystems.waiterrobot.shared.features.table.db.TableDatabase
 import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableEntry
 import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
+import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
+import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroupWithTables
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
 import org.koin.core.component.inject
@@ -30,10 +32,18 @@ internal class TableRepository : AbstractRepository() {
         }
     }
 
-    suspend fun getTables(forceUpdate: Boolean): List<Table> {
+    suspend fun getTableGroups(forceUpdate: Boolean): List<TableGroupWithTables> {
         val eventId = CommonApp.settings.selectedEventId
 
-        fun loadFromDb(): List<Table>? {
+        fun <T : Any> Map<TableGroup, List<T>>.mapTableGroupWithTables(
+            mapper: (T) -> Table
+        ): List<TableGroupWithTables> {
+            return this.map { (group, tables) ->
+                TableGroupWithTables(group, tables.map(mapper).sortedBy(Table::number))
+            }.sortedBy { it.group.name }
+        }
+
+        fun loadFromDb(): List<TableGroupWithTables>? {
             logger.i { "Fetching tables from DB ..." }
             val dbTables = tableDb.getTablesForEvent(eventId)
             logger.d { "Found ${dbTables.count()} tables in DB" }
@@ -41,11 +51,12 @@ internal class TableRepository : AbstractRepository() {
             return if (dbTables.isEmpty() || dbTables.any { it.updated.olderThan(maxAge) }) {
                 null
             } else {
-                dbTables.map { it.toModel() }
+                return dbTables.groupBy { TableGroup(it.groupId!!, it.groupName!!) }
+                    .mapTableGroupWithTables(TableEntry::toModel)
             }
         }
 
-        suspend fun loadFromApiAndStore(): List<Table> {
+        suspend fun loadFromApiAndStore(): List<TableGroupWithTables> {
             logger.i { "Loading Tables from api ..." }
 
             val timestamp = Now()
@@ -58,7 +69,8 @@ internal class TableRepository : AbstractRepository() {
             logger.d { "Saving tables to DB ..." }
             tableDb.putTables(apiTables.map { it.toEntry(timestamp) })
 
-            return apiTables.map(TableResponseDto::toModel)
+            return apiTables.groupBy { TableGroup(it.groupId, it.groupName) }
+                .mapTableGroupWithTables(TableResponseDto::toModel)
         }
 
         return if (forceUpdate) {
@@ -79,13 +91,21 @@ internal class TableRepository : AbstractRepository() {
     }
 }
 
-private fun TableResponseDto.toModel() = Table(id = this.id, number = this.number)
+private fun TableResponseDto.toModel() = Table(
+    id = this.id,
+    number = this.number,
+)
 
-private fun TableEntry.toModel() = Table(id = this.id!!, number = this.number!!)
+private fun TableEntry.toModel() = Table(
+    id = this.id!!,
+    number = this.number!!,
+)
 
 private fun TableResponseDto.toEntry(timestamp: Instant) = TableEntry(
     id = this.id,
     number = this.number,
     eventId = this.eventId,
+    groupId = this.groupId,
+    groupName = this.groupName,
     updatedAt = timestamp
 )
