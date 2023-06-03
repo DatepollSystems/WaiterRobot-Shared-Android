@@ -229,7 +229,6 @@ class CustomGitVersionManager(
         return when (val branch = project.property("GITHUB_BRANCH")) {
             "main" -> baseVersion
             "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
-            "feature/github-packages" -> "$baseVersion-test-pkg-github-${Date().toInstant().epochSecond}" // TODO remove
             else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
         }
     }
