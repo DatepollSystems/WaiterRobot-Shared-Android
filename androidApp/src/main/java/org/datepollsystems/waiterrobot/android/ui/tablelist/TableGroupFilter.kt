@@ -50,6 +50,7 @@ fun TableGroupFilter(
                     Text(group.name)
                 }
             }
+
             items(
                 items = unselectedGroups.toList(),
                 key = TableGroup::id
@@ -62,6 +63,7 @@ fun TableGroupFilter(
                 }
             }
         }
+
         Box {
             IconButton(
                 onClick = clearFilter,
