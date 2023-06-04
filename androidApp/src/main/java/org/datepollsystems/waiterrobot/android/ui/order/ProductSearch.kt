@@ -46,6 +46,7 @@ fun ProductSearch(
             IconButton(onClick = close) {
                 Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
             }
+
             OutlinedTextField(
                 value = text,
                 onValueChange = {
@@ -79,13 +80,13 @@ fun ProductSearch(
             )
         }
 
-        val pagerState = rememberPagerState {
-            productGroups.size + 1 // One all page
-        }
         val coScope = rememberCoroutineScope()
+        val pagerState = rememberPagerState { productGroups.size + 1 } // One additional "all" page
+
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
-            backgroundColor = MaterialTheme.colors.surface
+            backgroundColor = MaterialTheme.colors.surface,
+            divider = {} // Add divider externally as otherwise it does not span the whole width
         ) {
             Tab(
                 selected = pagerState.currentPage == 0,
@@ -100,6 +101,9 @@ fun ProductSearch(
                 )
             }
         }
+
+        TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
+
         HorizontalPager(pagerState) { pageIndex ->
             if (pageIndex == 0) {
                 ProductLazyVerticalGrid {
