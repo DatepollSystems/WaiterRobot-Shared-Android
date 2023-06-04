@@ -62,4 +62,8 @@ internal sealed class ApiException : Exception() {
     @Serializable
     @SerialName("WAITER_CREATE_TOKEN_INCORRECT")
     class WaiterCreateTokenIncorrect : ApiException()
+
+    @Serializable
+    @SerialName("APP_VERSION_TOO_OLD")
+    class AppVersionTooOld : ApiException()
 }
