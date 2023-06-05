@@ -71,12 +71,14 @@ fun TableListScreen(
                     columns = GridCells.Adaptive(80.dp)
                 ) {
                     state.filteredTableGroups.forEach { (group: TableGroup, tables: List<Table>) ->
-                        sectionHeader(key = "group-${group.id}", title = group.name)
-                        items(tables, key = Table::id) { table ->
-                            Table(
-                                table = table,
-                                onClick = { vm.onTableClick(table) }
-                            )
+                        if (tables.isNotEmpty()) {
+                            sectionHeader(key = "group-${group.id}", title = group.name)
+                            items(tables, key = Table::id) { table ->
+                                Table(
+                                    table = table,
+                                    onClick = { vm.onTableClick(table) }
+                                )
+                            }
                         }
                     }
                 }

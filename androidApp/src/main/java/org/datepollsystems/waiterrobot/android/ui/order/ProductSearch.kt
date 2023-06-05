@@ -22,10 +22,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
+import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
@@ -71,8 +73,7 @@ fun ProductSearch(
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search
+                    keyboardType = KeyboardType.Text, imeAction = ImeAction.Search
                 ),
                 modifier = Modifier
                     .padding(start = 10.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
@@ -80,50 +81,46 @@ fun ProductSearch(
             )
         }
 
-        val coScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState { productGroups.size + 1 } // One additional "all" page
+        if (productGroups.isEmpty()) {
+            CenteredText(text = L.productSearch.noProductFound(), scrollAble = false)
+        } else {
+            val coScope = rememberCoroutineScope()
+            val pagerState =
+                rememberPagerState { productGroups.size + 1 } // One additional "all" page
 
-        ScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            backgroundColor = MaterialTheme.colors.surface,
-            divider = {} // Add divider externally as otherwise it does not span the whole width
-        ) {
-            Tab(
-                selected = pagerState.currentPage == 0,
-                onClick = { coScope.launch { pagerState.scrollToPage(0) } },
-                text = { Text("All") }
-            )
-            productGroups.forEachIndexed { index, productGroupWithProducts ->
-                Tab(
-                    selected = pagerState.currentPage == index + 1,
-                    onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
-                    text = { Text(productGroupWithProducts.group.name) }
-                )
+            ScrollableTabRow(selectedTabIndex = pagerState.currentPage,
+                backgroundColor = MaterialTheme.colors.surface,
+                divider = {} // Add divider externally as otherwise it does not span the whole width
+            ) {
+                Tab(selected = pagerState.currentPage == 0,
+                    onClick = { coScope.launch { pagerState.scrollToPage(0) } },
+                    text = { Text("All") })
+                productGroups.forEachIndexed { index, productGroupWithProducts ->
+                    Tab(selected = pagerState.currentPage == index + 1,
+                        onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
+                        text = { Text(productGroupWithProducts.group.name) })
+                }
             }
-        }
 
-        TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
+            TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
 
-        HorizontalPager(pagerState) { pageIndex ->
-            if (pageIndex == 0) {
-                ProductLazyVerticalGrid {
-                    productGroups.forEach { (group: ProductGroup, products: List<Product>) ->
-                        sectionHeader(key = "group-${group.id}", title = group.name)
-                        items(products, key = Product::id) { product ->
-                            Product(
-                                product = product,
-                                onSelect = { onSelect(product) }
-                            )
+            HorizontalPager(pagerState) { pageIndex ->
+                if (pageIndex == 0) {
+                    ProductLazyVerticalGrid {
+                        productGroups.forEach { (group: ProductGroup, products: List<Product>) ->
+                            if (products.isNotEmpty()) {
+                                sectionHeader(key = "group-${group.id}", title = group.name)
+                                items(products, key = Product::id) { product ->
+                                    Product(product = product, onSelect = { onSelect(product) })
+                                }
+                            }
                         }
                     }
-                }
-            } else {
-                ProductLazyVerticalGrid {
-                    items(productGroups[pageIndex - 1].products, key = Product::id) { product ->
-                        Product(
-                            product = product,
-                            onSelect = { onSelect(product) }
-                        )
+                } else {
+                    ProductLazyVerticalGrid {
+                        items(productGroups[pageIndex - 1].products, key = Product::id) { product ->
+                            Product(product = product, onSelect = { onSelect(product) })
+                        }
                     }
                 }
             }
