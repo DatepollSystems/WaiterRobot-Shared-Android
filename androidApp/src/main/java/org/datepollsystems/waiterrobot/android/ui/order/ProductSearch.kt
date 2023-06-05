@@ -27,6 +27,7 @@ import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.allGroups
 import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
@@ -94,7 +95,7 @@ fun ProductSearch(
             ) {
                 Tab(selected = pagerState.currentPage == 0,
                     onClick = { coScope.launch { pagerState.scrollToPage(0) } },
-                    text = { Text("All") })
+                    text = { Text(L.productSearch.allGroups()) })
                 productGroups.forEachIndexed { index, productGroupWithProducts ->
                     Tab(selected = pagerState.currentPage == index + 1,
                         onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },

@@ -163,6 +163,9 @@ productSearch:
   noProductFound:
     en: There are no products for this event.
     de: Für dieses Event sind keine Produkte verfügbar.
+  allGroups:
+    en: All
+    de: Alle
 navigation:
   back:
     en: Back
