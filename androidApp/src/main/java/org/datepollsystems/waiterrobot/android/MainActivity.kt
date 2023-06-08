@@ -14,6 +14,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import co.touchlab.kermit.Logger
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
@@ -31,17 +35,19 @@ import org.orbitmvi.orbit.compose.collectAsState
 class MainActivity : AppCompatActivity() {
 
     private val vm: RootViewModel by viewModel()
+    private val appUpdateManager by lazy { AppUpdateManagerFactory.create(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Switch from SplashScreenTheme to AppTheme
-        setTheme(R.style.Theme_WaiterRobot_Main)
-
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false) // Support ime padding
 
-        setContent {
+        // Switch from SplashScreenTheme to AppTheme
+        setTheme(R.style.Theme_WaiterRobot_Main)
 
+        checkForUpdate()
+
+        setContent {
             val navEngine = rememberNavHostEngine()
             val navController = navEngine.rememberNavController()
             val scaffoldState = rememberScaffoldState()
@@ -90,12 +96,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability()
+                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    // If an in-app update is already running, resume the update.
+                    appUpdateManager.startUpdateFlow(
+                        appUpdateInfo,
+                        this,
+                        AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE),
+                    )
+                }
+            }
+    }
+
     private suspend fun handleSideEffects(
         effect: RootEffect,
         scaffoldState: ScaffoldState
     ) {
         when (effect) {
             is RootEffect.ShowSnackBar -> scaffoldState.snackbarHostState.showSnackbar(effect.message)
+        }
+    }
+
+    private fun checkForUpdate() {
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (
+                appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 3
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                appUpdateManager.startUpdateFlow(
+                    appUpdateInfo,
+                    this,
+                    AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
+                )
+            }
         }
     }
 }

@@ -193,4 +193,8 @@ dependencies {
 
     // QrCode Scanning
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
+    // In-App-Update support
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 }
