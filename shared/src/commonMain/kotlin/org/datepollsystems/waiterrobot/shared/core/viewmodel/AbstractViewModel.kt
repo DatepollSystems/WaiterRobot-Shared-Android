@@ -41,7 +41,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
                         navigator.popUpAndPush(
                             screen = Screen.UpdateApp,
                             popUpTo = Screen.RootScreen,
-                            inclusive = false
+                            inclusive = true
                         )
                     }
 

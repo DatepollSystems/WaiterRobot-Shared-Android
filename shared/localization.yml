@@ -9,6 +9,16 @@ app:
     title:
       en: Error
       de: Fehler
+  forceUpdate:
+    title:
+      en: App Update Required
+      de: App Aktualisierung benötigt
+    message:
+      en: Your installed app version is no longer supported. Please update now.
+      de: Deine installierte App Version wird nicht mehr unterstützt. Bitte installiere das update.
+    openStore:
+      en: Open %1$s
+      de: "%1$s öffnen"
 dialog:
   cancel:
     en: Cancel
