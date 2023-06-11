@@ -44,7 +44,7 @@ internal fun HttpClientConfig<*>.commonConfig(
     defaultRequest {
         header("X-App-Version", CommonApp.appInfo.appVersion)
         header("X-App-Os", CommonApp.appInfo.os.toString())
-        header("X-App-Name", "WR-Mobile")
+        header("X-App-Name", "Mobile")
     }
 
     installApiClientExceptionTransformer(json)
