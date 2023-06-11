@@ -30,6 +30,8 @@ internal val coreModule = module {
     )
     factory { (tag: String?) -> if (tag != null) baseLogger.withTag(tag) else baseLogger }
 
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+
     single { createJson() }
     single {
         createBasicClient(
@@ -49,8 +51,6 @@ internal val coreModule = module {
     }
 
     single { createRealmDB() }
-
-    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }
 
 private fun createJson() = Json { ignoreUnknownKeys = true }

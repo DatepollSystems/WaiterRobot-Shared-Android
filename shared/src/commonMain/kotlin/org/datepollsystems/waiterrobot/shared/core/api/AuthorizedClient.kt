@@ -9,11 +9,11 @@ import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
-import kotlin.jvm.JvmInline
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
-@JvmInline
-value class AuthorizedClient(val delegate: HttpClient)
+// Use a wrapper class to make it typeSafe and not require to rely on named dependencies in koin.
+// This also allows the usage of the nicer koin constructor DSL
+class AuthorizedClient(val delegate: HttpClient)
 
 internal fun createAuthorizedClient(
     json: Json,

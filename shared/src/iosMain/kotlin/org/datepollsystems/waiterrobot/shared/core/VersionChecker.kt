@@ -1,8 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.core
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.takeFrom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -11,26 +12,34 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.until
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.utils.extensions.defaultOnNull
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 
+@Suppress("unused")
 object VersionChecker : KoinComponent {
     var storeUrl: String? = null
 
     fun checkVersion(onNewVersionAvailable: () -> Unit) {
         val client: HttpClient = get()
         val scope: CoroutineScope = get()
+        val logger: Logger = get { parametersOf(this::class.simpleName!!) }
+        val json: Json = get()
 
         scope.launch {
             runCatching {
-                val details = client.get {
+                // API does return text/javascript as content type -> manual deserialization
+                val detailsString = client.get {
                     url {
-                        takeFrom("http://itunes.apple.com/at/lookup")
+                        takeFrom("https://itunes.apple.com/at/lookup")
                         this.parameters.append("bundleId", "org.datepollsystems.waiterrobot")
                     }
-                }.body<AppDetails>()
+                }.bodyAsText()
 
+                val details = json.decodeFromString<AppDetails>(detailsString)
                 val newest = details.results
                     .associateBy { Version.fromString(it.version) }
                     .maxBy { it.key }
@@ -40,14 +49,28 @@ object VersionChecker : KoinComponent {
 
                 storeUrl = newest.value.trackViewUrl
 
-                if (newest.key > installed
-                    && CommonApp.settings.lastUpdateAvailableNote // Show max once a day
-                        .defaultOnNull(Instant.DISTANT_PAST)
-                        .until(Clock.System.now(), DateTimeUnit.HOUR) > 24
-                ) {
-                    onNewVersionAvailable()
-                    CommonApp.settings.lastUpdateAvailableNote = Clock.System.now()
+                logger.d("Newest available version: ${newest.key}, Installed version: $installed")
+
+                if (newest.key > installed) {
+                    val hoursSinceLastUpdateAvailableNote =
+                        CommonApp.settings.lastUpdateAvailableNote
+                            .defaultOnNull(Instant.DISTANT_PAST)
+                            .until(Clock.System.now(), DateTimeUnit.HOUR)
+                    logger.i(
+                        "New app version is available, hoursSinceLastUpdateAvailableNote: " +
+                            hoursSinceLastUpdateAvailableNote
+                    )
+
+                    // Show max once a day
+                    if (hoursSinceLastUpdateAvailableNote > 24) {
+                        onNewVersionAvailable()
+                        CommonApp.settings.lastUpdateAvailableNote = Clock.System.now()
+                    }
+                } else {
+                    logger.i("No new app version available")
                 }
+            }.onFailure {
+                logger.w("checkVersion for iOS failed", it)
             }
         }
     }
