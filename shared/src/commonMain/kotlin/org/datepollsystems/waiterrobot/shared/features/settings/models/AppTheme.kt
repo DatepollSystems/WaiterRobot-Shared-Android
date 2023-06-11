@@ -1,10 +1,12 @@
 package org.datepollsystems.waiterrobot.shared.features.settings.models
 
+import kotlinx.serialization.Serializable
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.off
 import org.datepollsystems.waiterrobot.shared.generated.localization.on
 import org.datepollsystems.waiterrobot.shared.generated.localization.useSystem
 
+@Serializable
 enum class AppTheme {
     SYSTEM,
     LIGHT,
@@ -17,9 +19,6 @@ enum class AppTheme {
     }
 
     companion object {
-        fun fromSettings(name: String?) =
-            name?.runCatching { valueOf(name) }?.getOrNull() ?: SYSTEM
-
         @Suppress("unused") // Only iOS
         fun valueList() = values().toList()
     }

@@ -18,13 +18,17 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class RootViewModel internal constructor(
-    private val authRepo: AuthRepository
+    private val authRepo: AuthRepository,
+    private val rootApi: RootApi
 ) : AbstractViewModel<RootState, RootEffect>(RootState()) {
 
     override fun onCreate(state: RootState) {
         watchLoginState()
         watchSelectedEventState()
         watchAppTheme()
+
+        // Check the app version at each startup
+        checkAppVersion()
     }
 
     fun onDeepLink(url: String) = intent {
@@ -85,5 +89,10 @@ class RootViewModel internal constructor(
         CommonApp.appTheme.collect {
             reduce { state.copy(selectedTheme = it) }
         }
+    }
+
+    private fun checkAppVersion() = intent {
+        // Just call the index route to verify that the current app version is still supported
+        rootApi.ping()
     }
 }

@@ -4,6 +4,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.shared.core.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
@@ -35,9 +36,22 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
         onCreate = ::onCreate,
         buildSettings = {
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
-                logger.w(exception) { "Unhandled exception in intent. Exceptions should be handled directly in the intent!" }
+                when (exception) {
+                    is ApiException.AppVersionTooOld -> intent {
+                        navigator.popUpAndPush(
+                            screen = Screen.UpdateApp,
+                            popUpTo = Screen.RootScreen,
+                            inclusive = true
+                        )
+                    }
 
-                intent { reduceError(L.app.genericError.title(), L.app.genericError.message()) }
+                    else -> {
+                        logger.w(exception) { "Unhandled exception in intent. Exceptions should be handled directly in the intent!" }
+                        intent {
+                            reduceError(L.app.genericError.title(), L.app.genericError.message())
+                        }
+                    }
+                }
             }
         }
     )
@@ -108,8 +122,10 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
     inner class Navigator(private val simpleSyntax: SimpleSyntax<S, NavOrViewModelEffect<E>>) {
         @OrbitDsl
         suspend fun pop() = navigate(NavAction.Pop)
+
         @OrbitDsl
         suspend fun push(screen: Screen) = navigate(NavAction.Push(screen))
+
         @OrbitDsl
         suspend fun popUpTo(screen: Screen, inclusive: Boolean) =
             navigate(NavAction.PopUpTo(screen, inclusive))

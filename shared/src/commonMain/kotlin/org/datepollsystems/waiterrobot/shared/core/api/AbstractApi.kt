@@ -1,10 +1,14 @@
 package org.datepollsystems.waiterrobot.shared.core.api
 
 import co.touchlab.kermit.Logger
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
@@ -21,7 +25,7 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
      * Prepend string (endpoint) with base and make sure that endpoint does not start with "/".
      * Also remove the trailing "/" because ".../endpoint" and ".../endpoint/" may be treated as different routes.
      */
-    private fun String.toFullUrl() = (baseUrl + this.removePrefix("/")).removeSuffix("/")
+    private fun String.toFullUrl() = (baseUrl + this.removePrefix("/")).dropLastWhile { it == '/' }
 
     protected suspend fun get(
         endpoint: String = "",
@@ -48,6 +52,9 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
         block?.invoke(this)
     }
 }
+
+internal abstract class AuthorizedApi(basePath: String, client: AuthorizedClient) :
+    AbstractApi(basePath, client.delegate)
 
 // Marker interface
 internal interface RequestBodyDto

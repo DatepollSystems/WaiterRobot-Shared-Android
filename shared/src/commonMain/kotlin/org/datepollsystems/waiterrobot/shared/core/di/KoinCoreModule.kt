@@ -4,12 +4,13 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
-import org.datepollsystems.waiterrobot.shared.core.api.createApiClient
+import org.datepollsystems.waiterrobot.shared.core.api.createAuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.api.createBasicClient
 import org.datepollsystems.waiterrobot.shared.core.db.createRealmDB
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
@@ -29,11 +30,20 @@ internal val coreModule = module {
     )
     factory { (tag: String?) -> if (tag != null) baseLogger.withTag(tag) else baseLogger }
 
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+
     single { createJson() }
-    single(apiClientQualifier) {
-        createApiClient(
+    single {
+        createBasicClient(
             json = get(),
-            ktorLogger = CustomKtorLogger("api"),
+            logger = CustomKtorLogger("basic"),
+            enableNetworkLogs = true
+        )
+    }
+    single {
+        createAuthorizedClient(
+            json = get(),
+            ktorLogger = CustomKtorLogger("authorized"),
             authRepository = get(),
             enableNetworkLogs = true,
             scope = get()
@@ -41,8 +51,6 @@ internal val coreModule = module {
     }
 
     single { createRealmDB() }
-
-    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 }
 
 private fun createJson() = Json { ignoreUnknownKeys = true }
