@@ -53,5 +53,8 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
     }
 }
 
+internal abstract class AuthorizedApi(basePath: String, client: AuthorizedClient) :
+    AbstractApi(basePath, client.delegate)
+
 // Marker interface
 internal interface RequestBodyDto

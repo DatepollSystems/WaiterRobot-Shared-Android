@@ -17,9 +17,6 @@ enum class AppTheme {
     }
 
     companion object {
-        fun fromSettings(name: String?) =
-            name?.runCatching { valueOf(name) }?.getOrNull() ?: SYSTEM
-
         @Suppress("unused") // Only iOS
         fun valueList() = values().toList()
     }

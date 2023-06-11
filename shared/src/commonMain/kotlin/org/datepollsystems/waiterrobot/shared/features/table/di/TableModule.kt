@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.table.di
 
-import org.datepollsystems.waiterrobot.shared.core.di.getApiClient
-import org.datepollsystems.waiterrobot.shared.core.di.sharedViewModel
+import org.datepollsystems.waiterrobot.shared.core.di.sharedViewModelOf
 import org.datepollsystems.waiterrobot.shared.features.billing.di.billingModule
 import org.datepollsystems.waiterrobot.shared.features.table.api.TableApi
 import org.datepollsystems.waiterrobot.shared.features.table.db.TableDatabase
@@ -9,14 +8,15 @@ import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRep
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 internal val tableModule: Module = module {
     includes(billingModule)
 
-    single { TableRepository() }
-    single { TableDatabase() }
-    single { TableApi(getApiClient()) }
-    sharedViewModel { TableListViewModel(get()) }
-    sharedViewModel { params -> TableDetailViewModel(get(), params.get()) }
+    singleOf(::TableRepository)
+    singleOf(::TableDatabase)
+    singleOf(::TableApi)
+    sharedViewModelOf(::TableListViewModel)
+    sharedViewModelOf(::TableDetailViewModel)
 }
