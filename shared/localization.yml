@@ -207,6 +207,9 @@ billing:
   pay:
     en: Pay
     de: Bezahlen
+  given:
+    en: Given
+    de: Gegeben
   title:
     en: Bill for table %1$s (%2$s)
     de: Rechnung für Tisch %1$s (%2$s)
