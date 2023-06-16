@@ -46,7 +46,7 @@ fun TableDetailScreen(
 
     ScaffoldView(
         state = state,
-        title = L.tableDetail.title(table.number.toString()),
+        title = L.tableDetail.title(table.number.toString(), table.groupName),
         navigationIcon = {
             IconButton(onClick = { navigator.popBackStack() }) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -72,7 +72,7 @@ fun TableDetailScreen(
     ) {
         if (state.orderedItems.isEmpty()) {
             CenteredText(
-                text = L.tableDetail.noOrder(table.number.toString()),
+                text = L.tableDetail.noOrder(table.number.toString(), table.groupName),
                 scrollAble = true
             )
         } else {

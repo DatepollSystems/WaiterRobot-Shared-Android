@@ -40,7 +40,7 @@ internal class TableRepository : AbstractRepository() {
         ): List<TableGroupWithTables> {
             return this.map { (group, tables) ->
                 TableGroupWithTables(group, tables.map(mapper).sortedBy(Table::number))
-            }.sortedBy { it.group.name }
+            }.sortedBy { it.group.name.lowercase() }
         }
 
         fun loadFromDb(): List<TableGroupWithTables>? {
@@ -94,11 +94,13 @@ internal class TableRepository : AbstractRepository() {
 private fun TableResponseDto.toModel() = Table(
     id = this.id,
     number = this.number,
+    groupName = this.groupName
 )
 
 private fun TableEntry.toModel() = Table(
     id = this.id!!,
     number = this.number!!,
+    groupName = this.groupName!!
 )
 
 private fun TableResponseDto.toEntry(timestamp: Instant) = TableEntry(

@@ -96,7 +96,7 @@ fun BillingScreen(
 
     ScaffoldView(
         state = state,
-        title = L.billing.title(table.number.toString()),
+        title = L.billing.title(table.number.toString(), table.groupName),
         topBarActions = {
             IconButton(onClick = vm::selectAll) {
                 Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
@@ -142,7 +142,7 @@ fun BillingScreen(
         Column {
             if (state.billItems.isEmpty()) {
                 CenteredText(
-                    text = L.billing.noOpenBill(table.number.toString()),
+                    text = L.billing.noOpenBill(table.number.toString(), table.groupName),
                     scrollAble = true
                 )
             } else {

@@ -47,10 +47,10 @@ fun TableListScreen(
         onRefresh = { vm.loadTables(forceUpdate = true) }
     ) {
         Column {
-            if (state.selectedTableGroups.size + state.unselectedTableGroups.size > 1) {
+            if (state.selectedTableGroupList.size + state.unselectedTableGroupList.size > 1) {
                 TableGroupFilter(
-                    selectedGroups = state.selectedTableGroups,
-                    unselectedGroups = state.unselectedTableGroups,
+                    selectedGroups = state.selectedTableGroupList,
+                    unselectedGroups = state.unselectedTableGroupList,
                     onToggle = vm::toggleFilter,
                     clearFilter = vm::clearFilter
                 )

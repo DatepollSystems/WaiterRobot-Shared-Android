@@ -44,6 +44,6 @@ fun Table(table: Table, onClick: (Table) -> Unit) {
 @Composable
 private fun TablePreview() {
     WaiterRobotTheme {
-        Table(table = Table(0, 1), onClick = {})
+        Table(table = Table(0, 1, "Group 1"), onClick = {})
     }
 }

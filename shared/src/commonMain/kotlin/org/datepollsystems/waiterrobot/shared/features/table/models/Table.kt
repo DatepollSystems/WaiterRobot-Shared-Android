@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class Table(
     val id: Long,
     val number: Long,
+    val groupName: String
 )

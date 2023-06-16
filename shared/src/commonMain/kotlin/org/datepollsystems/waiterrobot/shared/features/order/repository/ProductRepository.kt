@@ -53,7 +53,7 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
                         .sortedBy { it.name.lowercase() }
                         .sortedBy(Product::soldOut)
                 )
-            }.sortedBy { it.group.name }
+            }.sortedBy { it.group.name.lowercase() }
         }
 
         fun loadFromDb(): List<ProductGroupWithProducts>? {

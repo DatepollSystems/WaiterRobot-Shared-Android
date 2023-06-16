@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -25,8 +25,8 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TableGroupFilter(
-    selectedGroups: Set<TableGroup>,
-    unselectedGroups: Set<TableGroup>,
+    selectedGroups: List<TableGroup>,
+    unselectedGroups: List<TableGroup>,
     onToggle: (TableGroup) -> Unit,
     clearFilter: () -> Unit,
 ) {
@@ -36,13 +36,14 @@ fun TableGroupFilter(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         LazyRow(
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(vertical = 10.dp, horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(
-                items = selectedGroups.toList(),
-                key = TableGroup::id
-            ) { group ->
+            itemsIndexed(
+                items = selectedGroups,
+                key = { i, group -> "$i-${group.id}-selected" }
+            ) { _, group ->
                 Button(
                     modifier = Modifier.animateItemPlacement(),
                     onClick = { onToggle(group) },
@@ -51,10 +52,10 @@ fun TableGroupFilter(
                 }
             }
 
-            items(
-                items = unselectedGroups.toList(),
-                key = TableGroup::id
-            ) { group ->
+            itemsIndexed(
+                items = unselectedGroups,
+                key = { i, group -> "$i-${group.id}-unselected" }
+            ) { _, group ->
                 OutlinedButton(
                     modifier = Modifier.animateItemPlacement(),
                     onClick = { onToggle(group) },
@@ -79,8 +80,16 @@ fun TableGroupFilter(
 @Preview
 private fun TableGroupFilterPreview() {
     TableGroupFilter(
-        selectedGroups = setOf(TableGroup(1, "Group 1")),
-        unselectedGroups = setOf(TableGroup(2, "Group 2")),
+        selectedGroups = listOf(
+            TableGroup(1, "Group 1"),
+            TableGroup(3, "Group 3")
+        ),
+        unselectedGroups = listOf(
+            TableGroup(2, "Group 2"),
+            TableGroup(4, "Group 4"),
+            TableGroup(5, "Group 5"),
+            TableGroup(6, "Group 6")
+        ),
         onToggle = {},
         clearFilter = {}
     )
