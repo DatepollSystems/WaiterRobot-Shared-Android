@@ -38,7 +38,7 @@ class SettingsViewModel internal constructor(
     }
 
     fun switchTheme(theme: AppTheme) {
-        CommonApp.settings.appTheme = theme
+        CommonApp.settings.theme = theme
     }
 
     fun logout() = intent {

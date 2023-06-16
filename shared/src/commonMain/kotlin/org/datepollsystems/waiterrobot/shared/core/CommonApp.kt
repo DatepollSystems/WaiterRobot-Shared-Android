@@ -48,8 +48,8 @@ object CommonApp : KoinComponent {
     }
 
     internal val appTheme: StateFlow<AppTheme> by lazy {
-        settings.appThemeFlow
-            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.appTheme)
+        settings.themeFlow
+            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.theme)
     }
 
     internal fun logout() {

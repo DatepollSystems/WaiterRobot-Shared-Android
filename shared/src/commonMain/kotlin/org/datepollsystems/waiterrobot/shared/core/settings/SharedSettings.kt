@@ -31,9 +31,9 @@ class SharedSettings : KoinComponent {
     internal val selectedEventIdFlow: Flow<Long> =
         settings.getLongFlow(key = "selectedEventId", defaultValue = -1)
 
-    internal var appTheme: AppTheme by settings.jsonSerialized(defaultValue = AppTheme.SYSTEM)
-    internal val appThemeFlow: Flow<AppTheme> =
-        settings.jsonSerializedFlow(SharedSettings::appTheme.name, AppTheme.SYSTEM)
+    internal var theme: AppTheme by settings.jsonSerialized(defaultValue = AppTheme.SYSTEM)
+    internal val themeFlow: Flow<AppTheme> =
+        settings.jsonSerializedFlow(SharedSettings::theme.name, AppTheme.SYSTEM)
 }
 
 @Serializable
