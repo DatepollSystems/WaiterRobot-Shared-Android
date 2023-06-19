@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register
 
 import org.datepollsystems.waiterrobot.shared.core.api.ApiException
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
@@ -9,7 +8,6 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class RegisterViewModel internal constructor(
@@ -21,7 +19,7 @@ class RegisterViewModel internal constructor(
         try {
             // TODO check name
             authRepository.createWithToken(createToken, name)
-            postSideEffect(RegisterEffect.Navigate(NavAction.popUpToRoot))
+            navigator.popUpToRoot()
             reduce { state.withViewState(ViewState.Idle) }
         } catch (e: ApiException.CredentialsIncorrect) {
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())
@@ -30,6 +28,6 @@ class RegisterViewModel internal constructor(
 
     fun cancel() = intent {
         // TODO confirm?
-        postSideEffect(RegisterEffect.Navigate(NavAction.popUpToRoot))
+        navigator.popUpToRoot()
     }
 }

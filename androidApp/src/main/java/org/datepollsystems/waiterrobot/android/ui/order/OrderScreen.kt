@@ -20,18 +20,16 @@ import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
-import org.datepollsystems.waiterrobot.android.ui.core.view.View
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderEffect
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -43,7 +41,7 @@ fun OrderScreen(
     vm: OrderViewModel = getViewModel(parameters = { parametersOf(table, initialItemId) })
 ) {
     val state = vm.collectAsState().value
-    vm.collectSideEffect { handleSideEffects(it, navigator) }
+    vm.handleSideEffects(navigator)
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -54,7 +52,7 @@ fun OrderScreen(
         // When opening the order screen waiter most likely wants to add a new product -> show the product list immediately
         // But don't show it when the screen was opened with an initial item, this feels not nice
         initialValue = if (initialItemId == null) ModalBottomSheetValue.Expanded else ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded } // Not allowed here (TODO Maybe allow but immediately close completely?)
+        skipHalfExpanded = true
     )
 
     LaunchedEffect(bottomSheetState.targetValue) {
@@ -110,27 +108,25 @@ fun OrderScreen(
         sheetShape = RoundedCornerShape(topStartPercent = 5, topEndPercent = 5),
         sheetContent = {
             ProductSearch(
-                products = state.products,
+                productGroups = state.productGroups,
                 onSelect = {
                     vm.addItem(it, 1)
                     coroutineScope.launch {
                         bottomSheetState.hide()
                     }
                 },
-                onFilter = { vm.filterProducts(it) }
+                onFilter = { vm.filterProducts(it) },
+                close = { coroutineScope.launch { bottomSheetState.hide() } }
             )
         }
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = L.order.title(table.number.toString())) },
-                    navigationIcon = {
-                        IconButton(onClick = vm::goBack) {
-                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
+        ScaffoldView(
+            state = state,
+            title = L.order.title(table.number.toString(), table.groupName),
+            navigationIcon = {
+                IconButton(onClick = vm::goBack) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                }
             },
             floatingActionButton = {
                 Column {
@@ -146,49 +142,31 @@ fun OrderScreen(
                         Spacer(modifier = Modifier.height(5.dp))
                     }
                     FloatingActionButton(
-                        onClick = {
-                            if (!bottomSheetState.isAnimationRunning && !bottomSheetState.isVisible) {
-                                coroutineScope.launch {
-                                    // Do not use state.show() here as we want to expand to full size
-                                    bottomSheetState.animateTo(ModalBottomSheetValue.Expanded)
-                                }
-                            }
-                        }
+                        onClick = { coroutineScope.launch { bottomSheetState.show() } }
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Product")
                     }
                 }
             }
-        ) { contentPadding ->
-            View(
-                modifier = Modifier.padding(contentPadding),
-                state = state
-            ) {
-                if (state.currentOrder.isEmpty()) {
-                    CenteredText(text = L.order.addProduct(), scrollAble = false)
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(state.currentOrder, key = { it.product.id }) { orderItem ->
-                            OrderListItem(
-                                id = orderItem.product.id,
-                                name = orderItem.product.name,
-                                amount = orderItem.amount,
-                                note = orderItem.note,
-                                addAction = vm::addItem,
-                                onLongClick = { noteDialogItem = orderItem }
-                            )
-                        }
+        ) {
+            if (state.currentOrder.isEmpty()) {
+                CenteredText(text = L.order.addProduct(), scrollAble = false)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.currentOrder, key = { it.product.id }) { orderItem ->
+                        OrderListItem(
+                            id = orderItem.product.id,
+                            name = orderItem.product.name,
+                            amount = orderItem.amount,
+                            note = orderItem.note,
+                            addAction = vm::addItem,
+                            onLongClick = { noteDialogItem = orderItem }
+                        )
                     }
                 }
             }
         }
-    }
-}
-
-private fun handleSideEffects(effect: OrderEffect, navigator: NavController) {
-    when (effect) {
-        is OrderEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }

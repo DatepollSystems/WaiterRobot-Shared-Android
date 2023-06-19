@@ -1,4 +1,10 @@
-# WaiterRobot Android & shared
+<p align="center">
+    <img src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/>
+</p>
+<h1 align="center">WaiterRobot</h1>
+<p align="center">Lightning fast and simple gastronomy</p>
+
+# Android & shared
 
 This repository includes the Android App ([androidApp](./androidApp)) and the shared KMM
 module ([shared](./shared)) for the WaiterRobot App. The iOS App can be
@@ -9,15 +15,6 @@ The Android App depends on the shared module directly through a gradle project d
 The shared module is also published as an SPM Package directly in this repo with a Package.swift in
 the repo root. Therefore [KMMBridge](https://github.com/touchlab/KMMBridge) is used. The SPM Package
 can be published by running the `KMM Bridge Publish Release` GitHub-Action.
-
-If you want to build and publish the SPM locally you can do so with the
-command `./gradlew kmmBridgePublish -PGITHUB_PUBLISH_TOKEN=xxx` (personal github token is needed and
-only possible on OSX). Before running create a new branch from the remote main branch (make sure to
-commit or stash all local changes before) and push the new branch to remote. After that run the
-command. When finished you delete the temporary created branch. This is done because while
-publishing the Package.swift file is newly generated and committed to the repository. This can lead
-to conflicts and is constantly changing the `Package.swift` file for local dev and releasing.
-(see [here](https://touchlab.github.io/KMMBridge/ciconfig/GITHUB_ACTIONS#workflow-options))
 
 ## iOS dev with local KMM module version
 
@@ -43,6 +40,9 @@ the `internal` Track on Google Play. After testing the app then must be promoted
 manually from there. A tag in the form of `android-major.minor.patch` (e.g. android-1.0.0) is
 created. (see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
 
+> Do not forget to bump the android version ([version.properties](androidApp/version.properties)) on
+> the dev branch after a production release was made.
+
 On each push to develop also a lava (dev) build is triggered and published to `internal` track of
 the WaiterRobot Lava app on Google Play. A tag in the form
 of `android-major.minor.patch-lava-epochMinutes` is created (e.g. android-1.0.1-lava-27935730). (
@@ -52,12 +52,12 @@ see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
 
 Production release is triggered on push to main (only when shared module changed). The CI then
 builds the Swift Package and releases to GitHub releases. A tag in the form of `major.minor.patch` (
-e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publishAndroid.yml)
+e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publishShared.yml)
 and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
-On each push to develop also a dev build is triggered and published to GitHub releases. A tag in the
-form of `major.minor.patch-dev-epochSeconds` (e.g. 1.0.1-dev-1676143102) is created. (
-see [publishShared.yml](.github/workflows/publishAndroid.yml)
+On each push to develop also a dev build is triggered and published to GitHub Packages. A tag in the
+form of `major.minor.patch-lava-epochSeconds` (e.g. 1.0.1-dev-1676143102) and a corresponding GitHub
+Release is created. (see [publishShared.yml](.github/workflows/publishAndroid.yml)
 and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
 # Language, libraries and tools

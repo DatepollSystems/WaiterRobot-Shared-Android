@@ -8,7 +8,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 
 data class SettingsState(
-    val currentAppTheme: AppTheme = CommonApp.settings.appTheme,
+    val currentAppTheme: AppTheme = CommonApp.settings.theme,
     override val viewState: ViewState = ViewState.Idle
 ) : ViewModelState() {
     val versionString

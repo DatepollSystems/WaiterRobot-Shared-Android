@@ -1,13 +1,11 @@
 package org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel
 
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.features.switchevent.repository.SwitchEventRepository
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class SwitchEventViewModel internal constructor(
@@ -31,8 +29,6 @@ class SwitchEventViewModel internal constructor(
 
         updateParent<TableListViewModel>()
 
-        postSideEffect(
-            SwitchEventEffect.Navigation(NavAction.popUpToRoot)
-        )
+        navigator.popUpToRoot()
     }
 }

@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -22,7 +22,7 @@ fun Table(table: Table, onClick: (Table) -> Unit) {
     val cardShape = RoundedCornerShape(10)
     Card(
         shape = cardShape,
-        backgroundColor = Color.Blue,
+        backgroundColor = MaterialTheme.colors.primary,
         modifier = Modifier
             .aspectRatio(1f)
             .clip(cardShape)
@@ -44,6 +44,6 @@ fun Table(table: Table, onClick: (Table) -> Unit) {
 @Composable
 private fun TablePreview() {
     WaiterRobotTheme {
-        Table(table = Table(0, 1), onClick = {})
+        Table(table = Table(0, 1, "Group 1"), onClick = {})
     }
 }

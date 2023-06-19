@@ -1,12 +1,13 @@
 package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
 import org.datepollsystems.waiterrobot.shared.core.api.ApiException
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRepository
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
@@ -14,7 +15,6 @@ import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.Ta
 import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 class OrderViewModel internal constructor(
@@ -28,8 +28,8 @@ class OrderViewModel internal constructor(
         if (initialItemId == null) {
             intent {
                 reduce { state.withViewState(ViewState.Loading) }
-                val allProducts = productRepository.getProducts()
-                reduce { state.copy(_products = allProducts, viewState = ViewState.Idle) }
+                val allProducts = productRepository.getProductGroups()
+                reduce { state.copy(productGroups = allProducts, viewState = ViewState.Idle) }
             }
         } else {
             addItem(initialItemId, 1)
@@ -63,11 +63,7 @@ class OrderViewModel internal constructor(
             updateParent<TableDetailViewModel>()
 
             reduce { state.copy(viewState = ViewState.Idle, _currentOrder = emptyMap()) }
-            postSideEffect(
-                OrderEffect.Navigate(
-                    NavAction.PopUpTo(Screen.TableDetailScreen(table), inclusive = false)
-                )
-            )
+            navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
         } catch (e: ApiException.ProductSoldOut) {
             val soldOutProduct = order.first { it.product.id == e.productId }.product
             reduceError(
@@ -86,7 +82,7 @@ class OrderViewModel internal constructor(
 
     fun goBack() = intent {
         if (state._currentOrder.isEmpty()) {
-            postSideEffect(OrderEffect.Navigate(NavAction.Pop))
+            navigator.pop()
         } else {
             reduce { state.copy(showConfirmationDialog = true) }
         }
@@ -95,7 +91,7 @@ class OrderViewModel internal constructor(
     fun abortOrder() = intent {
         // Hide the confirmation dialog before navigation away, as otherwise on iOS it would be still shown on the new screen
         reduce { state.copy(showConfirmationDialog = false) }
-        postSideEffect(OrderEffect.Navigate(NavAction.Pop))
+        navigator.pop()
     }
 
     fun keepOrder() = intent {
@@ -132,21 +128,26 @@ class OrderViewModel internal constructor(
         }
 
         // Reset products to clear filter
-        val allProducts = productRepository.getProducts()
-        reduce { state.copy(_currentOrder = newOrder, _products = allProducts) }
+        val allProducts = productRepository.getProductGroups()
+        reduce { state.copy(_currentOrder = newOrder, productGroups = allProducts) }
     }
 
     fun filterProducts(filter: String) = intent {
         // TODO do filter on db/repository layer?
-        val allProducts = productRepository.getProducts()
+        val allProducts = productRepository.getProductGroups()
         if (filter.isEmpty()) {
-            reduce { state.copy(_products = allProducts) }
+            reduce { state.copy(productGroups = allProducts) }
         } else {
             reduce {
                 state.copy(
-                    _products = allProducts.filter {
-                        it.name.contains(filter, ignoreCase = true)
-                    }
+                    productGroups = allProducts.map { (group: ProductGroup, products: List<Product>) ->
+                        ProductGroupWithProducts(
+                            group = group,
+                            products = products.filter {
+                                it.name.contains(filter, ignoreCase = true)
+                            }
+                        )
+                    },
                 )
             }
         }

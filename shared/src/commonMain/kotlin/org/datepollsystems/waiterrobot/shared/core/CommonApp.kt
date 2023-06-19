@@ -1,15 +1,15 @@
 package org.datepollsystems.waiterrobot.shared.core
 
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.pluginOrNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.shared.core.api.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
@@ -48,8 +48,8 @@ object CommonApp : KoinComponent {
     }
 
     internal val appTheme: StateFlow<AppTheme> by lazy {
-        settings.appThemeFlow
-            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.appTheme)
+        settings.themeFlow
+            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.theme)
     }
 
     internal fun logout() {
@@ -69,9 +69,9 @@ object CommonApp : KoinComponent {
         settings.waiterName = ""
 
         // Clear the tokens from the client, so that they get reloaded.
-        val apiClients = getKoin().getAll<HttpClient>()
+        val apiClients = getKoin().getAll<AuthorizedClient>()
         apiClients.forEach {
-            it.pluginOrNull(Auth)
+            it.delegate.pluginOrNull(Auth)
                 ?.providers
                 ?.filterIsInstance<BearerAuthProvider>()
                 ?.forEach(BearerAuthProvider::clearToken)

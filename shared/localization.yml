@@ -9,6 +9,23 @@ app:
     title:
       en: Error
       de: Fehler
+  forceUpdate:
+    title:
+      en: App Update Required
+      de: App Aktualisierung benötigt
+    message:
+      en: Your installed app version is no longer supported. Please update now.
+      de: Deine installierte App Version wird nicht mehr unterstützt. Bitte installiere das update.
+    openStore:
+      en: Open %1$s
+      de: "%1$s öffnen"
+  updateAvailable:
+    title:
+      en: Update available
+      de: Neue Version verfügbar
+    message:
+      en: A new version is available. Update now to get the new features and improvements.
+      de: Eine neue Version ist verfügbar. Aktualisiere jetzt, um die neuen Funktionen und Verbesserungen zu erhalten.
 dialog:
   cancel:
     en: Cancel
@@ -38,14 +55,14 @@ deepLink:
 tableList:
   noTableFound:
     en: There are no tables for this event.
-    de: Für dieses Event sind keinen Tische verfügbar.
+    de: Für dieses Event sind keine Tische verfügbar.
 tableDetail:
   title:
-    en: Table %1$s
-    de: Tisch %1$s
+    en: Table %1$s (%2$s)
+    de: Tisch %1$s (%2$s)
   noOrder:
-    en: There is currently no open order for table %1$s
-    de: Für den Tisch %1$s gibt es zurzeit keine offene Bestellung
+    en: There is currently no unpaid order for table %1$s (%2$s).
+    de: Für den Tisch %1$s (%2$s) gibt es zurzeit keine unbezahlte Bestellungen.
 login:
   title:
     en: Waiter login
@@ -121,8 +138,8 @@ order:
       en: You have selected items but not sent the order. Do you really want to go back?
       de: Du hast Artikel ausgewählt aber die Bestellung nicht gesendet. Willst du wirklich zurückgehen?
   title:
-    en: Order for table %1$s
-    de: Bestellung für Tisch %1$s
+    en: Order for table %1$s (%2$s)
+    de: Bestellung für Tisch %1$s (%2$s)
   addProduct:
     en: Add a product to the order
     de: Füge ein Produkt zur Bestellung hinzu
@@ -160,6 +177,12 @@ productSearch:
   placeholder:
     en: Search for a product
     de: Suche nach einem Produkt
+  noProductFound:
+    en: There are no products for this event.
+    de: Für dieses Event sind keine Produkte verfügbar.
+  allGroups:
+    en: All
+    de: Alle
 navigation:
   back:
     en: Back
@@ -184,12 +207,15 @@ billing:
   pay:
     en: Pay
     de: Bezahlen
+  given:
+    en: Given
+    de: Gegeben
   title:
-    en: Bill for table %1$s
-    de: Rechnung für Tisch %1$s
+    en: Bill for table %1$s (%2$s)
+    de: Rechnung für Tisch %1$s (%2$s)
   noOpenBill:
-    en: There is currently no open bill for table %1$s
-    de: Es gibt derzeit keine offene Rechnung für den Tisch %1$s
+    en: There is currently no open bill for table %1$s (%2$s)
+    de: Es gibt derzeit keine offene Rechnung für den Tisch %1$s (%2$s)
 settings:
   logout:
     action:

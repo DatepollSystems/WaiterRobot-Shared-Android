@@ -1,7 +1,8 @@
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import java.util.*
+import java.util.Date
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -129,7 +130,7 @@ android {
         // Write built version to file after creating a bundle (needed for ci, to create the version tag)
         if (this.name.endsWith("Release")) {
             tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
-                File(project.buildDir, "${this@variant.name}.version")
+                File(project.buildDir, "version.tag")
                     .writeText(this@variant.versionName)
             }
         }
@@ -192,4 +193,8 @@ dependencies {
 
     // QrCode Scanning
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
+    // In-App-Update support
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 }

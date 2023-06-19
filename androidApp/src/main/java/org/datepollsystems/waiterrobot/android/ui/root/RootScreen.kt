@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.android.ui.root
 
-import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
@@ -15,17 +14,14 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 @Destination
 @RootNavGraph(start = true)
-fun RootScreen(vm: RootViewModel, scaffoldState: ScaffoldState, navigator: NavController) {
+fun RootScreen(vm: RootViewModel, navigator: NavController) {
     val state = vm.collectAsState().value
 
     View(state = state) {
         when {
-            !state.isLoggedIn -> LoginScreen(scaffoldState = scaffoldState, navigator = navigator)
-            !state.hasEventSelected -> SwitchEventScreen(
-                navigator = navigator,
-                scaffoldState = scaffoldState
-            )
-            else -> TableListScreen(scaffoldState = scaffoldState, navigator = navigator)
+            !state.isLoggedIn -> LoginScreen(navigator = navigator)
+            !state.hasEventSelected -> SwitchEventScreen(navigator = navigator)
+            else -> TableListScreen(navigator = navigator)
         }
     }
 }

@@ -1,8 +1,16 @@
 package org.datepollsystems.waiterrobot.android.ui.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,27 +19,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.datepollsystems.waiterrobot.android.R
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
-import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginEffect
+import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.generated.localization.withQrCode
 import org.koin.androidx.compose.getViewModel
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun LoginScreen(
     vm: LoginViewModel = getViewModel(),
-    scaffoldState: ScaffoldState,
     navigator: NavController
 ) {
     // val state = vm.collectAsState().value
 
-    vm.collectSideEffect { handleSideEffect(it, navigator) }
+    vm.handleSideEffects(navigator)
 
-    Scaffold(scaffoldState = scaffoldState) {
+    Scaffold(scaffoldState = LocalScaffoldState.current) {
         Column(
             modifier = Modifier
                 .padding(it)
@@ -57,11 +63,5 @@ fun LoginScreen(
                 Text(text = L.login.withQrCode())
             }
         }
-    }
-}
-
-private fun handleSideEffect(effect: LoginEffect, navigator: NavController) {
-    when (effect) {
-        is LoginEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }

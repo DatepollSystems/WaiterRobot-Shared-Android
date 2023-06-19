@@ -1,14 +1,22 @@
 package org.datepollsystems.waiterrobot.android.ui.login
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -17,14 +25,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.core.handleNavAction
+import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
-import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterEffect
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.*
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyRegisteredInfo
+import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.login
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 @Destination
@@ -34,7 +45,7 @@ fun RegisterScreen(
     createToken: String
 ) {
     val state = vm.collectAsState().value
-    vm.collectSideEffect { handleSideEffect(it, navigator) }
+    vm.handleSideEffects(navigator)
 
     val focusManager = LocalFocusManager.current
     var name by remember { mutableStateOf("") }
@@ -90,11 +101,5 @@ fun RegisterScreen(
                 )
             }
         }
-    }
-}
-
-private fun handleSideEffect(effect: RegisterEffect, navigator: NavController) {
-    when (effect) {
-        is RegisterEffect.Navigate -> navigator.handleNavAction(effect.action)
     }
 }
