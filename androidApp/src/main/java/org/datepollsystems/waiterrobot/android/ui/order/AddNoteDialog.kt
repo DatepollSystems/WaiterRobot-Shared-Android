@@ -1,14 +1,36 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.ProvideTextStyle
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.generated.localization.*
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
+import org.datepollsystems.waiterrobot.shared.generated.localization.clear
+import org.datepollsystems.waiterrobot.shared.generated.localization.inputLabel
+import org.datepollsystems.waiterrobot.shared.generated.localization.inputPlaceholder
+import org.datepollsystems.waiterrobot.shared.generated.localization.save
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
 @Composable
 fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?) -> Unit) {
@@ -33,7 +55,9 @@ fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?
                         label = { Text(text = L.order.addNoteDialog.inputLabel()) },
                         placeholder = { Text(text = L.order.addNoteDialog.inputPlaceholder()) },
                         value = note,
-                        onValueChange = { note = it.take(120) }
+                        onValueChange = { note = it.take(120) },
+                        minLines = 3,
+                        maxLines = 3
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
