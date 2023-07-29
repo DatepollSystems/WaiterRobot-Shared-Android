@@ -1,0 +1,36 @@
+{
+  "baseBranches": [
+    "develop"
+  ],
+  "semanticPrefix": "renovate",
+  "labels": [
+    "dependencies"
+  ],
+  "schedule": [
+    "after 10pm every weekday",
+    "before 4am every weekday",
+    "every weekend"
+  ],
+  "pinVersions": false,
+  "semanticCommits": "enabled",
+  "separateMajorMinor": false,
+  "prHourlyLimit": 2,
+  "timezone": "Europe/Vienna",
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "minor-updates"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "major-risky-update"
+    }
+  ]
+}

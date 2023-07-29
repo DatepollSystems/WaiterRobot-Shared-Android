@@ -6,9 +6,9 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("com.github.triplet.play") version "3.6.0"
+    id("com.github.triplet.play") version "3.8.4"
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
+    id("com.google.devtools.ksp") version "1.9.0-1.0.12"
 }
 
 private val versionProperty by lazy {
@@ -73,21 +73,22 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.composeCompiler
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
@@ -158,11 +159,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
     // Compose
     runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.foundation:foundation:${Versions.compose}")
     implementation("androidx.compose.foundation:foundation-layout:${Versions.compose}")
     implementation("androidx.compose.ui:ui-graphics:${Versions.compose}")
@@ -180,7 +181,7 @@ dependencies {
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:3.4.2") // Not aligned with other koin version
+    implementation("io.insert-koin:koin-androidx-compose:3.4.5") // Not aligned with other koin version
 
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
@@ -192,7 +193,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${Versions.camera}")
 
     // QrCode Scanning
-    implementation("com.google.mlkit:barcode-scanning:17.0.3")
+    implementation("com.google.mlkit:barcode-scanning:17.1.0")
 
     // In-App-Update support
     implementation("com.google.android.play:app-update:2.1.0")
