@@ -15,7 +15,7 @@ plugins {
     id("co.touchlab.faktory.kmmbridge") version "0.3.7"
     `maven-publish`
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
-    id("io.realm.kotlin") version "1.6.1"
+    id("io.realm.kotlin") version "1.10.2"
 }
 
 version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
@@ -69,7 +69,7 @@ kotlin {
 
                 // Helper
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1") // Also needed by android for ComposeDestination parameter serialization
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // Also needed by android for ComposeDestination parameter serialization
             }
         }
         val commonTest by getting {
@@ -90,7 +90,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-cio:${Versions.ktor}")
             }
         }
-        val androidTest by getting
+        val androidUnitTest by getting
 
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -194,7 +194,7 @@ tasks {
                         copy {
                             from("$generatedLocalizationRoot/commonMain/resources/ios")
                             into(
-                                "${project.buildDir}/XCFrameworks/${buildType.toLowerCase()}/" +
+                                "${project.buildDir}/XCFrameworks/${buildType.lowercase()}/" +
                                     "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
                             )
                         }
