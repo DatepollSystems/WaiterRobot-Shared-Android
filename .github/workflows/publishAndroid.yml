@@ -55,10 +55,9 @@ jobs:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
       - name: Create version tag
-        if: ${{ github.ref_name == 'main' }}
         run: |
           git tag android-$(cat androidApp/build/version.tag)
-          git push --tags
+          git push origin android-$(cat androidApp/build/version.tag)
 
       # TODO auto increase androidPatch in version.properties (on prod build only) and push (to dev branch, republish must be prevented then)?
 
