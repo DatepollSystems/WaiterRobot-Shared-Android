@@ -22,7 +22,7 @@ plugins {
 }
 
 gitHooks {
-    preCommit {
+    hook("pre-push") {
         from {
             """
                 echo "Running detekt check..."
@@ -34,7 +34,7 @@ gitHooks {
                   rm ${'$'}OUTPUT
                   echo "**********************************************************************************************"
                   echo "                                         detekt failed                                        "
-                  echo "                        Please fix the above issues before committing                         "
+                  echo "                          Please fix the above issues before pushing.                         "
                   echo " Some of the issues might already be resolved automatically and only must be committed again. "
                   echo "                  Run './gradlew detekt' to to get an updated list of issues.                 "
                   echo "**********************************************************************************************"
