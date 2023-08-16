@@ -23,7 +23,6 @@ val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
     output = layout.buildDirectory.file("reports/detekt/merge.sarif")
 }
 
-
 allprojects {
     repositories {
         gradlePluginPortal()

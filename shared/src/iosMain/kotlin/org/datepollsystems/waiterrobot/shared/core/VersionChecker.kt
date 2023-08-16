@@ -57,6 +57,7 @@ object VersionChecker : KoinComponent {
                         CommonApp.settings.lastUpdateAvailableNote
                             .defaultOnNull(Instant.DISTANT_PAST)
                             .until(Clock.System.now(), DateTimeUnit.HOUR)
+
                     logger.i(
                         "New app version is available, hoursSinceLastUpdateAvailableNote: " +
                             hoursSinceLastUpdateAvailableNote

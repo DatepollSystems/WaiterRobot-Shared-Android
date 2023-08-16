@@ -158,6 +158,9 @@ class OrderViewModel internal constructor(
 
     private fun Product.toNewOrderItem(): OrderItem {
         require(!soldOut) { "Product is sold out, not allowed to add to an Order" }
+
+        println("fjdskaljfdlsk")
+
         return OrderItem(product = this, amount = 0, note = null)
     }
 }
