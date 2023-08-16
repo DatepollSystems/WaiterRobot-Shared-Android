@@ -59,7 +59,6 @@ fun View(
     content: @Composable () -> Unit
 ) = View(state, Modifier.padding(paddingValues), onRefresh, content)
 
-
 @Composable
 fun ScaffoldView(
     state: ViewModelState,

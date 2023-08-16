@@ -74,7 +74,8 @@ fun ProductSearch(
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text, imeAction = ImeAction.Search
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Search
                 ),
                 modifier = Modifier
                     .padding(start = 10.dp, end = 20.dp, top = 10.dp, bottom = 10.dp)
@@ -95,14 +96,17 @@ fun ProductSearch(
                 edgePadding = 0.dp,
                 divider = {} // Add divider externally as otherwise it does not span the whole width
             ) {
-                Tab(selected = pagerState.currentPage == 0,
+                Tab(
+                    selected = pagerState.currentPage == 0,
                     onClick = { coScope.launch { pagerState.scrollToPage(0) } },
-                    text = { Text(L.productSearch.allGroups()) })
+                    text = { Text(L.productSearch.allGroups()) }
+                )
                 productGroups.forEachIndexed { index, productGroupWithProducts ->
                     Tab(
                         selected = pagerState.currentPage == index + 1,
                         onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
-                        text = { Text(productGroupWithProducts.group.name) })
+                        text = { Text(productGroupWithProducts.group.name) }
+                    )
                 }
             }
 

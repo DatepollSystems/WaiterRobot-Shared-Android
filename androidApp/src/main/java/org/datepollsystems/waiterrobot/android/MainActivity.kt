@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity() {
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (
-                appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                && CommonApp.settings.lastUpdateAvailableNote // Show max once a day
+                appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) &&
+                CommonApp.settings.lastUpdateAvailableNote // Show max once a day
                     .defaultOnNull(Instant.DISTANT_PAST)
                     .until(Clock.System.now(), DateTimeUnit.HOUR) > 24
             ) {

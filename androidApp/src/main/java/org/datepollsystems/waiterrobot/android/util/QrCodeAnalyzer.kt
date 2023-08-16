@@ -14,8 +14,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
-class QrCodeAnalyzer(private val onQrCode: (List<Barcode>) -> Unit) : ImageAnalysis.Analyzer,
-    KoinComponent {
+class QrCodeAnalyzer(
+    private val onQrCode: (List<Barcode>) -> Unit
+) : ImageAnalysis.Analyzer, KoinComponent {
     private val logger: Logger by inject()
 
     private var lastAnalyzedTimeStamp = 0L
