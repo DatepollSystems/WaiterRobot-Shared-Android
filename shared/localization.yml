@@ -1,7 +1,7 @@
 app:
   name:
-    en: WaiterRobot
-    de: WaiterRobot
+    en: waiters.team
+    de: kellner.team
   genericError:
     message:
       en: Something went wrong. Please try again.
