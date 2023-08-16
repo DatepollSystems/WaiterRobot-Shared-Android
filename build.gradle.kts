@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.23.1")
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
 }
 
 val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
@@ -37,7 +37,8 @@ allprojects {
         config.from(rootDir.resolve("detekt.yml"))
         buildUponDefaultConfig = true
         basePath = rootDir.path
-        autoCorrect = true
+        // Autocorrection can only be done locally
+        autoCorrect = System.getenv("CI")?.lowercase() != true.toString()
     }
 
     dependencies {
@@ -50,7 +51,6 @@ allprojects {
             sarif.required = true
         }
         finalizedBy(detektReportMergeSarif)
-        autoCorrect = true
     }
     detektReportMergeSarif {
         input.from(tasks.withType<Detekt>().map { it.sarifReportFile })

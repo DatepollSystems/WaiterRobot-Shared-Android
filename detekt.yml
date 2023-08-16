@@ -7,8 +7,32 @@ complexity:
   LongMethod:
     ignoreAnnotated:
       - Composable
+  LongParameterList:
+    ignoreDefaultParameters: true
+    ignoreAnnotated:
+      - Composable
+  CyclomaticComplexMethod:
+    ignoreSimpleWhenEntries: true
 
 style:
   UnusedPrivateMember:
     ignoreAnnotated:
       - Preview
+  WildcardImport:
+    active: false
+  MagicNumber:
+    ignoreAnnotated:
+      - Composable
+
+# Formatting contains some overlapping rules with the standard rule set -> deactivate them so we do not get duplicate errors
+formatting:
+  NoWildcardImports: # style>WildcardImport
+    active: false
+  Filename: # naming>MatchingDeclarationName
+    active: false
+  FinalNewline: # style>NewLineAtEndOfFile
+    active: false
+  MaximumLineLength: # style>MaxLineLength
+    active: false
+  ModifierOrdering: # style>ModifierOrder
+    active: false

@@ -233,3 +233,11 @@ class CustomGitVersionManager(
         }
     }
 }
+
+detekt {
+    source.from(
+        "src/androidMain/kotlin",
+        "src/commonMain/kotlin",
+        "src/iosMain/kotlin",
+    )
+}
