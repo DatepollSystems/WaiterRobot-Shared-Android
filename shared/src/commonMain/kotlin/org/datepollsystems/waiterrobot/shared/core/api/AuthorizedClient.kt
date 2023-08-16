@@ -33,6 +33,7 @@ internal fun createAuthorizedClient(
 
                 // Function to refresh a token (called when server response with 401 and a WWW-Authenticate header)
                 refreshTokens {
+                    @Suppress("TooGenericExceptionCaught")
                     try {
                         authRepository.refreshTokens(scope).toBearerTokens()
                     } catch (e: Exception) {

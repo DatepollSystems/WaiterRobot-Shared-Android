@@ -46,7 +46,10 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
                     }
 
                     else -> {
-                        logger.w(exception) { "Unhandled exception in intent. Exceptions should be handled directly in the intent!" }
+                        logger.w(exception) {
+                            "Unhandled exception in intent. " +
+                                "Exceptions should be handled directly in the intent!"
+                        }
                         intent {
                             reduceError(L.app.genericError.title(), L.app.genericError.message())
                         }

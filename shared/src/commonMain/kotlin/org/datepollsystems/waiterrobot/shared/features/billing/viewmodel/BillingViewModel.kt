@@ -43,7 +43,7 @@ class BillingViewModel internal constructor(
         try {
             val given = givenText.euro
             reduce { state.copy(changeText = (given - state.priceSum).toString()) }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             reduce { state.copy(changeText = "NaN") }
         }
     }
@@ -86,7 +86,8 @@ class BillingViewModel internal constructor(
     }
 
     fun abortBill() = intent {
-        // Hide the confirmation dialog before navigation away, as otherwise on iOS it would be still shown on the new screen
+        // Hide the confirmation dialog before navigation away,
+        // as otherwise on iOS it would be still shown on the new screen
         reduce { state.copy(showConfirmationDialog = false) }
         navigator.pop()
     }

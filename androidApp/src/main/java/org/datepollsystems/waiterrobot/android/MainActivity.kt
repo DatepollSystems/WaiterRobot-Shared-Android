@@ -19,6 +19,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.until
 import org.datepollsystems.waiterrobot.android.ui.RootView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.CommonApp.MIN_UPDATE_INFO_HOURS
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
 import org.datepollsystems.waiterrobot.shared.utils.extensions.defaultOnNull
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) &&
                 CommonApp.settings.lastUpdateAvailableNote // Show max once a day
                     .defaultOnNull(Instant.DISTANT_PAST)
-                    .until(Clock.System.now(), DateTimeUnit.HOUR) > 24
+                    .until(Clock.System.now(), DateTimeUnit.HOUR) > MIN_UPDATE_INFO_HOURS
             ) {
                 CommonApp.settings.lastUpdateAvailableNote = Clock.System.now()
                 appUpdateManager.startUpdateFlow(

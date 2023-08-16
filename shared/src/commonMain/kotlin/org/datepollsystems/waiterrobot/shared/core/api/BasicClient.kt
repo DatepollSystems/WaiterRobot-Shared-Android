@@ -31,6 +31,7 @@ internal fun HttpClientConfig<*>.commonConfig(
     }
 
     install(HttpTimeout) {
+        @Suppress("MagicNumber")
         requestTimeoutMillis = 10_000
     }
 

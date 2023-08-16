@@ -55,6 +55,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
     }
 
     private suspend fun autoSelectEvent() {
+        @Suppress("TooGenericExceptionCaught")
         try {
             // Auto select event when there is only one available
             eventRepository.getEvents().singleOrNull()?.let {

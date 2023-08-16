@@ -15,7 +15,8 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 
 /**
  * Handles displaying errors and loading state.
- * If [onRefresh] is provided a [RefreshableView] is used and [content] must therefore be scrollable ([RefreshableView]). Otherwise a [LoadableView].
+ * If [onRefresh] is provided a [RefreshableView] is used and [content] therefore
+ * must be scrollable ([RefreshableView]). Otherwise a [LoadableView] is used.
  * @see ErrorDialog
  * @see RefreshableView
  * @see LoadableView

@@ -21,6 +21,7 @@ internal class ProductEntry() : RealmObject {
     val updated: Instant
         get() = Instant.fromEpochMilliseconds(updatedAt)
 
+    @Suppress("LongParameterList")
     constructor(
         id: Long,
         eventId: Long,
