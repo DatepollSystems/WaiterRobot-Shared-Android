@@ -25,7 +25,7 @@ class LoginScannerViewModel internal constructor(
                     navigator.push(Screen.RegisterScreen(deepLink.token))
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             logger.d { "Error with scanned login code: $code" }
             reduceError("Invalid code", "Scanned invalid code")
         }

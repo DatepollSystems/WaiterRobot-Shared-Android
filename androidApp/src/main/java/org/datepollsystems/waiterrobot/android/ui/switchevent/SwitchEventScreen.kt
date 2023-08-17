@@ -48,7 +48,8 @@ fun SwitchEventScreen(
 
     Scaffold(scaffoldState = LocalScaffoldState.current) {
         Column(modifier = Modifier.padding(it)) {
-            // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be on top of this part of the view
+            // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be
+            // on top of this part of the view
             Surface(modifier = Modifier.zIndex(1f)) {
                 Column {
                     Icon(

@@ -54,6 +54,7 @@ object CommonApp : KoinComponent {
 
     internal fun logout() {
         coroutineScope.launch {
+            @Suppress("TooGenericExceptionCaught")
             try {
                 val tokens = settings.tokens ?: return@launch
                 getKoin().getOrNull<AuthApi>()?.logout(tokens)
@@ -77,4 +78,6 @@ object CommonApp : KoinComponent {
                 ?.forEach(BearerAuthProvider::clearToken)
         }
     }
+
+    const val MIN_UPDATE_INFO_HOURS = 24
 }

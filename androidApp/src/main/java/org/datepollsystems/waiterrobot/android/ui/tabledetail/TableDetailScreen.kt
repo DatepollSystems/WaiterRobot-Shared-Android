@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
+import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem

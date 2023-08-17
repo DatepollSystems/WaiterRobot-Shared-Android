@@ -9,4 +9,3 @@ internal class OrderApi(client: AuthorizedClient) : AuthorizedApi("waiter/order"
         post("/", order)
     }
 }
-

@@ -84,9 +84,11 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
             productDb.deleteForEvent(eventId)
 
             logger.i { "Saving products to DB ..." }
-            productDb.insert(apiProducts.flatMap { group ->
-                group.products.map { it.toEntry(eventId, entryGroups[group.id]!!, timestamp) }
-            })
+            productDb.insert(
+                apiProducts.flatMap { group ->
+                    group.products.map { it.toEntry(eventId, entryGroups[group.id]!!, timestamp) }
+                }
+            )
 
             return apiProducts.associate { group ->
                 modelGroups[group.id]!! to group.products

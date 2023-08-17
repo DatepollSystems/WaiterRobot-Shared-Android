@@ -11,8 +11,7 @@ class AppInfo(
 ) {
     val apiBaseUrl = apiBaseUrl.removeSuffix("/") + "/"
 
-    val sessionName =
-        "$os; $appVersion ($appBuild); $phoneModel".truncate(60)
+    val sessionName = "$os; $appVersion ($appBuild); $phoneModel".truncate(MAX_SESSION_LENGTH)
 }
 
 sealed class OS {
@@ -26,3 +25,5 @@ sealed class OS {
         is Ios -> "iOS-${this.version}"
     }
 }
+
+private const val MAX_SESSION_LENGTH = 60

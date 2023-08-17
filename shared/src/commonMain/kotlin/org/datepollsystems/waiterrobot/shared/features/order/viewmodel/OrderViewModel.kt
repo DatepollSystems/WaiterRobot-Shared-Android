@@ -17,6 +17,7 @@ import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
+@Suppress("TooManyFunctions")
 class OrderViewModel internal constructor(
     private val productRepository: ProductRepository,
     private val orderRepository: OrderRepository,
@@ -76,6 +77,7 @@ class OrderViewModel internal constructor(
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // used on iOS
     fun removeAllOfProduct(productId: Long) = intent {
         reduce { state.copy(_currentOrder = state._currentOrder.minus(productId)) }
     }
@@ -89,7 +91,8 @@ class OrderViewModel internal constructor(
     }
 
     fun abortOrder() = intent {
-        // Hide the confirmation dialog before navigation away, as otherwise on iOS it would be still shown on the new screen
+        // Hide the confirmation dialog before navigation away,
+        // as otherwise on iOS it would be still shown on the new screen
         reduce { state.copy(showConfirmationDialog = false) }
         navigator.pop()
     }
@@ -155,6 +158,9 @@ class OrderViewModel internal constructor(
 
     private fun Product.toNewOrderItem(): OrderItem {
         require(!soldOut) { "Product is sold out, not allowed to add to an Order" }
+
+        println("fjdskaljfdlsk")
+
         return OrderItem(product = this, amount = 0, note = null)
     }
 }

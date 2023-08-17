@@ -82,30 +82,36 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
 
                     val analysisUseCase = ImageAnalysis.Builder()
                         .setTargetResolution(Size(previewView.width, previewView.height))
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // Do not process every frame only keep the latest
+                        // Do not process every frame only keep the latest
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build()
                         .apply {
                             setAnalyzer(
-                                Executors.newSingleThreadExecutor(), // Execute analysis on a single worker thread
+                                // Execute analysis on a single worker thread
+                                Executors.newSingleThreadExecutor(),
                                 QrCodeAnalyzer {
-                                    this.clearAnalyzer() // Stop after first detected code // TODO test scanning invalid code (no data and no url)
+                                    // Stop after first detected code
+                                    // TODO test scanning invalid code (no data and no url)
+                                    this.clearAnalyzer()
                                     onResult(it.first())
                                 }
                             )
                         }
 
                     coroutineScope.launch {
+                        @Suppress("TooGenericExceptionCaught")
                         try {
                             val cameraProvider = context.getCameraProvider()
-                            // Make sure no use case is bound to the cameraProvider, when QrCodeScanner is "launched" twice
-                            // (e.g. when first scan at login fails and the QrCodeScanner is then opened a second time)
-
                             if (!cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)) {
                                 errorMessage = L.qrScanner.noCameraFound()
                                 return@launch
                             }
 
+                            // Make sure no use case is bound to the cameraProvider,
+                            // when QrCodeScanner is "launched" twice (e.g. when first scan at
+                            // login fails and the QrCodeScanner is then opened a second time)
                             cameraProvider.unbindAll()
+
                             cam = cameraProvider.bindToLifecycle(
                                 lifecycleOwner,
                                 CameraSelector.DEFAULT_BACK_CAMERA,

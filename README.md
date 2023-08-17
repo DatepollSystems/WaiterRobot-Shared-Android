@@ -97,7 +97,7 @@ and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 # Further Resources and References
 
 - [Kotlin/kmm-sample](https://github.com/Kotlin/kmm-sample)
-- [KaMPKit](https://github.com/touchlab/KaMPKit) Collection of code and tools for getting stated
+- [KaMPKit](https://github.com/touchlab/KaMPKit) Collection of code and tools for getting started
   with KMP/KMM
 - [KMMBridge SPM sample (android + shared)](https://github.com/touchlab/KMMBridgeSampleKotlin)
 - [KMMBridge SPM sample (iOS)](https://github.com/touchlab/KMMBridgeSampleSpm)

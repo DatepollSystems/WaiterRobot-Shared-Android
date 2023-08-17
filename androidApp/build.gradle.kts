@@ -107,7 +107,7 @@ android {
             // -> use epochMinutes (overflow would be in 5962).
             // (conversion to int is save as java int is bigger as the max versionCode allowed by google play)
             val epochMinutes = (Date().toInstant().epochSecond / 60).toInt()
-            versionNameSuffix = "-lava-${epochMinutes}"
+            versionNameSuffix = "-lava-$epochMinutes"
             versionCode = epochMinutes
         }
 
