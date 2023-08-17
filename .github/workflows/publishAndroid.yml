@@ -1,4 +1,7 @@
 name: Publish Android
+concurrency: # Cancel currently running releases when a new one is started
+  group: publish-android
+  cancel-in-progress: true
 on:
   push:
     branches:
