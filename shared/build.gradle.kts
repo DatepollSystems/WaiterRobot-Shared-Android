@@ -14,7 +14,7 @@ plugins {
     id("com.android.library")
     id("co.touchlab.faktory.kmmbridge") version "0.3.7"
     `maven-publish`
-    id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha10" // Shared localization
+    id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
     id("io.realm.kotlin") version "1.10.2"
 }
 

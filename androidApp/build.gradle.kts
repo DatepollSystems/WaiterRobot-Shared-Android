@@ -8,7 +8,7 @@ plugins {
     id("com.android.application")
     id("com.github.triplet.play") version "3.8.4"
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.9.0-1.0.12"
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
 }
 
 private val versionProperty by lazy {
@@ -173,13 +173,13 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-permissions:0.28.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
     // Architecture (MVI)
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:3.4.5") // Not aligned with other koin version
+    implementation("io.insert-koin:koin-androidx-compose:3.4.6") // Not aligned with other koin version
 
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
@@ -191,7 +191,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${Versions.camera}")
 
     // QrCode Scanning
-    implementation("com.google.mlkit:barcode-scanning:17.1.0")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
 
     // In-App-Update support
     implementation("com.google.android.play:app-update:2.1.0")
