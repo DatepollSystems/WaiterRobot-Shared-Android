@@ -233,7 +233,7 @@ settings:
   darkMode:
     title:
       en: Dark Mode
-      de: Dunklermodus
+      de: Dunkelmodus
     useSystem:
       en: Use system setting
       de: System einstellung verwenden

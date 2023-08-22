@@ -23,6 +23,10 @@ android {
     namespace = "org.datepollsystems.waiterrobot.android"
     compileSdk = Versions.androidCompileSdk
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "org.datepollsystems.waiterrobot.android"
 
