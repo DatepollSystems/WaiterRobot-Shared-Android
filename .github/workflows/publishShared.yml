@@ -1,6 +1,6 @@
 name: Publish Shared Swift Package
 concurrency: # Cancel currently running releases when a new one is started
-  group: publish-shared
+  group: publish-shared-${{ github.ref_name }}
   cancel-in-progress: true
 on:
   workflow_dispatch: # allow manually running the workflow for the dev and main branch
