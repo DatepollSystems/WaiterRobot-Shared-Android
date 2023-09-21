@@ -95,10 +95,7 @@ private fun ProductGroupDto.toModel() = ProductGroup(
     id = this.id,
     name = this.name,
     position = this.position,
-    products = this.products
-        .map(ProductDto::toModel)
-        .sortedBy { it.name.lowercase() } // Sort products with same position by name
-        .sortedBy(Product::position)
+    products = this.products.map(ProductDto::toModel).sort()
 )
 
 private fun ProductDto.toModel() = Product(
@@ -145,5 +142,9 @@ private fun ProductGroupEntry.toModel() = ProductGroup(
     id = this.id!!,
     name = this.name!!,
     position = this.position,
-    products = this.products.map(ProductEntry::toModel)
+    products = this.products.map(ProductEntry::toModel).sort()
 )
+
+private fun List<Product>.sort() = this
+    .sortedBy { it.name.lowercase() } // Sort products with same position by name
+    .sortedBy(Product::position)
