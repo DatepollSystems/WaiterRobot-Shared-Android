@@ -10,14 +10,14 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
 class QrCodeAnalyzer(
     private val onQrCode: (List<Barcode>) -> Unit
 ) : ImageAnalysis.Analyzer, KoinComponent {
-    private val logger: Logger by inject()
+    private val logger: Logger by injectLoggerForClass()
 
     private var lastAnalyzedTimeStamp = 0L
 

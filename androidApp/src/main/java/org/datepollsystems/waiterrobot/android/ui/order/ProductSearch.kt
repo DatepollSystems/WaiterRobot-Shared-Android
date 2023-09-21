@@ -25,7 +25,6 @@ import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
-import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.allGroups
 import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
@@ -35,7 +34,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.title
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductSearch(
-    productGroups: List<ProductGroupWithProducts>,
+    productGroups: List<ProductGroup>,
     onSelect: (Product) -> Unit,
     onFilter: (String) -> Unit,
     close: () -> Unit
@@ -101,11 +100,11 @@ fun ProductSearch(
                     onClick = { coScope.launch { pagerState.scrollToPage(0) } },
                     text = { Text(L.productSearch.allGroups()) }
                 )
-                productGroups.forEachIndexed { index, productGroupWithProducts ->
+                productGroups.forEachIndexed { index, productGroup ->
                     Tab(
                         selected = pagerState.currentPage == index + 1,
                         onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
-                        text = { Text(productGroupWithProducts.group.name) }
+                        text = { Text(productGroup.name) }
                     )
                 }
             }
@@ -115,10 +114,13 @@ fun ProductSearch(
             HorizontalPager(pagerState) { pageIndex ->
                 if (pageIndex == 0) {
                     ProductLazyVerticalGrid {
-                        productGroups.forEach { (group: ProductGroup, products: List<Product>) ->
-                            if (products.isNotEmpty()) {
-                                sectionHeader(key = "group-${group.id}", title = group.name)
-                                items(products, key = Product::id) { product ->
+                        productGroups.forEach { productGroup ->
+                            if (productGroup.products.isNotEmpty()) {
+                                sectionHeader(
+                                    key = "group-${productGroup.id}",
+                                    title = productGroup.name
+                                )
+                                items(productGroup.products, key = Product::id) { product ->
                                     Product(product = product, onSelect = { onSelect(product) })
                                 }
                             }
