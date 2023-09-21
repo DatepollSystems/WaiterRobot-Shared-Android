@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
-import org.datepollsystems.waiterrobot.android.ui.core.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -49,7 +49,8 @@ fun OrderScreen(
     var noteDialogItem: OrderItem? by remember { mutableStateOf(null) }
 
     val bottomSheetState = rememberModalBottomSheetState(
-        // When opening the order screen waiter most likely wants to add a new product -> show the product list immediately
+        // When opening the order screen waiter most likely wants to add a new product
+        // -> show the product list immediately
         // But don't show it when the screen was opened with an initial item, this feels not nice
         initialValue = if (initialItemId == null) ModalBottomSheetValue.Expanded else ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true

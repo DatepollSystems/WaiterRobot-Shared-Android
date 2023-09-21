@@ -124,7 +124,11 @@ fun SettingsScreen(
                 settingsItem(
                     icon = { Icon(Icons.Filled.Logout, contentDescription = "Logout") },
                     title = { Text(L.settings.logout.action()) },
-                    subtitle = { Text("\"${CommonApp.settings.organisationName}\" / \"${CommonApp.settings.waiterName}\"") },
+                    subtitle = {
+                        Text(
+                            "\"${CommonApp.settings.organisationName}\" / \"${CommonApp.settings.waiterName}\""
+                        )
+                    },
                     onClick = { showLogoutWarningDialog = true }
                 )
                 settingsItem(

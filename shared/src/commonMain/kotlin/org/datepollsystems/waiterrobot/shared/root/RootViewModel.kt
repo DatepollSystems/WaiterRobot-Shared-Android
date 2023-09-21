@@ -62,7 +62,7 @@ class RootViewModel internal constructor(
                 }
             }
             reduce { state.withViewState(ViewState.Idle) }
-        } catch (e: ApiException.CredentialsIncorrect) {
+        } catch (_: ApiException.CredentialsIncorrect) {
             reduceError(L.root.invalidLoginLink.title(), L.root.invalidLoginLink.desc())
         }
     }

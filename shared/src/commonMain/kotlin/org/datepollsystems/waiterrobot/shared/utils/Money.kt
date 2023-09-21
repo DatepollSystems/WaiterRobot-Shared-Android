@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package org.datepollsystems.waiterrobot.shared.utils
 
 import kotlin.math.abs

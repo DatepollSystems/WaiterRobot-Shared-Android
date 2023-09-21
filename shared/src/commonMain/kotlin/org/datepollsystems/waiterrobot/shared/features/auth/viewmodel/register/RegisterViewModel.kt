@@ -21,7 +21,7 @@ class RegisterViewModel internal constructor(
             authRepository.createWithToken(createToken, name)
             navigator.popUpToRoot()
             reduce { state.withViewState(ViewState.Idle) }
-        } catch (e: ApiException.CredentialsIncorrect) {
+        } catch (_: ApiException.CredentialsIncorrect) {
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())
         }
     }

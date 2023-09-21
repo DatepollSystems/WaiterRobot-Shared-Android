@@ -1,3 +1,6 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
+
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -5,11 +8,19 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        val kotlinVersion = "1.8.10"
-        classpath("com.android.tools.build:gradle:7.4.1")
+        val kotlinVersion = "1.9.0"
+        classpath("com.android.tools.build:gradle:8.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-serialization:${kotlinVersion}")
     }
+}
+
+plugins {
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
+}
+
+val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
+    output = layout.buildDirectory.file("reports/detekt/merge.sarif")
 }
 
 allprojects {
@@ -17,5 +28,30 @@ allprojects {
         gradlePluginPortal()
         google()
         mavenCentral()
+    }
+
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    detekt {
+        config.from(rootDir.resolve("detekt.yml"))
+        buildUponDefaultConfig = true
+        basePath = rootDir.path
+        // Autocorrection can only be done locally
+        autoCorrect = System.getenv("CI")?.lowercase() != true.toString()
+    }
+
+    dependencies {
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        reports {
+            html.required = true
+            sarif.required = true
+        }
+        finalizedBy(detektReportMergeSarif)
+    }
+    detektReportMergeSarif {
+        input.from(tasks.withType<Detekt>().map { it.sarifReportFile })
     }
 }

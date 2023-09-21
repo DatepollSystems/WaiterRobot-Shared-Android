@@ -30,5 +30,5 @@ fun initKoin(appDeclaration: KoinAppDeclaration = { }) = startKoin {
 }
 
 fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }
-internal fun KoinComponent.injectLoggerForClass(): Lazy<Logger> =
+fun KoinComponent.injectLoggerForClass(): Lazy<Logger> =
     injectLogger(this::class.simpleName ?: "AnonymousClass")

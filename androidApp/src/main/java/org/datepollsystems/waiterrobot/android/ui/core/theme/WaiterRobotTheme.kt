@@ -15,9 +15,11 @@ fun WaiterRobotTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    Box(modifier = Modifier
-        .systemBarsPadding()
-        .imePadding()) {
+    Box(
+        modifier = Modifier
+            .systemBarsPadding()
+            .imePadding()
+    ) {
         MaterialTheme(
             colors = if (useDarkTheme) darkColors else lightColors,
             content = content

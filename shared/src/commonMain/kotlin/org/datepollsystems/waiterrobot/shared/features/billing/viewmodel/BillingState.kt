@@ -10,6 +10,7 @@ data class BillingState(
     val moneyGivenText: String = "",
     val changeText: String = "0.00 €",
     val showConfirmationDialog: Boolean = false,
+    @Suppress("ConstructorParameterNaming")
     internal val _billItems: Map<Long, BillItem> = emptyMap()
 ) : ViewModelState() {
     val billItems: List<BillItem> by lazy { _billItems.values.toList() }

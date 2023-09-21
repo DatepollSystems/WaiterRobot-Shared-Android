@@ -62,6 +62,7 @@ private fun OrderListItemPreview() {
             amount = 10,
             note = "test Note",
             addAction = { _, _ -> },
-            onLongClick = {})
+            onLongClick = {}
+        )
     }
 }

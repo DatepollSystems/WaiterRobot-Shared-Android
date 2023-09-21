@@ -3,12 +3,13 @@ package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
+import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
 
 data class OrderState(
     override val viewState: ViewState = ViewState.Idle,
     val showConfirmationDialog: Boolean = false,
-    val productGroups: List<ProductGroupWithProducts> = emptyList(),
+    val productGroups: List<ProductGroup> = emptyList(),
+    @Suppress("ConstructorParameterNaming")
     internal val _currentOrder: Map<Long, OrderItem> = emptyMap() // Product ID to Order
 ) : ViewModelState() {
     // Expose only as a list of OrderItems

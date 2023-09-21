@@ -16,7 +16,8 @@ import kotlinx.coroutines.flow.*
  * Collects the flow and calls the [onEach] function for each received item.
  * KotlinFlow -> Callback base API
  *
- * This is needed as from Swift no coroutines can be launched and to collect a flow a coroutine (or suspendable function) is needed.
+ * This is needed as from Swift no coroutines can be launched and to collect a flow a coroutine
+ * (or suspendable function) is needed.
  */
 @Suppress("unused") // Used by iOS
 fun <T : Any> Flow<T>.subscribe(

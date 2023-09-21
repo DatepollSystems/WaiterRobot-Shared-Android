@@ -31,8 +31,9 @@ internal fun <T : Any> Settings.jsonSerialized(
     serializer: KSerializer<T>
 ): ReadWriteProperty<Any?, T> = JsonSerializedDelegate(this, key, defaultValue, serializer)
 
-internal inline fun <reified T : Any> Settings.nullableJsonSerialized(key: String? = null)
-    : ReadWriteProperty<Any?, T?> = nullableJsonSerialized(key, serializer())
+internal inline fun <reified T : Any> Settings.nullableJsonSerialized(
+    key: String? = null
+): ReadWriteProperty<Any?, T?> = nullableJsonSerialized(key, serializer())
 
 internal fun <T : Any> Settings.nullableJsonSerialized(
     key: String? = null,

@@ -39,10 +39,10 @@ internal abstract class AbstractApi(basePath: String, private val client: HttpCl
         block?.invoke(this)
     }
 
-    protected suspend fun post(
+    protected suspend inline fun <reified B : RequestBodyDto> post(
         endpoint: String = "",
-        body: RequestBodyDto? = null,
-        block: (HttpRequestBuilder.() -> Unit)? = null
+        body: B? = null,
+        noinline block: (HttpRequestBuilder.() -> Unit)? = null
     ): HttpResponse = client.post(endpoint.toFullUrl()) {
         if (body != null) {
             contentType(ContentType.Application.Json)

@@ -53,4 +53,7 @@ internal val coreModule = module {
     single { createRealmDB() }
 }
 
-private fun createJson() = Json { ignoreUnknownKeys = true }
+private fun createJson() = Json {
+    ignoreUnknownKeys = true
+    coerceInputValues = true // Use default value for null (when not-nullable) and unknown values
+}

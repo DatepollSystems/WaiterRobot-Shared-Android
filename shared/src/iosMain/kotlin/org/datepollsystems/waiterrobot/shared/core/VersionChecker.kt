@@ -14,6 +14,7 @@ import kotlinx.datetime.until
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.datepollsystems.waiterrobot.shared.core.CommonApp.MIN_UPDATE_INFO_HOURS
 import org.datepollsystems.waiterrobot.shared.utils.extensions.defaultOnNull
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -56,13 +57,14 @@ object VersionChecker : KoinComponent {
                         CommonApp.settings.lastUpdateAvailableNote
                             .defaultOnNull(Instant.DISTANT_PAST)
                             .until(Clock.System.now(), DateTimeUnit.HOUR)
+
                     logger.i(
                         "New app version is available, hoursSinceLastUpdateAvailableNote: " +
                             hoursSinceLastUpdateAvailableNote
                     )
 
                     // Show max once a day
-                    if (hoursSinceLastUpdateAvailableNote > 24) {
+                    if (hoursSinceLastUpdateAvailableNote > MIN_UPDATE_INFO_HOURS) {
                         onNewVersionAvailable()
                         CommonApp.settings.lastUpdateAvailableNote = Clock.System.now()
                     }

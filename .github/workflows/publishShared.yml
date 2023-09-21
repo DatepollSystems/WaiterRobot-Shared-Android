@@ -1,4 +1,7 @@
 name: Publish Shared Swift Package
+concurrency: # Cancel currently running releases when a new one is started
+  group: publish-shared
+  cancel-in-progress: true
 on:
   workflow_dispatch: # allow manually running the workflow for the dev and main branch
     branches:
@@ -17,8 +20,8 @@ on:
 
 jobs:
   call-kmmbridge-publish:
-    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@v0.8
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildbranches.yml@2e121ace461e0004eb079926c1f6e74afaee3e3d
     with:
-      jvmVersion: 11
+      jvmVersion: 17
     secrets:
       gradle_params: "-PGITHUB_BRANCH=${{ github.ref_name }}"
