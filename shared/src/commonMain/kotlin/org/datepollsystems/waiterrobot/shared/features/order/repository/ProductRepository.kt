@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.shared.features.order.repository
 
-import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
@@ -8,12 +7,14 @@ import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.order.api.ProductApi
 import org.datepollsystems.waiterrobot.shared.features.order.api.models.ProductDto
+import org.datepollsystems.waiterrobot.shared.features.order.api.models.ProductGroupDto
 import org.datepollsystems.waiterrobot.shared.features.order.db.ProductDatabase
+import org.datepollsystems.waiterrobot.shared.features.order.db.model.AllergenEntry
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEntry
+import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductGroupEntry
 import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
-import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
@@ -34,29 +35,16 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
     }
 
     suspend fun getProductById(id: Long): Product? {
-        return productDb.getById(id)?.toModel()
+        return productDb.getProductById(id)?.toModel()
             ?: getProductGroups(true) // TODO limit force update
-                .flatMap(ProductGroupWithProducts::products)
+                .flatMap(ProductGroup::products)
                 .find { it.id == id }
     }
 
-    suspend fun getProductGroups(forceUpdate: Boolean = false): List<ProductGroupWithProducts> {
+    suspend fun getProductGroups(forceUpdate: Boolean = false): List<ProductGroup> {
         val eventId = CommonApp.settings.selectedEventId
 
-        fun <T : Any> Map<ProductGroup, List<T>>.mapProductGroupWithProducts(
-            mapper: (T) -> Product
-        ): List<ProductGroupWithProducts> {
-            return this.map { (group, products) ->
-                ProductGroupWithProducts(
-                    group = group,
-                    products = products.map(mapper)
-                        .sortedBy { it.name.lowercase() }
-                        .sortedBy(Product::soldOut)
-                )
-            }.sortedBy { it.group.name.lowercase() }
-        }
-
-        fun loadFromDb(): List<ProductGroupWithProducts>? {
+        fun loadFromDb(): List<ProductGroup>? {
             logger.i { "Fetching products from DB ..." }
             val dbProducts = productDb.getForEvent(eventId)
             logger.d { "Found ${dbProducts.count()} products in DB" }
@@ -64,48 +52,54 @@ internal class ProductRepository : AbstractRepository(), KoinComponent {
             return if (dbProducts.isEmpty() || dbProducts.any { it.updated.olderThan(maxAge) }) {
                 null
             } else {
-                dbProducts.groupBy { it.productGroup!!.toModel() }
-                    .mapProductGroupWithProducts(ProductEntry::toModel)
+                dbProducts.map(ProductGroupEntry::toModel)
             }
         }
 
-        suspend fun loadFromApiAndStore(): List<ProductGroupWithProducts> {
+        suspend fun loadFromApiAndStore(): List<ProductGroup> {
             logger.i { "Loading products from api ..." }
 
             val timestamp = Now()
             val apiProducts = productApi.getProducts(eventId)
             logger.d { "Got ${apiProducts.sumOf { it.products.count() }} products from api" }
 
-            val modelGroups = apiProducts.associate { it.id to ProductGroup(it.id, it.name) }
-            val entryGroups =
-                apiProducts.associate { it.id to ProductEntry.ProductGroup(it.id, it.name) }
+            val modelGroups = apiProducts.map(ProductGroupDto::toModel)
+            val entryGroups = apiProducts.map { it.toEntry(eventId, timestamp) }
 
             logger.i { "Remove old products from DB ..." }
             productDb.deleteForEvent(eventId)
 
             logger.i { "Saving products to DB ..." }
-            productDb.insert(
-                apiProducts.flatMap { group ->
-                    group.products.map { it.toEntry(eventId, entryGroups[group.id]!!, timestamp) }
-                }
-            )
+            productDb.insert(entryGroups)
 
-            return apiProducts.associate { group ->
-                modelGroups[group.id]!! to group.products
-            }.mapProductGroupWithProducts(ProductDto::toModel)
+            return modelGroups
         }
 
-        return if (forceUpdate) {
-            loadFromApiAndStore()
-        } else {
-            loadFromDb() ?: loadFromApiAndStore()
+        val result = when (forceUpdate) {
+            true -> loadFromApiAndStore()
+            false -> loadFromDb() ?: loadFromApiAndStore()
         }
+
+        return result
+            .filter { it.products.isNotEmpty() } // Do not show groups that do not have products at all
+            .sortedBy { it.name.lowercase() } // Sort groups with same position by name
+            .sortedBy(ProductGroup::position)
     }
 
     companion object {
         private val maxAge = 24.hours
     }
 }
+
+private fun ProductGroupDto.toModel() = ProductGroup(
+    id = this.id,
+    name = this.name,
+    position = this.position,
+    products = this.products
+        .map(ProductDto::toModel)
+        .sortedBy { it.name.lowercase() } // Sort products with same position by name
+        .sortedBy(Product::position)
+)
 
 private fun ProductDto.toModel() = Product(
     id = this.id,
@@ -115,23 +109,27 @@ private fun ProductDto.toModel() = Product(
     allergens = this.allergens.map { allergen ->
         Allergen(allergen.id, allergen.name, allergen.shortName)
     },
+    position = this.position,
 )
 
-private fun ProductDto.toEntry(
-    eventId: Long,
-    group: ProductEntry.ProductGroup,
-    timestamp: Instant
-) = ProductEntry(
+private fun ProductGroupDto.toEntry(eventId: Long, timestamp: Instant) = ProductGroupEntry(
     id = this.id,
+    name = this.name,
     eventId = eventId,
+    position = this.position,
+    products = this.products.map { it.toEntry() },
+    updatedAt = timestamp
+)
+
+private fun ProductDto.toEntry() = ProductEntry(
+    id = this.id,
     name = this.name,
     price = this.price,
     soldOut = this.soldOut,
-    productGroup = group,
     allergens = this.allergens.map {
-        ProductEntry.Allergen(id = it.id, name = it.name, shortName = it.shortName)
-    }.toRealmList(),
-    updatedAt = timestamp
+        AllergenEntry(id = it.id, name = it.name, shortName = it.shortName)
+    },
+    position = this.position,
 )
 
 private fun ProductEntry.toModel() = Product(
@@ -139,10 +137,13 @@ private fun ProductEntry.toModel() = Product(
     name = this.name!!,
     price = this.price!!.cent,
     soldOut = this.soldOut!!,
-    allergens = this.allergens!!.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
+    allergens = this.allergens.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
+    position = this.position
 )
 
-private fun ProductEntry.ProductGroup.toModel() = ProductGroup(
+private fun ProductGroupEntry.toModel() = ProductGroup(
     id = this.id!!,
-    name = this.name!!
+    name = this.name!!,
+    position = this.position,
+    products = this.products.map(ProductEntry::toModel)
 )

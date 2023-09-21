@@ -6,8 +6,6 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
-import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
-import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroupWithProducts
 import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRepository
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
@@ -41,7 +39,7 @@ class OrderViewModel internal constructor(
         addItem(id, amount) { productRepository.getProductById(id) }
 
     fun addItem(product: Product, amount: Int) =
-        addItem(product.id, amount) { product }
+        addItem(product.id, amount) { productRepository.getProductById(product.id) }
 
     fun addItemNote(item: OrderItem, note: String?) = intent {
         @Suppress("NAME_SHADOWING")
@@ -143,13 +141,11 @@ class OrderViewModel internal constructor(
         } else {
             reduce {
                 state.copy(
-                    productGroups = allProducts.map { (group: ProductGroup, products: List<Product>) ->
-                        ProductGroupWithProducts(
-                            group = group,
-                            products = products.filter {
-                                it.name.contains(filter, ignoreCase = true)
-                            }
-                        )
+                    productGroups = allProducts.map { group ->
+                        val filteredProducts = group.products
+                            .filter { it.name.contains(filter, ignoreCase = true) }
+                        // Also add groups with no products so that the tabs do not change
+                        group.copy(products = filteredProducts)
                     },
                 )
             }
@@ -158,9 +154,6 @@ class OrderViewModel internal constructor(
 
     private fun Product.toNewOrderItem(): OrderItem {
         require(!soldOut) { "Product is sold out, not allowed to add to an Order" }
-
-        println("fjdskaljfdlsk")
-
         return OrderItem(product = this, amount = 0, note = null)
     }
 }

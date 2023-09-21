@@ -40,13 +40,14 @@ fun Product(
                 textAlign = TextAlign.Center,
                 textDecoration = if (product.soldOut) TextDecoration.LineThrough else null
             )
-            Text(
-                text = product.allergens.joinToString(", ") { it.shortName }
-                    .ifEmpty { "-" },
-                style = MaterialTheme.typography.caption,
-                textAlign = TextAlign.Center,
-                color = Color.LightGray
-            )
+            if (product.allergens.isNotEmpty()) {
+                Text(
+                    text = product.allergens.joinToString(", ") { it.shortName },
+                    style = MaterialTheme.typography.caption,
+                    textAlign = TextAlign.Center,
+                    color = Color.LightGray
+                )
+            }
             Text(
                 text = product.price.toString(),
                 style = MaterialTheme.typography.body2,

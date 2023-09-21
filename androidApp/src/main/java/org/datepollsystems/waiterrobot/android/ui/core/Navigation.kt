@@ -16,7 +16,7 @@ import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
-import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -26,7 +26,7 @@ fun <S : ViewModelState, E : ViewModelEffect> AbstractViewModel<S, E>.handleSide
     navigator: NavController,
     handler: (suspend (E) -> Unit)? = null
 ) {
-    val logger: Logger = get { parametersOf("handleSideEffects") }
+    val logger: Logger = koinInject { parametersOf("handleSideEffects") }
     collectSideEffect { navOrSideEffect ->
         when (navOrSideEffect) {
             is NavOrViewModelEffect.NavEffect -> navigator.handleNavAction(navOrSideEffect.action)
