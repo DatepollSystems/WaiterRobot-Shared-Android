@@ -1,4 +1,4 @@
-name: Publish Shared Swift Package
+name: Publish
 concurrency: # Cancel currently running releases when a new one is started
   group: publish-${{ github.ref_name }}
   cancel-in-progress: true
@@ -28,6 +28,7 @@ on:
 
 jobs:
   changes:
+    name: Identify changed modules
     runs-on: ubuntu-latest
     outputs:
       android: ${{ steps.changes.outputs.android }}
@@ -49,6 +50,7 @@ jobs:
               - 'settings.gradle.kts'
 
   release-shared:
+    name: Release shared
     permissions:
       contents: write
       packages: write
@@ -65,11 +67,13 @@ jobs:
 
 
   android-after-shared:
+    name: Release Android
     needs: release-shared
     uses: ./.github/workflows/publishAndroid.yml
     secrets: inherit
 
   android-only:
+    name: Release Android
     needs: changes
     if: ${{ (needs.changes.outputs.android == 'true' && needs.changes.outputs.shared == 'false') || (github.event_name == 'workflow_dispatch' && github.event.inputs.androidOnly) }}
     uses: ./.github/workflows/publishAndroid.yml
