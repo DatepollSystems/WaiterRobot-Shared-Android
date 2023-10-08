@@ -1,4 +1,7 @@
 name: Test
+concurrency: # Cancel currently running tests when a new one is started
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches-ignore:
