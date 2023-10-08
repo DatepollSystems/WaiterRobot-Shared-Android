@@ -14,6 +14,7 @@ on:
       - main
     paths:
       - 'androidApp/**'
+      - '!androidApp/version.properties'
       - 'shared/**'
       - 'buildSrc/**'
       - 'build.gradle.kts'

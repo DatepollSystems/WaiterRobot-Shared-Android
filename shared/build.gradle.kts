@@ -168,9 +168,11 @@ buildkonfig {
 }
 
 tasks {
+    val generateLocalizationsTask = named("generateLocalizations")
+
     // Plutil generates the localizations for ios
     val plutil = named("executePlutil") {
-        dependsOn(named("generateLocalizations"))
+        dependsOn(generateLocalizationsTask)
     }
 
     // Generate the localizations for all ios targets
@@ -199,12 +201,18 @@ tasks {
                 }
             }
         }
+
+        // Make sure that the localizations are up to date for release
+        named("androidReleaseSourcesJar") {
+            dependsOn(generateLocalizationsTask)
+        }
     }
 
     // Make sure that the localizations are always up to date
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
     }
+
 }
 
 detekt {
