@@ -5,6 +5,8 @@ concurrency: # Cancel currently running releases when a new one is started
 
 on:
   workflow_dispatch: # TODO remove
+    branches:
+      - refactor/shared-versioning
   push:
     branches:
       - develop
