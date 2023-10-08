@@ -17,7 +17,11 @@ private val versionProperty by lazy {
     }
 }
 
+val SHARED_GROUP: String by project
+val SHARED_BASE_VERSION: String by project
+
 version = versionProperty.getProperty("androidVersion")
+group = SHARED_GROUP
 
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
@@ -28,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "org.datepollsystems.waiterrobot.android"
+        applicationId = this@android.namespace
 
         minSdk = Versions.androidMinSdk
         targetSdk = Versions.androidTargetSdk
@@ -167,8 +171,6 @@ if (remoteBuild) {
         }
     }
 }
-val SHARED_GROUP: String by project
-val SHARED_BASE_VERSION: String by project
 
 dependencies {
     if (remoteBuild) {
