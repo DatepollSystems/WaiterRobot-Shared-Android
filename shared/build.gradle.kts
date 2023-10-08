@@ -20,6 +20,7 @@ group = project.property("SHARED_GROUP") as String
 version = project.property(
     if (project.hasProperty("AUTO_VERSION")) "AUTO_VERSION" else "SHARED_BASE_VERSION"
 ) as String
+val sharedNamespace = "$group.shared"
 
 kotlin {
     // For some reason androidTarget is recognized by IntelliJ,
@@ -134,7 +135,7 @@ kotlin {
 }
 
 android {
-    namespace = group as String
+    namespace = sharedNamespace
     compileSdk = Versions.androidCompileSdk
     defaultConfig {
         minSdk = Versions.androidMinSdk
@@ -152,8 +153,8 @@ kmmbridge {
 }
 
 kmmResourcesConfig {
-    androidApplicationId.set(group as String) // appId of the shared module
-    packageName.set("$group.generated.localization")
+    androidApplicationId.set(sharedNamespace) // appId of the shared module
+    packageName.set("$sharedNamespace.generated.localization")
     defaultLanguage.set("en")
     input.set(File(project.projectDir, "localization.yml"))
     output.set(project.projectDir)
@@ -161,7 +162,7 @@ kmmResourcesConfig {
 }
 
 buildkonfig {
-    packageName = "$group.buildkonfig"
+    packageName = "$sharedNamespace.buildkonfig"
     defaultConfigs {
         buildConfigField(Type.STRING, "sharedVersion", version as String, const = true)
     }
