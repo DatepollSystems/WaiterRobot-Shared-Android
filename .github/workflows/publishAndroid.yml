@@ -50,7 +50,7 @@ jobs:
 
       - name: Add version to env
         run: |
-          echo "ANDROID_VERSION=$(cat androidApp/build/version.tag) >> $GITHUB_ENV
+          echo "ANDROID_VERSION=$(cat androidApp/build/version.tag)" >> $GITHUB_ENV
           echo "VERSION_TAG=android/$ANDROID_VERSION" >> $GITHUB_ENV
 
       - name: Create version tag ${{ env.VERSION_TAG }}
