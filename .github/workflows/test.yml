@@ -6,6 +6,16 @@ on:
   push:
     branches-ignore:
       - 'build-**' # temporary build branch for kmmbridge
+    paths:
+      - 'androidApp/**'
+      - '!androidApp/version.properties'
+      - 'shared/**'
+      - 'buildSrc/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - '.github/workflows/test.yml'
 
 jobs:
   test:
