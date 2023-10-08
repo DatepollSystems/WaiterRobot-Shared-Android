@@ -4,7 +4,9 @@ concurrency: # Cancel currently running releases when a new one is started
   cancel-in-progress: true
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # TODO remove
+    branches:
+      - refactor/shared-versioning
   push:
     branches:
       - develop
