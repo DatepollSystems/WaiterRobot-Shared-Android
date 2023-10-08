@@ -49,18 +49,20 @@ jobs:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
       - name: Add version to env
-        run: echo "VERSION_TAG=android/$(cat androidApp/build/version.tag)" >> $GITHUB_ENV
-
-      - name: Create version tag $VERSION_TAG
         run: |
-          git tag $VERSION_TAG
-          git push origin $VERSION_TAG
+          echo "ANDROID_VERSION=$(cat androidApp/build/version.tag) >> $GITHUB_ENV
+          echo "VERSION_TAG=android/$ANDROID_VERSION" >> $GITHUB_ENV
+
+      - name: Create version tag ${{ env.VERSION_TAG }}
+        run: |
+          git tag ${{ env.VERSION_TAG }}
+          git push origin ${{ env.VERSION_TAG }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Android $VERSION_TAG
-          tag_name: $VERSION_TAG
+          name: Android ${{ env.ANDROID_VERSION }}
+          tag_name: ${{ env.VERSION_TAG }}
           prerelease: ${{ github.ref_name != 'main' }}
           generate_release_notes: true
 
