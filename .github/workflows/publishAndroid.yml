@@ -48,10 +48,22 @@ jobs:
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
-      - name: Create version tag
+      - name: Add version to env
+        run: echo "VERSION_TAG=android/$(cat androidApp/build/version.tag)" >> $GITHUB_ENV
+
+      - name: Create version tag $VERSION_TAG
         run: |
-          git tag android-$(cat androidApp/build/version.tag)
-          git push origin android-$(cat androidApp/build/version.tag)
+          git tag $VERSION_TAG
+          git push origin $VERSION_TAG
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Android $VERSION_TAG
+          tag_name: $VERSION_TAG
+          prerelease: ${{ github.ref_name != 'main' }}
+          generate_release_notes: true
+
 
       # TODO auto increase androidPatch in version.properties (on prod build only) and push (to dev branch, republish must be prevented then)?
 
