@@ -1,12 +1,11 @@
 name: Test
+concurrency: # Cancel currently running tests when a new one is started
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
-    # Push to develop and main branches trigger a release -> tests are run anyway
     branches-ignore:
-      - 'develop'
-      - 'main'
       - 'build-**' # temporary build branch for kmmbridge
-
 
 jobs:
   test:

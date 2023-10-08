@@ -154,8 +154,28 @@ play {
     releaseStatus.set(ReleaseStatus.COMPLETED)
 }
 
+val remoteBuild = project.findProperty("remoteBuild") == "true" // Default false
+if (remoteBuild) {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/DatepollSystems/WaiterRobot-Shared-Android")
+            credentials {
+                username = project.property("GITHUB_PACKAGES_USERNAME") as String
+                password = project.property("GITHUB_PACKAGES_PASSWORD") as String
+            }
+        }
+    }
+}
+val SHARED_GROUP: String by project
+val SHARED_BASE_VERSION: String by project
+
 dependencies {
-    implementation(project(":shared"))
+    if (remoteBuild) {
+        implementation("${SHARED_GROUP}:shared-android:${SHARED_BASE_VERSION}.+")
+    } else {
+        implementation(project(":shared"))
+    }
 
     implementation("androidx.lifecycle:lifecycle-process:${Versions.androidxLifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")

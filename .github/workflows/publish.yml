@@ -1,0 +1,67 @@
+name: Publish Shared Swift Package
+concurrency: # Cancel currently running releases when a new one is started
+  group: publish-${{ github.ref_name }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch: # TODO remove
+    branches:
+      - refactor/shared-versioning
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - 'androidApp/**'
+      - 'shared/**'
+      - 'buildSrc/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.changes.outputs.android }}
+      shared: ${{ steps.changes.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            android:
+              - 'androidApp/**'
+            shared:
+              - 'shared/**'
+              - 'buildSrc/**'
+              - 'build.gradle.kts'
+              - 'gradle.properties'
+              - 'settings.gradle.kts'
+
+  release-shared:
+    permissions:
+      contents: write
+      packages: write
+    needs: changes
+    if: ${{ needs.changes.outputs.shared == 'true' }}
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildautoversion.yml@v1.0
+    with:
+      jvmVersion: 17
+      versionBaseProperty: SHARED_BASE_VERSION
+      # kmmBridgePublish = xcFramework, publishAndroidReleasePublicationToGitHubPackagesRepository = Android lib
+      publishTask: kmmBridgePublish publishAndroidReleasePublicationToGitHubPackagesRepository
+    secrets:
+      gradle_params: "-PGITHUB_BRANCH=${{ github.ref_name }}"
+
+
+  android-after-shared:
+    needs: release-shared
+    uses: ./.github/workflows/publishAndroid.yml
+
+  android-only:
+    needs: changes
+    if: ${{ needs.changes.outputs.android == 'true' && needs.changes.outputs.shared == 'false' }}
+    uses: ./.github/workflows/publishAndroid.yml

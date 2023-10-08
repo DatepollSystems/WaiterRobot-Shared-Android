@@ -1,36 +1,44 @@
-import co.touchlab.faktory.internal.GithubCalls
-import co.touchlab.faktory.versionmanager.GitTagBasedVersionManager
-import co.touchlab.faktory.versionmanager.GitTagVersionManager
-import co.touchlab.faktory.versionmanager.GithubReleaseVersionWriter
-import co.touchlab.faktory.versionmanager.VersionManager
-import co.touchlab.faktory.versionmanager.VersionWriter
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.util.Date
 
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     id("com.android.library")
-    id("co.touchlab.faktory.kmmbridge") version "0.3.7"
+    id("co.touchlab.kmmbridge") version "0.5.0"
     `maven-publish`
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
     id("io.realm.kotlin") version "1.10.2"
+    id("com.codingfeline.buildkonfig")
 }
 
-version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
-
-val sharedNamespace = "org.datepollsystems.waiterrobot.shared"
 val generatedLocalizationRoot: String =
     File(project.buildDir, "generated/localizations").absolutePath
 val iosFrameworkName = "shared"
 
-kotlin {
-    android()
+group = project.property("SHARED_GROUP") as String
+version = project.property(
+    if (project.hasProperty("AUTO_VERSION")) "AUTO_VERSION" else "SHARED_BASE_VERSION"
+) as String
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+kotlin {
+    // For some reason androidTarget is recognized by IntelliJ,
+    // but when building it throws "Unresolved reference: androidTarget"
+    // -> Just keep it till it is removed
+    android {
+        publishAllLibraryVariants()
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            // Must be set to false for shared localization (otherwise resources are not available)
+            isStatic = false
+        }
+    }
 
     // needed to export kotlin documentation in objective-c headers
     targets.withType<KotlinNativeTarget> {
@@ -120,27 +128,13 @@ kotlin {
         }
     }
 
-    // Needed for kmmbrigde to create swift package
-    cocoapods {
-        name = iosFrameworkName
-        summary = "Shared KMM iOS-module of the WaiterRobot app"
-        homepage = "https://github.com/DatepollSystems/waiterrobot-mobile_android-shared"
-        authors = "DatepollSystems"
-        ios.deploymentTarget = "15"
-
-        framework {
-            // Must be set to false for shared localization (otherwise resources are not available)
-            isStatic = false
-        }
-    }
-
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
     }
 }
 
 android {
-    namespace = sharedNamespace
+    namespace = group as String
     compileSdk = Versions.androidCompileSdk
     defaultConfig {
         minSdk = Versions.androidMinSdk
@@ -151,23 +145,26 @@ android {
     sourceSets["main"].res.srcDir("$generatedLocalizationRoot/androidMain/res")
 }
 
+addGithubPackagesRepository()
 kmmbridge {
     mavenPublishArtifacts()
-    /** [co.touchlab.faktory.KmmBridgeExtension.githubReleaseVersions] */
-    versionManager.set(CustomGitVersionManager(GitTagVersionManager))
-    versionWriter.set(GithubReleaseVersionWriter(GithubCalls)) // TODO modify to support draft releases, custom title and generation of release notes (for api see https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#create-a-release)?
     spm()
-    versionPrefix.set(version as String)
 }
-addGithubPackagesRepository()
 
 kmmResourcesConfig {
-    androidApplicationId.set(sharedNamespace) // appId of the shared module
-    packageName.set("${sharedNamespace}.generated.localization")
+    androidApplicationId.set(group as String) // appId of the shared module
+    packageName.set("$group.generated.localization")
     defaultLanguage.set("en")
     input.set(File(project.projectDir, "localization.yml"))
     output.set(project.projectDir)
     srcFolder.set(generatedLocalizationRoot) // place the generated files in the build folder
+}
+
+buildkonfig {
+    packageName = "$group.buildkonfig"
+    defaultConfigs {
+        buildConfigField(Type.STRING, "sharedVersion", version as String, const = true)
+    }
 }
 
 tasks {
@@ -207,30 +204,6 @@ tasks {
     // Make sure that the localizations are always up to date
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
-    }
-}
-
-/**
- * Adds a suffix to the version when a lava/pre release is made
- * see [co.touchlab.faktory.versionmanager.GitTagVersionManager]
- */
-class CustomGitVersionManager(
-    private val manager: GitTagBasedVersionManager
-) : VersionManager by manager {
-    override fun getVersion(
-        project: Project,
-        versionPrefix: String,
-        versionWriter: VersionWriter
-    ): String {
-        val baseVersion = manager.getVersion(project, versionPrefix, versionWriter)
-
-        // Add version suffix for dev releases
-        // e.g. main -> 1.0.1, develop -> 1.0.1-lava-1676142940
-        return when (val branch = project.property("GITHUB_BRANCH")) {
-            "main" -> baseVersion
-            "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
-            else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
-        }
     }
 }
 
