@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.api
+package org.datepollsystems.waiterrobot.shared.core.data.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth

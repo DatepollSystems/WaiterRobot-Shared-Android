@@ -5,12 +5,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
@@ -19,14 +21,14 @@ class SettingsViewModel internal constructor(
     private val productRepo: ProductRepository
 ) : AbstractViewModel<SettingsState, SettingsEffect>(SettingsState()) {
 
-    override fun onCreate(state: SettingsState) {
+    override suspend fun SimpleSyntax<SettingsState, NavOrViewModelEffect<SettingsEffect>>.onCreate() {
         watchAppTheme()
     }
 
     fun refreshAll() = intent {
         coroutineScope {
             listOf(
-                launchCatching { tableRepo.getTableGroups(true) },
+                launchCatching { tableRepo.refreshTableGroups() },
                 launchCatching { productRepo.getProductGroups(true) }
             ).joinAll()
         }

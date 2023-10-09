@@ -1,7 +1,8 @@
 package org.datepollsystems.waiterrobot.shared.root
 
+import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
@@ -16,16 +17,19 @@ import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 
 class RootViewModel internal constructor(
     private val authRepo: AuthRepository,
     private val rootApi: RootApi
 ) : AbstractViewModel<RootState, RootEffect>(RootState()) {
 
-    override fun onCreate(state: RootState) {
-        watchLoginState()
-        watchSelectedEventState()
-        watchAppTheme()
+    override suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.onCreate() {
+        repeatOnSubscription {
+            launch { watchLoginState() }
+            launch { watchSelectedEventState() }
+            launch { watchAppTheme() }
+        }
 
         // Check the app version at each startup
         checkAppVersion()
@@ -67,7 +71,7 @@ class RootViewModel internal constructor(
         }
     }
 
-    private fun watchLoginState() = intent {
+    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchLoginState() {
         CommonApp.isLoggedIn.collect { loggedIn ->
             reduce { state.copy(isLoggedIn = loggedIn) }
             if (!loggedIn) {
@@ -76,7 +80,7 @@ class RootViewModel internal constructor(
         }
     }
 
-    private fun watchSelectedEventState() = intent {
+    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchSelectedEventState() {
         CommonApp.hasEventSelected.collect { hasEventSelected ->
             reduce { state.copy(hasEventSelected = hasEventSelected) }
             if (!hasEventSelected) {
@@ -85,13 +89,13 @@ class RootViewModel internal constructor(
         }
     }
 
-    private fun watchAppTheme() = intent {
+    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchAppTheme() {
         CommonApp.appTheme.collect {
             reduce { state.copy(selectedTheme = it) }
         }
     }
 
-    private fun checkAppVersion() = intent {
+    private suspend fun checkAppVersion() {
         // Just call the index route to verify that the current app version is still supported
         rootApi.ping()
     }

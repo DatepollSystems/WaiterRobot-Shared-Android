@@ -1,19 +1,25 @@
 package org.datepollsystems.waiterrobot.shared.features.table.repository
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
+import org.datepollsystems.waiterrobot.shared.core.data.cachedRemoteResource
+import org.datepollsystems.waiterrobot.shared.core.data.mapResource
+import org.datepollsystems.waiterrobot.shared.core.data.remoteResource
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
 import org.datepollsystems.waiterrobot.shared.features.table.api.TableApi
+import org.datepollsystems.waiterrobot.shared.features.table.api.models.TableGroupResponseDto
 import org.datepollsystems.waiterrobot.shared.features.table.api.models.TableResponseDto
 import org.datepollsystems.waiterrobot.shared.features.table.db.TableDatabase
 import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableEntry
+import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableGroupEntry
 import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
-import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroupWithTables
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
 import org.koin.core.component.inject
@@ -32,82 +38,87 @@ internal class TableRepository : AbstractRepository() {
         }
     }
 
-    suspend fun getTableGroups(forceUpdate: Boolean): List<TableGroupWithTables> {
-        val eventId = CommonApp.settings.selectedEventId
-
-        fun <T : Any> Map<TableGroup, List<T>>.mapTableGroupWithTables(
-            mapper: (T) -> Table
-        ): List<TableGroupWithTables> {
-            return this.map { (group, tables) ->
-                TableGroupWithTables(group, tables.map(mapper).sortedBy(Table::number))
-            }.sortedBy { it.group.name.lowercase() }
+    fun getTableGroupsFlow(forceUpdate: Boolean): Flow<Resource<List<TableGroup>>> =
+        cachedRemoteResource(
+            query = { tableDb.getForEventFlow(CommonApp.settings.selectedEventId) },
+            update = ::refreshTableGroups,
+            shouldFetch = { cachedGroups ->
+                forceUpdate || cachedGroups.isEmpty() ||
+                    cachedGroups.any { it.updated.olderThan(maxAge) }
+            },
+            mapDbEntity = { it.map(TableGroupEntry::toModel) }
+        ).mapResource { groups ->
+            groups?.filter { it.tables.isNotEmpty() } // Do not show groups that do not have tables at all
+                ?.sortedBy { it.name.lowercase() } // Sort groups with same position by name
+                ?.sortedBy(TableGroup::position)
         }
 
-        fun loadFromDb(): List<TableGroupWithTables>? {
-            logger.i { "Fetching tables from DB ..." }
-            val dbTables = tableDb.getTablesForEvent(eventId)
-            logger.d { "Found ${dbTables.count()} tables in DB" }
+    suspend fun refreshTableGroups() {
+        logger.i { "Loading Tables from api ..." }
 
-            return if (dbTables.isEmpty() || dbTables.any { it.updated.olderThan(maxAge) }) {
-                null
-            } else {
-                return dbTables.groupBy { TableGroup(it.groupId!!, it.groupName!!) }
-                    .mapTableGroupWithTables(TableEntry::toModel)
+        val timestamp = Now()
+        val apiTables = tableApi.getTableGroups()
+        logger.d { "Got ${apiTables.count()} table groups with ${apiTables.sumOf { it.tables.count() }} from api" }
+
+        logger.d { "Update tables in DB ..." }
+        val tableIdsWithOrders = tableApi.getTableIdsOfTablesWithOpenOrder()
+        tableDb.replace(apiTables.map { it.toEntry(timestamp) }, tableIdsWithOrders)
+    }
+
+    suspend fun updateTablesWithOrder() {
+        val ids = tableApi.getTableIdsOfTablesWithOpenOrder()
+        tableDb.updateTablesWithOrder(ids)
+    }
+
+    suspend fun toggleGroupFilter(group: TableGroup) {
+        tableDb.toggleFiltered(group.id)
+    }
+
+    suspend fun clearFilter() {
+        tableDb.clearFilter()
+    }
+
+    suspend fun getUnpaidItemsForTable(table: Table): Flow<Resource<List<OrderedItem>>> =
+        remoteResource {
+            billingApi.getBillForTable(table.id).products.map {
+                OrderedItem(it.id, it.name, it.amount)
             }
         }
-
-        suspend fun loadFromApiAndStore(): List<TableGroupWithTables> {
-            logger.i { "Loading Tables from api ..." }
-
-            val timestamp = Now()
-            val apiTables = tableApi.getTables()
-            logger.d { "Got ${apiTables.count()} tables from api" }
-
-            logger.d { "Remove old tables from DB ..." }
-            tableDb.deleteTablesOfEvent(eventId)
-
-            logger.d { "Saving tables to DB ..." }
-            tableDb.putTables(apiTables.map { it.toEntry(timestamp) })
-
-            return apiTables.groupBy { TableGroup(it.groupId, it.groupName) }
-                .mapTableGroupWithTables(TableResponseDto::toModel)
-        }
-
-        return if (forceUpdate) {
-            loadFromApiAndStore()
-        } else {
-            loadFromDb() ?: loadFromApiAndStore()
-        }
-    }
-
-    suspend fun getUnpaidItemsForTable(table: Table): List<OrderedItem> {
-        return billingApi.getBillForTable(table.id).products.map {
-            OrderedItem(it.id, it.name, it.amount)
-        }
-    }
 
     companion object {
         private val maxAge = 24.hours
     }
 }
 
-private fun TableResponseDto.toModel() = Table(
-    id = this.id,
-    number = this.number,
-    groupName = this.groupName
-)
-
 private fun TableEntry.toModel() = Table(
-    id = this.id!!,
-    number = this.number!!,
-    groupName = this.groupName!!
-)
-
-private fun TableResponseDto.toEntry(timestamp: Instant) = TableEntry(
     id = this.id,
     number = this.number,
+    hasOrders = this.hasOrders,
+)
+
+private fun TableGroupEntry.toModel() = TableGroup(
+    id = this.id,
+    name = this.name,
     eventId = this.eventId,
-    groupId = this.groupId,
-    groupName = this.groupName,
+    position = this.position,
+    color = this.color,
+    isFiltered = this.isFiltered,
+    tables = this.tables.map(TableEntry::toModel).sort()
+)
+
+private fun TableGroupResponseDto.toEntry(timestamp: Instant) = TableGroupEntry(
+    id = this.id,
+    name = this.name,
+    eventId = this.eventId,
+    position = this.position,
+    color = this.color,
+    tables = this.tables.map(TableResponseDto::toEntry),
     updatedAt = timestamp
 )
+
+private fun TableResponseDto.toEntry() = TableEntry(
+    id = this.id,
+    number = this.number,
+)
+
+private fun List<Table>.sort() = this.sortedBy(Table::number)

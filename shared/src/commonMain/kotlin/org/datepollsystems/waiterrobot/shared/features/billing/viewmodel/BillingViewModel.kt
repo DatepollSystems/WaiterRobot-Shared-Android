@@ -1,11 +1,13 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
+import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.utils.euro
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.math.max
@@ -16,7 +18,7 @@ class BillingViewModel internal constructor(
     private val table: Table
 ) : AbstractViewModel<BillingState, BillingEffect>(BillingState()) {
 
-    override fun onCreate(state: BillingState) {
+    override suspend fun SimpleSyntax<BillingState, NavOrViewModelEffect<BillingEffect>>.onCreate() {
         loadBill()
     }
 

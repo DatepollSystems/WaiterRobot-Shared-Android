@@ -1,11 +1,11 @@
-package org.datepollsystems.waiterrobot.shared.core.api
+package org.datepollsystems.waiterrobot.shared.core.data.api
 
 import co.touchlab.kermit.Logger
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.statement.*
+import io.ktor.client.HttpClientConfig
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 internal fun HttpClientConfig<*>.installApiClientExceptionTransformer(json: Json) {

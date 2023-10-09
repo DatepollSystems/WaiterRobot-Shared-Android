@@ -1,7 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.api.models
 
 import kotlinx.serialization.Serializable
-import org.datepollsystems.waiterrobot.shared.core.api.RequestBodyDto
+import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
 import org.datepollsystems.waiterrobot.shared.utils.Cents
 
 @Serializable

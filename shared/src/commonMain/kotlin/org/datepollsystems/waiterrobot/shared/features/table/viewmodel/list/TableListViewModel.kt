@@ -1,12 +1,17 @@
 package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
-import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
-import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroupWithTables
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
@@ -14,55 +19,27 @@ class TableListViewModel internal constructor(
     private val tableRepository: TableRepository
 ) : AbstractViewModel<TableListState, TableListEffect>(TableListState()) {
 
-    override fun onCreate(state: TableListState) {
-        loadTables()
+    override suspend fun SimpleSyntax<TableListState, NavOrViewModelEffect<TableListEffect>>.onCreate() {
+        coroutineScope {
+            launch { watchRefresh() }
+            refreshChannel.send(ForceUpdate(false))
+        }
     }
 
-    fun loadTables(forceUpdate: Boolean = false) = loadTables(forceUpdate, showLoading = true)
+    class ForceUpdate(val forceUpdate: Boolean)
 
-    private fun loadTables(forceUpdate: Boolean, showLoading: Boolean) = intent {
-        logger.d { "Load tables ..." }
-        if (showLoading) reduce { state.copy(viewState = ViewState.Loading) }
+    private val refreshChannel: Channel<ForceUpdate> = Channel(Channel.BUFFERED)
 
-        val tableGroups = tableRepository.getTableGroups(forceUpdate)
-        val groups: Set<TableGroup> = tableGroups.mapTo(mutableSetOf()) { it.group }
-
-        reduce {
-            state.copy(
-                viewState = ViewState.Idle,
-                unselectedTableGroups = groups.minus(state.selectedTableGroups),
-                filteredTableGroups = tableGroups.filterGroups(state.selectedTableGroups)
-            )
-        }
+    fun loadTables(forceUpdate: Boolean = false) = intent {
+        refreshChannel.send(ForceUpdate(forceUpdate))
     }
 
     fun toggleFilter(tableGroup: TableGroup) = intent {
-        reduce {
-            if (state.selectedTableGroups.contains(tableGroup)) {
-                state.copy(
-                    selectedTableGroups = state.selectedTableGroups.minus(tableGroup),
-                    unselectedTableGroups = state.unselectedTableGroups.plus(tableGroup),
-                )
-            } else {
-                state.copy(
-                    selectedTableGroups = state.selectedTableGroups.plus(tableGroup),
-                    unselectedTableGroups = state.selectedTableGroups.minus(tableGroup),
-                )
-            }
-        }
-
-        loadTables(forceUpdate = false, showLoading = false)
+        tableRepository.toggleGroupFilter(tableGroup)
     }
 
     fun clearFilter() = intent {
-        reduce {
-            state.copy(
-                selectedTableGroups = emptySet(),
-                unselectedTableGroups = state.unselectedTableGroups.plus(state.selectedTableGroups)
-            )
-        }
-
-        loadTables(forceUpdate = false, showLoading = false)
+        tableRepository.clearFilter()
     }
 
     fun onTableClick(table: Table) = intent {
@@ -73,13 +50,16 @@ class TableListViewModel internal constructor(
         navigator.push(Screen.SettingsScreen)
     }
 
-    override fun update() = loadTables(true)
-
-    private fun List<TableGroupWithTables>.filterGroups(selectedGroups: Set<TableGroup>): List<TableGroupWithTables> {
-        return if (selectedGroups.isEmpty()) {
-            this
-        } else {
-            this.filter { it.group in selectedGroups }
+    private suspend fun SimpleSyntax<TableListState, NavOrViewModelEffect<TableListEffect>>.watchRefresh() {
+        refreshChannel.receiveAsFlow().collectLatest {
+            logger.d { "Load tables (forceUpdate=${it.forceUpdate}..." }
+            tableRepository.getTableGroupsFlow(it.forceUpdate).collect {
+                reduce { state.copy(tableGroups = it) }
+            }
         }
+    }
+
+    override fun update() {
+        loadTables(true)
     }
 }

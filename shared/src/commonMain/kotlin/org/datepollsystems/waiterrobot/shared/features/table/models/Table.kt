@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable // needed for android navigation
 data class Table(
     val id: Long,
-    val number: Long,
-    val groupName: String
+    val number: Int,
+    val groupName: String = "TODO", // TODO
+    val hasOrders: Boolean = false
 )

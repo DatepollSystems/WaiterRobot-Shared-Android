@@ -4,7 +4,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
@@ -26,14 +26,15 @@ import kotlin.reflect.KClass
 // This flow is used to trigger a update of a ViewModel from an other ViewModel
 private val updateViewModel: MutableSharedFlow<String> = MutableSharedFlow()
 
-abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initialState: S) :
-    ViewModel(), ContainerHost<S, NavOrViewModelEffect<E>>, KoinComponent {
+abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
+    initialState: S
+) : ViewModel(), ContainerHost<S, NavOrViewModelEffect<E>>, KoinComponent {
 
     protected val logger by injectLoggerForClass()
 
     final override val container: Container<S, NavOrViewModelEffect<E>> = viewModelScope.container(
         initialState = initialState,
-        onCreate = ::onCreate,
+        onCreate = { this.onCreate() },
         buildSettings = {
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 when (exception) {
@@ -70,8 +71,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
         }
     }
 
-    // Default implementation
-    protected open fun onCreate(state: S): Unit = Unit
+    protected open suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.onCreate(): Unit = Unit
 
     protected suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.reduceError(
         errorTitle: String,
@@ -91,11 +91,13 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
         postSideEffect(NavOrViewModelEffect.VMEffect(effect))
     }
 
-    protected fun dismissError() = intent {
-        reduce {
-            @Suppress("UNCHECKED_CAST")
-            // Swift does not support recursive Generics so we have to cast here
-            state.withViewState(ViewState.Idle) as S
+    protected fun dismissError() {
+        intent {
+            reduce {
+                @Suppress("UNCHECKED_CAST")
+                // Swift does not support recursive Generics so we have to cast here
+                state.withViewState(ViewState.Idle) as S
+            }
         }
     }
 

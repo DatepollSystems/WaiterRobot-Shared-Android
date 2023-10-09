@@ -2,7 +2,7 @@ package org.datepollsystems.waiterrobot.shared.features.auth.api.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.datepollsystems.waiterrobot.shared.core.api.RequestBodyDto
+import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
 
 @Serializable
 internal class LoginRequestDto(

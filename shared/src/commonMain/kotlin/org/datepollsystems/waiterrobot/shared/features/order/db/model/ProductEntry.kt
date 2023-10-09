@@ -10,9 +10,10 @@ import org.datepollsystems.waiterrobot.shared.utils.Cents
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 
 internal class ProductGroupEntry constructor() : RealmObject {
-    var id: Long? = null
-    var name: String? = null
-    var eventId: Long? = null
+    @PrimaryKey
+    var id: Long = -1
+    var name: String = ""
+    var eventId: Long = -1
     var position: Int = Int.MAX_VALUE
     var products: RealmList<ProductEntry> = realmListOf()
     var updatedAt: Long = 0L
@@ -39,10 +40,10 @@ internal class ProductGroupEntry constructor() : RealmObject {
 
 internal class ProductEntry() : RealmObject {
     @PrimaryKey
-    var id: Long? = null
-    var name: String? = null
-    var price: Cents? = null
-    var soldOut: Boolean? = null
+    var id: Long = -1
+    var name: String = ""
+    var price: Cents = 0
+    var soldOut: Boolean = false
     var allergens: RealmList<AllergenEntry> = realmListOf()
     var position: Int = Int.MAX_VALUE
 
@@ -65,9 +66,10 @@ internal class ProductEntry() : RealmObject {
 }
 
 internal class AllergenEntry constructor() : RealmObject {
-    var id: Long? = null
-    var name: String? = null
-    var shortName: String? = null
+    @PrimaryKey
+    var id: Long = -1
+    var name: String = ""
+    var shortName: String = ""
 
     constructor(id: Long, name: String, shortName: String) : this() {
         this.id = id

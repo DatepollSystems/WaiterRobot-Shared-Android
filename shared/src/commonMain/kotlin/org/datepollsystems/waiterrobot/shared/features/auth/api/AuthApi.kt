@@ -1,11 +1,16 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.api
 
-import io.ktor.client.*
-import io.ktor.client.call.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.api.AbstractApi
+import org.datepollsystems.waiterrobot.shared.core.data.api.AbstractApi
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
-import org.datepollsystems.waiterrobot.shared.features.auth.api.models.*
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.CreateLoginRequestDto
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LoginRequestDto
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LoginResponseDto
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LogoutRequestDto
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.RefreshRequestDto
+import org.datepollsystems.waiterrobot.shared.features.auth.api.models.RefreshResponseDto
 
 internal class AuthApi(client: HttpClient) : AbstractApi("waiter/auth", client) {
 

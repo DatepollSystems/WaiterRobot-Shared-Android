@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
-import org.datepollsystems.waiterrobot.shared.core.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -12,6 +13,7 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.*
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
@@ -23,7 +25,7 @@ class OrderViewModel internal constructor(
     private val initialItemId: Long?
 ) : AbstractViewModel<OrderState, OrderEffect>(OrderState()) {
 
-    override fun onCreate(state: OrderState) {
+    override suspend fun SimpleSyntax<OrderState, NavOrViewModelEffect<OrderEffect>>.onCreate() {
         if (initialItemId == null) {
             intent {
                 reduce { state.withViewState(ViewState.Loading) }
