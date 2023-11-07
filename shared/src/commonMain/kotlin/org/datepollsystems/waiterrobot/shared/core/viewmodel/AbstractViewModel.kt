@@ -10,8 +10,8 @@ import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.message
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 import org.koin.core.component.KoinComponent
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -52,7 +52,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
                                 "Exceptions should be handled directly in the intent!"
                         }
                         intent {
-                            reduceError(L.app.genericError.title(), L.app.genericError.message())
+                            reduceError(L.exceptions.title(), exception.getLocalizedUserMessage())
                         }
                     }
                 }

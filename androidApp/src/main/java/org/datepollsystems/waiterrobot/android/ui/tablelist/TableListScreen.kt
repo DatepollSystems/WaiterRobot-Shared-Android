@@ -97,8 +97,7 @@ private fun TableGrid(
             )
         }
         if (groupsResource is Resource.Error) {
-            // TODO this error messages are not very user friendly (Use a global mapper Throwable.getUserMessage()?)
-            ErrorBar(message = groupsResource.exception.message ?: "Unknown error")
+            ErrorBar(exception = groupsResource.exception)
         }
         if (tableGroups.isNullOrEmpty()) {
             CenteredText(text = L.tableList.noTableFound(), scrollAble = true)

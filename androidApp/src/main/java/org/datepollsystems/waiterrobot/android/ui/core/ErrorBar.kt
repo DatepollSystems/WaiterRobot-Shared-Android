@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 
 @Composable
 fun ErrorBar(
@@ -30,3 +31,6 @@ fun ErrorBar(
         )
     }
 }
+
+@Composable
+fun ErrorBar(exception: Throwable) = ErrorBar(message = exception.getLocalizedUserMessage())

@@ -2,13 +2,6 @@ app:
   name:
     en: waiters.team
     de: kellner.team
-  genericError:
-    message:
-      en: Something went wrong. Please try again.
-      de: Etwas ist schief gelaufen. Bitte versuche es erneut.
-    title:
-      en: Error
-      de: Fehler
   forceUpdate:
     title:
       en: App Update Required
@@ -257,3 +250,13 @@ settings:
   privacyPolicy:
     en: Privacy Policy
     de: Datenschutz
+exceptions:
+  title:
+    en: Error
+    de: Fehler
+  generic:
+    en: Something went wrong. Please try again.
+    de: Etwas ist schief gelaufen. Bitte versuche es erneut.
+  accountNotActivated:
+    en: Your account is not activated. Please contact your Organization admin,
+    de: Dein Account ist nicht aktiviert. Bitte wende dich an deinen Organisationsadministrator.

@@ -97,9 +97,7 @@ fun TableDetailScreen(
                 Column {
                     val res = state.orderedItemsResource
                     if (res is Resource.Error) {
-                        // TODO this error messages are not very user friendly
-                        //  (Use a global mapper Throwable.getUserMessage()?)
-                        ErrorBar(message = res.exception.message ?: "Unknown error")
+                        ErrorBar(exception = res.exception)
                     }
                     val orderedItems = state.orderedItemsResource.data
                     if (orderedItems.isNullOrEmpty()) {
