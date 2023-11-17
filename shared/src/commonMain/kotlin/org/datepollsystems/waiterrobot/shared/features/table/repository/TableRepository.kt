@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.table.repository
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -65,17 +66,28 @@ internal class TableRepository : AbstractRepository() {
         tableDb.replace(apiTables.map { it.toEntry(timestamp) }, tableIdsWithOrders)
     }
 
-    suspend fun updateTablesWithOrder() {
-        val ids = tableApi.getTableIdsOfTablesWithOpenOrder()
-        tableDb.updateTablesWithOrder(ids)
+    suspend fun updateTablesWithOpenOrder() {
+        @Suppress("TooGenericExceptionCaught")
+        try {
+            val ids = tableApi.getTableIdsOfTablesWithOpenOrder()
+            tableDb.updateTablesWithOrder(ids)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.i("Refreshing of tables with open orders failed", e)
+        }
     }
 
     suspend fun toggleGroupFilter(group: TableGroup) {
-        tableDb.toggleFiltered(group.id)
+        tableDb.toggleHidden(group.id)
     }
 
-    suspend fun clearFilter() {
-        tableDb.clearFilter()
+    suspend fun showAll() {
+        tableDb.showAll()
+    }
+
+    suspend fun hideAll() {
+        tableDb.hideAll()
     }
 
     suspend fun getUnpaidItemsForTable(table: Table): Flow<Resource<List<OrderedItem>>> =
@@ -90,10 +102,11 @@ internal class TableRepository : AbstractRepository() {
     }
 }
 
-private fun TableEntry.toModel() = Table(
+private fun TableEntry.toModel(groupName: String) = Table(
     id = this.id,
     number = this.number,
     hasOrders = this.hasOrders,
+    groupName = groupName,
 )
 
 private fun TableGroupEntry.toModel() = TableGroup(
@@ -102,8 +115,8 @@ private fun TableGroupEntry.toModel() = TableGroup(
     eventId = this.eventId,
     position = this.position,
     color = this.color,
-    isFiltered = this.isFiltered,
-    tables = this.tables.map(TableEntry::toModel).sort()
+    hidden = this.hidden,
+    tables = this.tables.map { it.toModel(this.name) }.sort()
 )
 
 private fun TableGroupResponseDto.toEntry(timestamp: Instant) = TableGroupEntry(

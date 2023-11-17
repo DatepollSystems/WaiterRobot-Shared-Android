@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FilterListOff
+import androidx.compose.material.icons.outlined.DoneAll
+import androidx.compose.material.icons.outlined.RemoveDone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +25,8 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 fun TableGroupFilter(
     groups: List<TableGroup>,
     onToggle: (TableGroup) -> Unit,
-    clearFilter: () -> Unit,
+    showAll: () -> Unit,
+    hideAll: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -42,14 +43,14 @@ fun TableGroupFilter(
                 key = TableGroup::id
             ) { group ->
 
-                if (group.isFiltered) {
-                    Button(
+                if (group.hidden) {
+                    OutlinedButton(
                         onClick = { onToggle(group) },
                     ) {
                         Text(group.name)
                     }
                 } else {
-                    OutlinedButton(
+                    Button(
                         onClick = { onToggle(group) },
                     ) {
                         Text(group.name)
@@ -58,12 +59,19 @@ fun TableGroupFilter(
             }
         }
 
-        Box {
+        Row {
             IconButton(
-                onClick = clearFilter,
-                enabled = groups.any { it.isFiltered }
+                onClick = showAll,
+                enabled = groups.any { it.hidden }
             ) {
-                Icon(Icons.Outlined.FilterListOff, contentDescription = "Clear Filter")
+                Icon(Icons.Outlined.DoneAll, contentDescription = "Show all table groups")
+            }
+
+            IconButton(
+                onClick = hideAll,
+                enabled = !groups.all { it.hidden }
+            ) {
+                Icon(Icons.Outlined.RemoveDone, contentDescription = "Hide all table groups")
             }
         }
     }
@@ -82,6 +90,7 @@ private fun TableGroupFilterPreview() {
             TableGroup(6, "Group 6", 1, 6, null, false, emptyList())
         ),
         onToggle = {},
-        clearFilter = {}
+        showAll = {},
+        hideAll = {}
     )
 }

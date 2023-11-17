@@ -5,6 +5,7 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
+import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
@@ -15,6 +16,7 @@ import kotlin.math.min
 
 class BillingViewModel internal constructor(
     private val billingRepository: BillingRepository,
+    private val tableRepository: TableRepository,
     private val table: Table
 ) : AbstractViewModel<BillingState, BillingEffect>(BillingState()) {
 
@@ -36,6 +38,8 @@ class BillingViewModel internal constructor(
         loadBill()
 
         reduce { state.copy(changeText = "0", moneyGivenText = "") }
+
+        tableRepository.updateTablesWithOpenOrder()
     }
 
     fun moneyGiven(moneyGiven: String) = intent {

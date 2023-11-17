@@ -10,6 +10,6 @@ data class TableGroup(
     val eventId: Long,
     val position: Int,
     val color: String?,
-    val isFiltered: Boolean,
+    val hidden: Boolean,
     var tables: List<Table>
 )

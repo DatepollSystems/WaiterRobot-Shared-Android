@@ -72,7 +72,8 @@ fun TableListScreen(
                 TableGrid(
                     groupsResource = state.tableGroups,
                     toggleFilter = vm::toggleFilter,
-                    clearFilter = vm::clearFilter,
+                    showAll = vm::showAll,
+                    hideAll = vm::hideAll,
                     onTableClick = vm::onTableClick
                 )
             }
@@ -84,7 +85,8 @@ fun TableListScreen(
 private fun TableGrid(
     groupsResource: Resource<List<TableGroup>>,
     toggleFilter: (TableGroup) -> Unit,
-    clearFilter: () -> Unit,
+    showAll: () -> Unit,
+    hideAll: () -> Unit,
     onTableClick: (Table) -> Unit
 ) {
     val tableGroups = groupsResource.data
@@ -93,7 +95,8 @@ private fun TableGrid(
             TableGroupFilter(
                 groups = tableGroups,
                 onToggle = toggleFilter,
-                clearFilter = clearFilter
+                showAll = showAll,
+                hideAll = hideAll
             )
         }
         if (groupsResource is Resource.Error) {
@@ -115,7 +118,7 @@ private fun TableGrid(
                 columns = GridCells.Adaptive(80.dp)
             ) {
                 tableGroups
-                    .filterNot(TableGroup::isFiltered)
+                    .filterNot(TableGroup::hidden)
                     .forEach { group: TableGroup ->
                         // TODO use a sticky header
                         //  (Compose currently does not support sticky headers in LazyGrids)

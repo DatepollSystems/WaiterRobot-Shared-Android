@@ -2,18 +2,23 @@ package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.IntentContext
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
+import org.datepollsystems.waiterrobot.shared.utils.repeatUntilCanceled
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import kotlin.time.Duration.Companion.minutes
 
 class TableListViewModel internal constructor(
     private val tableRepository: TableRepository
@@ -22,6 +27,7 @@ class TableListViewModel internal constructor(
     override suspend fun SimpleSyntax<TableListState, NavOrViewModelEffect<TableListEffect>>.onCreate() {
         coroutineScope {
             launch { watchRefresh() }
+            launch { pollTablesWithOpenOrder() }
             refreshChannel.send(ForceUpdate(false))
         }
     }
@@ -38,8 +44,12 @@ class TableListViewModel internal constructor(
         tableRepository.toggleGroupFilter(tableGroup)
     }
 
-    fun clearFilter() = intent {
-        tableRepository.clearFilter()
+    fun showAll() = intent {
+        tableRepository.showAll()
+    }
+
+    fun hideAll() = intent {
+        tableRepository.hideAll()
     }
 
     fun onTableClick(table: Table) = intent {
@@ -50,11 +60,20 @@ class TableListViewModel internal constructor(
         navigator.push(Screen.SettingsScreen)
     }
 
-    private suspend fun SimpleSyntax<TableListState, NavOrViewModelEffect<TableListEffect>>.watchRefresh() {
+    private suspend fun IntentContext<TableListState, TableListEffect>.watchRefresh() {
         refreshChannel.receiveAsFlow().collectLatest {
-            logger.d { "Load tables (forceUpdate=${it.forceUpdate}..." }
+            logger.d { "Load tables (forceUpdate=${it.forceUpdate})..." }
             tableRepository.getTableGroupsFlow(it.forceUpdate).collect {
                 reduce { state.copy(tableGroups = it) }
+            }
+        }
+    }
+
+    private suspend fun IntentContext<TableListState, TableListEffect>.pollTablesWithOpenOrder() {
+        delay(1.minutes) // on start the tables are always refreshed -> no need to refresh twice
+        repeatOnSubscription {
+            repeatUntilCanceled(1.minutes) {
+                tableRepository.updateTablesWithOpenOrder()
             }
         }
     }

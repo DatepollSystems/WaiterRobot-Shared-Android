@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.data
 
+import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
@@ -53,10 +54,12 @@ internal inline fun <ModelType, EntityType> cachedRemoteResource(
         @Suppress("TooGenericExceptionCaught")
         try {
             update()
-        } catch (tr: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             // TODO provide a better way to handle different errors?
             // TODO log
-            emit(Resource.Error(tr, mapDbEntity(cachedData)))
+            emit(Resource.Error(e, mapDbEntity(cachedData)))
         }
     }
 
@@ -73,10 +76,12 @@ internal fun <ModelType> remoteResource(
     try {
         val result = fetch()
         emit(Resource.Success(result))
-    } catch (tr: Throwable) {
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
         // TODO provide a better way to handle different errors?
         // TODO log
-        emit(Resource.Error(tr, null))
+        emit(Resource.Error(e, null))
     }
 }
 

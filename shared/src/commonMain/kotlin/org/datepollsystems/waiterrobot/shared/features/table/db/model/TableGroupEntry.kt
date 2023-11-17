@@ -15,7 +15,7 @@ internal class TableGroupEntry() : RealmObject {
     var eventId: Long = -1
     var position: Int = Int.MAX_VALUE
     var color: String? = null
-    var isFiltered: Boolean = false
+    var hidden: Boolean = false
     var tables: RealmList<TableEntry> = realmListOf()
     var updatedAt: Long = 0L
 

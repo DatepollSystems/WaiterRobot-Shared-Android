@@ -26,6 +26,8 @@ import kotlin.reflect.KClass
 // This flow is used to trigger a update of a ViewModel from an other ViewModel
 private val updateViewModel: MutableSharedFlow<String> = MutableSharedFlow()
 
+typealias IntentContext<S, E> = SimpleSyntax<S, NavOrViewModelEffect<E>>
+
 abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
     initialState: S
 ) : ViewModel(), ContainerHost<S, NavOrViewModelEffect<E>>, KoinComponent {
@@ -34,7 +36,10 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
 
     final override val container: Container<S, NavOrViewModelEffect<E>> = viewModelScope.container(
         initialState = initialState,
-        onCreate = { this.onCreate() },
+        onCreate = {
+            logger.d { "Creating Orbit container" }
+            this.onCreate()
+        },
         buildSettings = {
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 when (exception) {

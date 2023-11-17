@@ -20,10 +20,10 @@ internal class TableDatabase : AbstractDatabase() {
         val idsToKeep = tableGroups.mapTo(mutableSetOf(), TableGroupEntry::id)
         // Realm does currently not have the concept of partial update.
         // Always the whole object is overridden.
-        val filteredGroupIds = realm.query<TableGroupEntry>("isFiltered == $0", true)
+        val hiddenGroupIds = realm.query<TableGroupEntry>("hidden == $0", true)
             .find { it.mapTo(mutableSetOf(), TableGroupEntry::id) }
         tableGroups.forEach {
-            it.isFiltered = it.id in filteredGroupIds
+            it.hidden = it.id in hiddenGroupIds
         }
 
         realm.write {
@@ -44,10 +44,10 @@ internal class TableDatabase : AbstractDatabase() {
         }
     }
 
-    suspend fun toggleFiltered(id: Long) {
+    suspend fun toggleHidden(id: Long) {
         realm.write {
             val group = query<TableGroupEntry>("id == $0", id).first().find() ?: return@write
-            group.isFiltered = !group.isFiltered
+            group.hidden = !group.hidden
         }
     }
 
@@ -58,11 +58,20 @@ internal class TableDatabase : AbstractDatabase() {
         }
     }
 
-    suspend fun clearFilter() {
-        val filteredGroups = realm.query<TableGroupEntry>("isFiltered == $0", true).find()
+    suspend fun showAll() {
+        val groups = realm.query<TableGroupEntry>().find()
         realm.write {
-            filteredGroups.forEach {
-                findLatest(it)?.isFiltered = false
+            groups.forEach {
+                findLatest(it)?.hidden = false
+            }
+        }
+    }
+
+    suspend fun hideAll() {
+        val groups = realm.query<TableGroupEntry>().find()
+        realm.write {
+            groups.forEach {
+                findLatest(it)?.hidden = true
             }
         }
     }

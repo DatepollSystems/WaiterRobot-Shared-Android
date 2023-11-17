@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class Table(
     val id: Long,
     val number: Int,
-    val groupName: String = "TODO", // TODO
+    val groupName: String,
     val hasOrders: Boolean = false
 )
