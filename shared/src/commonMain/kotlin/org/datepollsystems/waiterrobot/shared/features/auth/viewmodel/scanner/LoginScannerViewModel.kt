@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner
 
+import kotlinx.coroutines.CancellationException
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -28,6 +29,8 @@ class LoginScannerViewModel internal constructor(
                     navigator.push(Screen.RegisterScreen(deepLink.token))
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (_: Exception) {
             logger.d { "Error with scanned login code: $code" }
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())

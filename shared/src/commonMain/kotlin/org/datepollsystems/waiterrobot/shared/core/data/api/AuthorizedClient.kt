@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
+import kotlin.coroutines.cancellation.CancellationException
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 // Use a wrapper class to make it typeSafe and not require to rely on named dependencies in koin.
@@ -36,6 +37,8 @@ internal fun createAuthorizedClient(
                     @Suppress("TooGenericExceptionCaught")
                     try {
                         authRepository.refreshTokens(scope).toBearerTokens()
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         // TODO improve request errors handling (-> try again, no connection info)
                         ktorLogger.log(e.message ?: "Error while refreshing token")
