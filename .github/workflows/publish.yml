@@ -34,7 +34,7 @@ jobs:
       android: ${{ steps.changes.outputs.android }}
       shared: ${{ steps.changes.outputs.shared }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
         id: changes
         with:
