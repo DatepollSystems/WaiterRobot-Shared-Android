@@ -56,6 +56,11 @@ internal abstract class AbstractRepository : KoinComponent {
         emitAll(flow)
     }
 
+    /**
+     * Handles resources that come from a remote source (e.g. REST-API) and should **not** be cached locally.
+     *
+     * @param fetch the fetch operation to execute
+     */
     internal fun <ModelType> remoteResource(
         fetch: suspend () -> ModelType,
     ): Flow<Resource<ModelType>> = flow {
