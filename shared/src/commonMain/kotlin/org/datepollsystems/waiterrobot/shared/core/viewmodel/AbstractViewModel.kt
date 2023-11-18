@@ -4,14 +4,14 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.message
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 import org.koin.core.component.KoinComponent
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -24,16 +24,23 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.reflect.KClass
 
 // This flow is used to trigger a update of a ViewModel from an other ViewModel
+@Deprecated("Replace by new architecture")
 private val updateViewModel: MutableSharedFlow<String> = MutableSharedFlow()
 
-abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initialState: S) :
-    ViewModel(), ContainerHost<S, NavOrViewModelEffect<E>>, KoinComponent {
+typealias IntentContext<S, E> = SimpleSyntax<S, NavOrViewModelEffect<E>>
+
+abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
+    initialState: S
+) : ViewModel(), ContainerHost<S, NavOrViewModelEffect<E>>, KoinComponent {
 
     protected val logger by injectLoggerForClass()
 
     final override val container: Container<S, NavOrViewModelEffect<E>> = viewModelScope.container(
         initialState = initialState,
-        onCreate = ::onCreate,
+        onCreate = {
+            logger.d { "Creating Orbit container" }
+            this.onCreate()
+        },
         buildSettings = {
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 when (exception) {
@@ -51,7 +58,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
                                 "Exceptions should be handled directly in the intent!"
                         }
                         intent {
-                            reduceError(L.app.genericError.title(), L.app.genericError.message())
+                            reduceError(L.exceptions.title(), exception.getLocalizedUserMessage())
                         }
                     }
                 }
@@ -70,9 +77,9 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
         }
     }
 
-    // Default implementation
-    protected open fun onCreate(state: S): Unit = Unit
+    protected open suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.onCreate(): Unit = Unit
 
+    @Deprecated("Replace by new architecture")
     protected suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.reduceError(
         errorTitle: String,
         errorMsg: String,
@@ -91,24 +98,32 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(initia
         postSideEffect(NavOrViewModelEffect.VMEffect(effect))
     }
 
-    protected fun dismissError() = intent {
-        reduce {
-            @Suppress("UNCHECKED_CAST")
-            // Swift does not support recursive Generics so we have to cast here
-            state.withViewState(ViewState.Idle) as S
+    @Deprecated("Replace by new architecture")
+    protected fun dismissError() {
+        intent {
+            reduce {
+                @Suppress("UNCHECKED_CAST")
+                // Swift does not support recursive Generics so we have to cast here
+                state.withViewState(ViewState.Idle) as S
+            }
         }
     }
 
     /** This function gets called when a sub view model changes something which must also change in this view model */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace by new architecture")
     protected open fun update() {
         logger.w("Received update request but there is no update implementation for the ViewModel")
     }
 
     /** With this function a update of an other ViewModel can be triggered */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace by new architecture")
     protected inline fun <reified T : AbstractViewModel<*, *>> updateParent(): Unit =
         updateParent(T::class)
 
     /** With this function a update of an other ViewModel can be triggered */
+    @Deprecated("Replace by new architecture")
     protected fun updateParent(clazz: KClass<out AbstractViewModel<*, *>>) {
         if (this::class == clazz) {
             logger.w { "updateParent should only be used to update other ViewModels. Call update directly." }

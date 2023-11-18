@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.db
+package org.datepollsystems.waiterrobot.shared.core.data.db
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -7,10 +7,12 @@ import org.datepollsystems.waiterrobot.shared.features.order.db.model.AllergenEn
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEntry
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductGroupEntry
 import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableEntry
+import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableGroupEntry
 import kotlin.reflect.KClass
 
 fun createRealmDB(): Realm {
     val schema: Set<KClass<out RealmObject>> = setOf(
+        TableGroupEntry::class,
         TableEntry::class,
         ProductGroupEntry::class,
         ProductEntry::class,
@@ -23,7 +25,7 @@ fun createRealmDB(): Realm {
         .deleteRealmIfMigrationNeeded()
         // TODO increase with each version of the common code
         //  (automate - compute from version in buildScript or app version?)
-        .schemaVersion(3)
+        .schemaVersion(4)
         .build()
 
     return Realm.open(config)

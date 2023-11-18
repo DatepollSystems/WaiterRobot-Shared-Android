@@ -1,6 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register
 
-import org.datepollsystems.waiterrobot.shared.core.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository

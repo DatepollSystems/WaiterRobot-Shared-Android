@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
-import org.datepollsystems.waiterrobot.shared.core.api.createAuthorizedClient
-import org.datepollsystems.waiterrobot.shared.core.api.createBasicClient
-import org.datepollsystems.waiterrobot.shared.core.db.createRealmDB
+import org.datepollsystems.waiterrobot.shared.core.data.api.createAuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.api.createBasicClient
+import org.datepollsystems.waiterrobot.shared.core.data.db.createRealmDB
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module

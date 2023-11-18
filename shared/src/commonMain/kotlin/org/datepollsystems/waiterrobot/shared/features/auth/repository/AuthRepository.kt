@@ -9,6 +9,7 @@ import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.auth.api.WaiterApi
 import org.datepollsystems.waiterrobot.shared.features.switchevent.repository.SwitchEventRepository
 import org.koin.core.component.inject
+import kotlin.coroutines.cancellation.CancellationException
 
 internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository() {
 
@@ -61,6 +62,8 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
             eventRepository.getEvents().singleOrNull()?.let {
                 eventRepository.switchToEvent(it)
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.w(e) { "Autos-selecting event failed" }
         }

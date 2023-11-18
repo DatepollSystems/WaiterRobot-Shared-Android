@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.db
+package org.datepollsystems.waiterrobot.shared.core.data.db
 
 import co.touchlab.kermit.Logger
 import io.realm.kotlin.Realm

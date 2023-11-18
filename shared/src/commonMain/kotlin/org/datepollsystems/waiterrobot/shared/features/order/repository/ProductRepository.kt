@@ -130,17 +130,17 @@ private fun ProductDto.toEntry() = ProductEntry(
 )
 
 private fun ProductEntry.toModel() = Product(
-    id = this.id!!,
-    name = this.name!!,
-    price = this.price!!.cent,
-    soldOut = this.soldOut!!,
-    allergens = this.allergens.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
+    id = this.id,
+    name = this.name,
+    price = this.price.cent,
+    soldOut = this.soldOut,
+    allergens = this.allergens.map { Allergen(it.id, it.name, it.shortName) },
     position = this.position
 )
 
 private fun ProductGroupEntry.toModel() = ProductGroup(
-    id = this.id!!,
-    name = this.name!!,
+    id = this.id,
+    name = this.name,
     position = this.position,
     products = this.products.map(ProductEntry::toModel).sort()
 )

@@ -1,25 +1,35 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
+import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
+import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
-import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
+import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
@@ -36,52 +46,90 @@ fun TableListScreen(
     val state = vm.collectAsState().value
     vm.handleSideEffects(navigator)
 
-    ScaffoldView(
-        state = state,
-        title = CommonApp.settings.eventName,
-        topBarActions = {
-            IconButton(onClick = vm::openSettings) {
-                Icon(Icons.Filled.Settings, contentDescription = "Settings")
-            }
+    Scaffold(
+        scaffoldState = LocalScaffoldState.current,
+        topBar = {
+            TopAppBar(
+                title = { Text(CommonApp.settings.eventName) },
+                actions = {
+                    IconButton(onClick = vm::openSettings) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                    }
+                },
+            )
         },
-        onRefresh = { vm.loadTables(forceUpdate = true) }
     ) {
-        Column {
-            if (state.selectedTableGroupList.size + state.unselectedTableGroupList.size > 1) {
-                TableGroupFilter(
-                    selectedGroups = state.selectedTableGroupList,
-                    unselectedGroups = state.unselectedTableGroupList,
-                    onToggle = vm::toggleFilter,
-                    clearFilter = vm::clearFilter
+        RefreshableView(
+            modifier = Modifier.padding(it),
+            loading = state.tableGroups is Resource.Loading && state.tableGroups.data != null,
+            onRefresh = { vm.loadTables(true) },
+        ) {
+            if (state.tableGroups is Resource.Loading && state.tableGroups.data == null) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                TableGrid(
+                    groupsResource = state.tableGroups,
+                    toggleFilter = vm::toggleFilter,
+                    showAll = vm::showAll,
+                    hideAll = vm::hideAll,
+                    onTableClick = vm::onTableClick
                 )
             }
-            if (state.filteredTableGroups.isEmpty()) {
-                CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
-            } else {
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 10.dp,
-                        bottom = 20.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    columns = GridCells.Adaptive(80.dp)
-                ) {
-                    state.filteredTableGroups.forEach { (group: TableGroup, tables: List<Table>) ->
-                        if (tables.isNotEmpty()) {
-                            sectionHeader(key = "group-${group.id}", title = group.name)
-                            items(tables, key = Table::id) { table ->
-                                Table(
-                                    table = table,
-                                    onClick = { vm.onTableClick(table) }
-                                )
-                            }
+        }
+    }
+}
+
+@Composable
+private fun TableGrid(
+    groupsResource: Resource<List<TableGroup>>,
+    toggleFilter: (TableGroup) -> Unit,
+    showAll: () -> Unit,
+    hideAll: () -> Unit,
+    onTableClick: (Table) -> Unit
+) {
+    val tableGroups = groupsResource.data
+    Column {
+        if (tableGroups?.size?.let { it > 1 } == true) {
+            TableGroupFilter(
+                groups = tableGroups,
+                onToggle = toggleFilter,
+                showAll = showAll,
+                hideAll = hideAll
+            )
+        }
+        if (groupsResource is Resource.Error) {
+            ErrorBar(exception = groupsResource.exception)
+        }
+        if (tableGroups.isNullOrEmpty()) {
+            CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
+        } else {
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 20.dp,
+                    end = 20.dp,
+                    top = 10.dp,
+                    bottom = 20.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                columns = GridCells.Adaptive(80.dp)
+            ) {
+                tableGroups
+                    .filterNot(TableGroup::hidden)
+                    .forEach { group: TableGroup ->
+                        // TODO use a sticky header
+                        //  (Compose currently does not support sticky headers in LazyGrids)
+                        sectionHeader(key = "group-${group.id}", title = group.name)
+                        items(group.tables, key = Table::id) { table ->
+                            Table(
+                                table = table,
+                                onClick = { onTableClick(table) }
+                            )
                         }
                     }
-                }
             }
         }
     }

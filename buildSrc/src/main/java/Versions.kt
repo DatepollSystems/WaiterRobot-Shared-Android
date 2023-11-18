@@ -2,7 +2,7 @@ object Versions {
     // Shared
     const val kermitLogger = "1.2.2"
     const val koinDi = "3.4.3"
-    const val orbitMvi = "4.5.0"
+    const val orbitMvi = "6.1.0"
     const val mokoMvvm = "0.16.1"
     const val ktor = "2.3.3"
     const val settings = "1.0.0"

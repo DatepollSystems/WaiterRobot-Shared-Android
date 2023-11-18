@@ -3,7 +3,7 @@ package org.datepollsystems.waiterrobot.shared.features.order.db
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmResults
-import org.datepollsystems.waiterrobot.shared.core.db.AbstractDatabase
+import org.datepollsystems.waiterrobot.shared.core.data.db.AbstractDatabase
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEntry
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductGroupEntry
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now

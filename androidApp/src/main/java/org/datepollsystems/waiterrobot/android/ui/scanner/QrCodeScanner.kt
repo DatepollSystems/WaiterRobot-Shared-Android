@@ -38,6 +38,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.cameraPermi
 import org.datepollsystems.waiterrobot.shared.generated.localization.errorOpeningCamera
 import org.datepollsystems.waiterrobot.shared.generated.localization.noCameraFound
 import java.util.concurrent.Executors
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -118,6 +119,8 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
                                 previewUseCase,
                                 analysisUseCase
                             )
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             errorMessage = L.qrScanner.errorOpeningCamera()
                             // TODO Logger.error

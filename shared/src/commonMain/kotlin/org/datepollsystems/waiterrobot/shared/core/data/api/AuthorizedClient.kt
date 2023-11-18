@@ -1,9 +1,10 @@
-package org.datepollsystems.waiterrobot.shared.core.api
+package org.datepollsystems.waiterrobot.shared.core.data.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
@@ -36,6 +37,8 @@ internal fun createAuthorizedClient(
                     @Suppress("TooGenericExceptionCaught")
                     try {
                         authRepository.refreshTokens(scope).toBearerTokens()
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         // TODO improve request errors handling (-> try again, no connection info)
                         ktorLogger.log(e.message ?: "Error while refreshing token")

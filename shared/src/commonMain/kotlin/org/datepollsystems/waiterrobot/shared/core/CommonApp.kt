@@ -9,13 +9,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.api.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.coroutines.cancellation.CancellationException
 
 object CommonApp : KoinComponent {
     private val coroutineScope: CoroutineScope by inject()
@@ -58,6 +59,8 @@ object CommonApp : KoinComponent {
             try {
                 val tokens = settings.tokens ?: return@launch
                 getKoin().getOrNull<AuthApi>()?.logout(tokens)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e(e) { "Could not delete session." }
             }
