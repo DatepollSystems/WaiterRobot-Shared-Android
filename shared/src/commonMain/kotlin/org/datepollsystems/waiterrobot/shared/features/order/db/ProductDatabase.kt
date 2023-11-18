@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.shared.features.order.db
 
-import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmResults
@@ -35,13 +34,5 @@ internal class ProductDatabase : AbstractDatabase() {
         realm.write {
             delete(query<ProductGroupEntry>("updatedAt <= $0", timestamp).find())
         }
-    }
-
-    private fun MutableRealm.deleteGroups(groups: RealmResults<ProductGroupEntry>) {
-        groups.flatMap(ProductGroupEntry::products).forEach {
-            delete(it)
-        }
-        // TODO how to delete the allergens (they might be referenced by multiple tables...?
-        delete(groups)
     }
 }

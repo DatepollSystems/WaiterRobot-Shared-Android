@@ -5,7 +5,6 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
@@ -15,7 +14,6 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 
 class BillingViewModel internal constructor(
     private val billingRepository: BillingRepository,
-    private val tableRepository: TableRepository,
     private val table: Table
 ) : AbstractViewModel<BillingState, BillingEffect>(BillingState()) {
 
