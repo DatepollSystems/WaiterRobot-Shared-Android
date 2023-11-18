@@ -1,11 +1,13 @@
 <p align="center">
-    <img alt="WaiterRobot logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>
-    <a href="https://play.google.com/store/apps/details?id=org.datepollsystems.waiterrobot.android">
-        <img alt="Get it on Google Play" height="60px" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/>
-    </a>    
+    <img alt="WaiterRobot logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>    
 </p>
 <h1 align="center">WaiterRobot</h1>
-<p align="center">Lightning fast and simple gastronomy</p>
+<div align="center">
+    <span>Lightning fast and simple gastronomy</span><br>
+    <a href="https://play.google.com/store/apps/details?id=org.datepollsystems.waiterrobot.android">
+        <img alt="Get it on Google Play" height="60px" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/>
+    </a>
+</div>
 
 # Android & Shared
 
