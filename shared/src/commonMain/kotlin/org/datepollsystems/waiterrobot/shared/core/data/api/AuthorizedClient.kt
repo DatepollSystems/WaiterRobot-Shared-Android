@@ -4,12 +4,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
-import kotlin.coroutines.cancellation.CancellationException
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 // Use a wrapper class to make it typeSafe and not require to rely on named dependencies in koin.

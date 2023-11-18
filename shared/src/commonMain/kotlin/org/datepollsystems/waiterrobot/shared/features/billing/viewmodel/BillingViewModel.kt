@@ -36,8 +36,6 @@ class BillingViewModel internal constructor(
         loadBill()
 
         reduce { state.copy(changeText = "0", moneyGivenText = "") }
-
-        tableRepository.updateTablesWithOpenOrder()
     }
 
     @OptIn(OrbitExperimental::class)
