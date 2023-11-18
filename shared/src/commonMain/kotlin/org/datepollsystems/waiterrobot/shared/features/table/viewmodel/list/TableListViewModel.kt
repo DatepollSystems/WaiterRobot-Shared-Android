@@ -2,7 +2,6 @@ package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -70,7 +69,6 @@ class TableListViewModel internal constructor(
     }
 
     private suspend fun IntentContext<TableListState, TableListEffect>.pollTablesWithOpenOrder() {
-        delay(1.minutes) // on start the tables are always refreshed -> no need to refresh twice
         repeatOnSubscription {
             repeatUntilCanceled(1.minutes) {
                 tableRepository.updateTablesWithOpenOrder()
