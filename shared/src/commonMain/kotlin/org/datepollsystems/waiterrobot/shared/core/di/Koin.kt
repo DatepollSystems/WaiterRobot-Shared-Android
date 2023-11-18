@@ -9,6 +9,7 @@ import org.datepollsystems.waiterrobot.shared.features.switchevent.di.switchEven
 import org.datepollsystems.waiterrobot.shared.features.table.di.tableModule
 import org.datepollsystems.waiterrobot.shared.root.di.rootModule
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 import org.koin.core.context.startKoin
 import org.koin.core.parameter.parametersOf
@@ -28,6 +29,10 @@ fun initKoin(appDeclaration: KoinAppDeclaration = { }) = startKoin {
         settingsModule
     )
 }
+
+fun KoinComponent.getLogger(tag: String): Logger = get { parametersOf(tag) }
+fun KoinComponent.getLoggerForClass(): Logger =
+    getLogger(this::class.simpleName ?: "AnonymousClass")
 
 fun KoinComponent.injectLogger(tag: String): Lazy<Logger> = inject { parametersOf(tag) }
 fun KoinComponent.injectLoggerForClass(): Lazy<Logger> =

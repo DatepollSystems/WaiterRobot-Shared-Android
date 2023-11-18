@@ -1,9 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.settings.viewmodel
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -12,6 +10,7 @@ import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductR
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
+import org.datepollsystems.waiterrobot.shared.utils.launchCatching
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -28,8 +27,8 @@ class SettingsViewModel internal constructor(
     fun refreshAll() = intent {
         coroutineScope {
             listOf(
-                launchCatching { tableRepo.refreshTableGroups() },
-                launchCatching { productRepo.getProductGroups(true) }
+                launchCatching(logger) { tableRepo.refreshTableGroups() },
+                launchCatching(logger) { productRepo.getProductGroups(true) }
             ).joinAll()
         }
         updateParent<TableListViewModel>()
@@ -45,12 +44,6 @@ class SettingsViewModel internal constructor(
 
     fun logout() = intent {
         CommonApp.logout()
-    }
-
-    private fun CoroutineScope.launchCatching(block: suspend () -> Unit) = launch {
-        runCatching {
-            block()
-        }
     }
 
     private fun watchAppTheme() = intent {

@@ -23,11 +23,6 @@ class TableDetailViewModel internal constructor(
         }
     }
 
-    // TODO can we somehow delegate this to the repository, so that we can call refresh of the orders
-    //  from another viewModel which then emits a new value on the "getUnpaidItemsForTable" Flow.
-    //  This way the AbstractViewModel.update mechanism would not be needed anymore.
-    //  Or is there even a cleaner way? Or does the repeatOnSubscription already solve the issue?
-    //  --> It is already handled by repeatOnSubscription
     fun refreshOrder() = intent { loadOrder() }
 
     private suspend fun SimpleSyntax<TableDetailState, NavOrViewModelEffect<TableDetailEffect>>.loadOrder() {

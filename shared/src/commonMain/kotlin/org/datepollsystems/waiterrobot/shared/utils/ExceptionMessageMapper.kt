@@ -1,6 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.utils
 
+import kotlinx.coroutines.CancellationException
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.di.getLogger
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.accountNotActivated
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
@@ -10,6 +13,13 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
 fun Throwable.getLocalizedUserMessage(): String = when (this) {
     is ApiException -> this.getLocalizedUserMessage()
+    is CancellationException -> {
+        CommonApp.getLogger("ExceptionMessageMapper").w(this) {
+            "Probably caught a CancellationException. CancellationException must not be caught. " +
+                "Otherwise structured concurrency does not work correctly."
+        }
+        L.exceptions.generic()
+    }
 
     else -> L.exceptions.generic()
 }

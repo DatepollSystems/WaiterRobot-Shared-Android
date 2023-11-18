@@ -7,9 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.core.data.cachedRemoteResource
 import org.datepollsystems.waiterrobot.shared.core.data.mapResource
-import org.datepollsystems.waiterrobot.shared.core.data.remoteResource
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
 import org.datepollsystems.waiterrobot.shared.features.table.api.TableApi
@@ -47,7 +45,7 @@ internal class TableRepository : AbstractRepository() {
                 forceUpdate || cachedGroups.isEmpty() ||
                     cachedGroups.any { it.updated.olderThan(maxAge) }
             },
-            mapDbEntity = { it.map(TableGroupEntry::toModel) }
+            mapDbEntity = { it.map(TableGroupEntry::toModel) },
         ).mapResource { groups ->
             groups?.filter { it.tables.isNotEmpty() } // Do not show groups that do not have tables at all
                 ?.sortedBy { it.name.lowercase() } // Sort groups with same position by name

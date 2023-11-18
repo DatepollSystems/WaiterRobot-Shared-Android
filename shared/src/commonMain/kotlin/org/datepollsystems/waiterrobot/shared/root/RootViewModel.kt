@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.root
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
@@ -66,6 +67,8 @@ class RootViewModel internal constructor(
                 }
             }
             reduce { state.withViewState(ViewState.Idle) }
+        } catch (e: CancellationException){
+            throw e
         } catch (_: ApiException.CredentialsIncorrect) {
             reduceError(L.root.invalidLoginLink.title(), L.root.invalidLoginLink.desc())
         }

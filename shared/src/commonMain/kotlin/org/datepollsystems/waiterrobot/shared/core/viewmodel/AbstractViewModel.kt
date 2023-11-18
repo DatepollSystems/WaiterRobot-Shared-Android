@@ -24,6 +24,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.reflect.KClass
 
 // This flow is used to trigger a update of a ViewModel from an other ViewModel
+@Deprecated("Replace by new architecture")
 private val updateViewModel: MutableSharedFlow<String> = MutableSharedFlow()
 
 typealias IntentContext<S, E> = SimpleSyntax<S, NavOrViewModelEffect<E>>
@@ -78,6 +79,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
 
     protected open suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.onCreate(): Unit = Unit
 
+    @Deprecated("Replace by new architecture")
     protected suspend fun SimpleSyntax<S, NavOrViewModelEffect<E>>.reduceError(
         errorTitle: String,
         errorMsg: String,
@@ -96,6 +98,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
         postSideEffect(NavOrViewModelEffect.VMEffect(effect))
     }
 
+    @Deprecated("Replace by new architecture")
     protected fun dismissError() {
         intent {
             reduce {
@@ -107,15 +110,20 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
     }
 
     /** This function gets called when a sub view model changes something which must also change in this view model */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace by new architecture")
     protected open fun update() {
         logger.w("Received update request but there is no update implementation for the ViewModel")
     }
 
     /** With this function a update of an other ViewModel can be triggered */
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Replace by new architecture")
     protected inline fun <reified T : AbstractViewModel<*, *>> updateParent(): Unit =
         updateParent(T::class)
 
     /** With this function a update of an other ViewModel can be triggered */
+    @Deprecated("Replace by new architecture")
     protected fun updateParent(clazz: KClass<out AbstractViewModel<*, *>>) {
         if (this::class == clazz) {
             logger.w { "updateParent should only be used to update other ViewModels. Call update directly." }
