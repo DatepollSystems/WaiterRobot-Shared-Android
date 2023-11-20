@@ -5,7 +5,8 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     id("com.android.library")
-    id("co.touchlab.kmmbridge") version "0.5.0"
+    id("co.touchlab.kmmbridge") version "0.5.1"
+    id("co.touchlab.skie") version "0.5.5"
     `maven-publish`
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
     id("io.realm.kotlin") version "1.10.2"
@@ -61,6 +62,7 @@ kotlin {
                 // Architecture
                 api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
                 api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
+                implementation("co.touchlab.skie:configuration-annotations:0.5.5")
 
                 // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-core:${Versions.ktor}")
@@ -185,9 +187,10 @@ tasks {
     }
 
     afterEvaluate {
-        // Copy the generated iOS localizations to the framework
+        // Copy the generated iOS localizations to the framework and set some task dependencies
         listOf("Release", "Debug").forEach { buildType ->
             named("assembleShared${buildType}XCFramework") {
+                dependsOn(generateLocalizationsTask)
                 doLast {
                     // TODO can we get this names from somewhere?
                     listOf("ios-arm64", "ios-arm64_x86_64-simulator").forEach { arch ->
@@ -199,6 +202,11 @@ tasks {
                             )
                         }
                     }
+                }
+            }
+            listOf("X64", "Arm64", "SimulatorArm64").forEach { arch ->
+                named("skiePackageCustomSwift${buildType}FrameworkIos$arch") {
+                    dependsOn(generateLocalizationsTask)
                 }
             }
         }
@@ -213,7 +221,6 @@ tasks {
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
     }
-
 }
 
 detekt {

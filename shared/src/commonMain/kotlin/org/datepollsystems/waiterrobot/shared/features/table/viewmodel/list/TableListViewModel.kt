@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +36,7 @@ class TableListViewModel internal constructor(
 
     private val refreshChannel: Channel<ForceUpdate> = Channel(Channel.BUFFERED)
 
+    @DefaultArgumentInterop.Enabled
     fun loadTables(forceUpdate: Boolean = false) = intent {
         refreshChannel.send(ForceUpdate(forceUpdate))
     }

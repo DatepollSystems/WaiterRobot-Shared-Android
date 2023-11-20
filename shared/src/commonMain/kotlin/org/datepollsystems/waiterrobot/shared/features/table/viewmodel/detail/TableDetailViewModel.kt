@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
@@ -37,6 +38,7 @@ class TableDetailViewModel internal constructor(
         }
     }
 
+    @DefaultArgumentInterop.Enabled
     fun openOrderScreen(initialItemId: Long? = null) = intent {
         navigator.push(Screen.OrderScreen(table, initialItemId))
     }

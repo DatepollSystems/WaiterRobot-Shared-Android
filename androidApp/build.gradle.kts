@@ -8,7 +8,7 @@ plugins {
     id("com.android.application")
     id("com.github.triplet.play") version "3.8.4"
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+    id("com.google.devtools.ksp") version "1.9.20-1.0.13"
 }
 
 private val versionProperty by lazy {
