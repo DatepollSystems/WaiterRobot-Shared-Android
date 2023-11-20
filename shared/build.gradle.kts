@@ -205,7 +205,7 @@ tasks {
                 }
             }
             listOf("X64", "Arm64", "SimulatorArm64").forEach { arch ->
-                named("skiePackageCustomSwift${buildType}FrameworkIos$arch") {
+                findByName("skiePackageCustomSwift${buildType}FrameworkIos$arch")?.apply {
                     dependsOn(generateLocalizationsTask)
                 }
             }
