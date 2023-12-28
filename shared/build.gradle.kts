@@ -6,10 +6,10 @@ plugins {
     kotlin("plugin.serialization")
     id("com.android.library")
     id("co.touchlab.kmmbridge") version "0.5.1"
-    id("co.touchlab.skie") version "0.5.5"
+    id("co.touchlab.skie") version "0.6.1"
     `maven-publish`
     id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
-    id("io.realm.kotlin") version "1.10.2"
+    id("io.realm.kotlin") version "1.13.0"
     id("com.codingfeline.buildkonfig")
 }
 
@@ -62,7 +62,7 @@ kotlin {
                 // Architecture
                 api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
                 api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
-                implementation("co.touchlab.skie:configuration-annotations:0.5.5")
+                implementation("co.touchlab.skie:configuration-annotations:0.6.1")
 
                 // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-core:${Versions.ktor}")
@@ -79,8 +79,8 @@ kotlin {
                 implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}")
 
                 // Helper
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // Also needed by android for ComposeDestination parameter serialization
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2") // Also needed by android for ComposeDestination parameter serialization
             }
         }
         val commonTest by getting {

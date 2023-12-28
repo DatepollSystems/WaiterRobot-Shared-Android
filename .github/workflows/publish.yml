@@ -56,7 +56,7 @@ jobs:
       packages: write
     needs: changes
     if: ${{ (github.event_name != 'workflow_dispatch' && needs.changes.outputs.shared == 'true') || (github.event_name == 'workflow_dispatch' && !github.event.inputs.androidOnly) }}
-    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildautoversion.yml@v1.0
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildautoversion.yml@v1.1
     with:
       jvmVersion: 17
       versionBaseProperty: SHARED_BASE_VERSION

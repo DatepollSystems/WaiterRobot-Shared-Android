@@ -8,16 +8,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        val kotlinVersion = "1.9.20"
-        classpath("com.android.tools.build:gradle:8.1.1")
+        val kotlinVersion = "1.9.22"
+        classpath("com.android.tools.build:gradle:8.2.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-serialization:${kotlinVersion}")
-        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.14.0")
+        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.15.1")
     }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.23.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.4"
 }
 
 val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
@@ -42,7 +42,7 @@ allprojects {
     }
 
     dependencies {
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.4")
     }
 
     tasks.withType<Detekt>().configureEach {

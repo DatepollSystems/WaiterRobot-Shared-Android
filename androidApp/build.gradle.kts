@@ -6,9 +6,9 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("com.github.triplet.play") version "3.8.4"
+    id("com.github.triplet.play") version "3.8.6"
     kotlin("android")
-    id("com.google.devtools.ksp") version "1.9.20-1.0.13"
+    id("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
 private val versionProperty by lazy {
@@ -183,11 +183,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     // Compose
     runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.compose.foundation:foundation:${Versions.compose}")
     implementation("androidx.compose.foundation:foundation-layout:${Versions.compose}")
     implementation("androidx.compose.ui:ui-graphics:${Versions.compose}")
@@ -205,7 +205,7 @@ dependencies {
     implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:3.4.6") // Not aligned with other koin version
+    implementation("io.insert-koin:koin-androidx-compose:3.5.3") // Not aligned with other koin version
 
     // SafeCompose Navigation Args
     implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
