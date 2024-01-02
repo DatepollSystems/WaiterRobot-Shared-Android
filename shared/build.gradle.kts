@@ -1,17 +1,16 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.android.library")
-    id("co.touchlab.kmmbridge") version "0.5.1"
-    id("co.touchlab.skie") version "0.6.1"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.android.library)
     `maven-publish`
-    id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
-    id("io.realm.kotlin") version "1.13.0"
-    id("com.codingfeline.buildkonfig")
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.touchlab.kmmbridge)
+    alias(libs.plugins.touchlab.skie)
+    alias(libs.plugins.kmmresources)
+    alias(libs.plugins.realm)
 }
 
 val generatedLocalizationRoot: String =
@@ -29,13 +28,7 @@ kotlin {
         publishAllLibraryVariants()
     }
 
-    jvm {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        }
-    }
+    jvmToolchain(17)
 
     listOf(
         iosX64(),
@@ -53,78 +46,73 @@ kotlin {
         compilations["main"].kotlinOptions.freeCompilerArgs += "-Xexport-kdoc"
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/commonMain/kotlin")
 
             dependencies {
                 // Logger
-                api("co.touchlab:kermit:${Versions.kermitLogger}")
+                api(libs.touchlab.kermit)
 
                 // Dependency injection
-                implementation("io.insert-koin:koin-core:${Versions.koinDi}")
+                implementation(libs.koin.core)
 
                 // Architecture
-                api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
-                api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
-                implementation("co.touchlab.skie:configuration-annotations:0.6.1")
+                api(libs.orbit.core) // MVI
+                api(libs.moko.mvvm) // ViewModelScope
+                implementation(libs.touchlab.skie.annotations)
 
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-core:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-logging:${Versions.ktor}")
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.serialization.json)
+                implementation(libs.ktor.client.auth)
+                implementation(libs.ktor.client.logging)
 
                 // Realm (Database)
-                implementation("io.realm.kotlin:library-base:${Versions.realm}")
+                implementation(libs.realm)
 
                 // SharedSettings
-                implementation("com.russhwolf:multiplatform-settings:${Versions.settings}")
-                implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}")
+                implementation(libs.settings)
+                implementation(libs.settings.coroutines)
 
                 // Helper
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2") // Also needed by android for ComposeDestination parameter serialization
+                api(libs.kotlinx.datetime)
+                // Also needed by android for ComposeDestination parameter serialization
+                api(libs.kotlinx.serialization.json)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
 
-        val androidMain by getting {
+        androidMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/androidMain/kotlin")
 
             dependencies {
                 // Dependency injection
-                api("io.insert-koin:koin-android:${Versions.koinDi}")
+                api(libs.koin.android)
 
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-cio:${Versions.ktor}")
+                implementation(libs.ktor.client.cio)
             }
         }
-        val androidUnitTest by getting
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
+        iosMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/iosMain/kotlin")
 
             dependencies {
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-darwin:${Versions.ktor}")
+                implementation(libs.ktor.client.darwin)
             }
         }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating
     }
 
     sourceSets.all {
@@ -134,13 +122,9 @@ kotlin {
 
 android {
     namespace = sharedNamespace
-    compileSdk = Versions.androidCompileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
-        minSdk = Versions.androidMinSdk
-    }
-
-    testOptions {
-        targetSdk = Versions.androidTargetSdk
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
     // Include the generated localization string resources
@@ -196,8 +180,11 @@ tasks {
                         copy {
                             from("$generatedLocalizationRoot/commonMain/resources/ios")
                             into(
-                                "${project.layout.buildDirectory}/XCFrameworks/${buildType.lowercase()}/" +
-                                    "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
+                                File(
+                                    project.layout.buildDirectory.asFile.get(),
+                                    "XCFrameworks/${buildType.lowercase()}/" +
+                                        "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
+                                )
                             )
                         }
                     }

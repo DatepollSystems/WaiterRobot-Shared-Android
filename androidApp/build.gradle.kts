@@ -5,10 +5,10 @@ import java.util.Date
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("com.github.triplet.play") version "3.8.6"
-    kotlin("android")
-    id("com.google.devtools.ksp") version "1.9.22-1.0.16"
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.play.publisher)
+    alias(libs.plugins.google.ksp)
 }
 
 private val versionProperty by lazy {
@@ -23,9 +23,13 @@ val SHARED_BASE_VERSION: String by project
 version = versionProperty.getProperty("androidVersion")
 group = SHARED_GROUP
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
-    compileSdk = Versions.androidCompileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     androidResources {
         generateLocaleConfig = true
@@ -34,9 +38,9 @@ android {
     defaultConfig {
         applicationId = this@android.namespace
 
-        minSdk = Versions.androidMinSdk
-        targetSdk = Versions.androidTargetSdk
-        buildToolsVersion = Versions.androidBuildTools
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        buildToolsVersion = libs.versions.android.buildTools.get()
 
         versionName = version.toString()
         versionCode = run {
@@ -85,7 +89,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.composeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
     packaging {
@@ -95,8 +99,6 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
@@ -130,14 +132,14 @@ android {
         // Include the generated navigation sources
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
+                kotlin.srcDir(File(project.layout.buildDirectory.asFile.get(), "/generated/ksp/$name/kotlin"))
             }
         }
 
         // Write built version to file after creating a bundle (needed for ci, to create the version tag)
         if (this.name.endsWith("Release")) {
             tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
-                File(project.buildDir, "version.tag")
+                File(project.layout.buildDirectory.asFile.get(), "version.tag")
                     .writeText(this@variant.versionName)
             }
         }
@@ -179,47 +181,38 @@ dependencies {
         implementation(project(":shared"))
     }
 
-    implementation("androidx.lifecycle:lifecycle-process:${Versions.androidxLifecycle}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.appcompat)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring(libs.android.desugar)
 
     // Compose
-    runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.compose.foundation:foundation:${Versions.compose}")
-    implementation("androidx.compose.foundation:foundation-layout:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-graphics:${Versions.compose}")
-    implementation("androidx.compose.ui:ui:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-tooling:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-tooling-preview:${Versions.compose}")
-    implementation("androidx.compose.material:material:${Versions.compose}")
-    implementation("androidx.compose.material:material-icons-core:${Versions.compose}")
-    implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
+    runtimeOnly(libs.androidx.compose.compiler)
+    implementation(libs.bundles.android.compose)
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation(libs.accompanist.permissions)
 
     // Architecture (MVI)
-    implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
+    implementation(libs.orbit.compose)
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:3.5.3") // Not aligned with other koin version
+    implementation(libs.koin.compose) // Not aligned with other koin version
 
     // SafeCompose Navigation Args
-    implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
-    ksp("io.github.raamcosta.compose-destinations:ksp:${Versions.composeDestinations}")
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
 
     // CameraX
-    implementation("androidx.camera:camera-camera2:${Versions.camera}")
-    implementation("androidx.camera:camera-view:${Versions.camera}")
-    implementation("androidx.camera:camera-lifecycle:${Versions.camera}")
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.lifecycle)
 
     // QrCode Scanning
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation(libs.barcode.scanning)
 
     // In-App-Update support
-    implementation("com.google.android.play:app-update:2.1.0")
-    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
 }
