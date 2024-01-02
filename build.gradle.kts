@@ -31,6 +31,11 @@ allprojects {
         mavenCentral()
     }
 
+    tasks.withType<JavaCompile>() {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+    }
+
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     detekt {

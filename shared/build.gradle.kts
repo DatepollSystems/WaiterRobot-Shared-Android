@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -14,7 +15,7 @@ plugins {
 }
 
 val generatedLocalizationRoot: String =
-    File(project.buildDir, "generated/localizations").absolutePath
+    File(project.layout.buildDirectory.asFile.get(), "generated/localizations").absolutePath
 val iosFrameworkName = "shared"
 
 group = project.property("SHARED_GROUP") as String
@@ -24,11 +25,16 @@ version = project.property(
 val sharedNamespace = "$group.shared"
 
 kotlin {
-    // For some reason androidTarget is recognized by IntelliJ,
-    // but when building it throws "Unresolved reference: androidTarget"
-    // -> Just keep it till it is removed
-    android {
+    androidTarget {
         publishAllLibraryVariants()
+    }
+
+    jvm {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
     }
 
     listOf(
@@ -110,11 +116,6 @@ kotlin {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/iosMain/kotlin")
 
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-
             dependencies {
                 // Ktor (HTTP client)
                 implementation("io.ktor:ktor-client-darwin:${Versions.ktor}")
@@ -123,12 +124,7 @@ kotlin {
         val iosX64Test by getting
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
-        }
+        val iosTest by creating
     }
 
     sourceSets.all {
@@ -141,6 +137,9 @@ android {
     compileSdk = Versions.androidCompileSdk
     defaultConfig {
         minSdk = Versions.androidMinSdk
+    }
+
+    testOptions {
         targetSdk = Versions.androidTargetSdk
     }
 
@@ -197,7 +196,7 @@ tasks {
                         copy {
                             from("$generatedLocalizationRoot/commonMain/resources/ios")
                             into(
-                                "${project.buildDir}/XCFrameworks/${buildType.lowercase()}/" +
+                                "${project.layout.buildDirectory}/XCFrameworks/${buildType.lowercase()}/" +
                                     "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
                             )
                         }
