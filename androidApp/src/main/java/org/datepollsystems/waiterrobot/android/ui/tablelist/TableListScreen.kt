@@ -62,7 +62,7 @@ fun TableListScreen(
         RefreshableView(
             modifier = Modifier.padding(it),
             loading = state.tableGroups is Resource.Loading && state.tableGroups.data != null,
-            onRefresh = { vm.loadTables(true) },
+            onRefresh = vm::refreshTables,
         ) {
             if (state.tableGroups is Resource.Loading && state.tableGroups.data == null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
