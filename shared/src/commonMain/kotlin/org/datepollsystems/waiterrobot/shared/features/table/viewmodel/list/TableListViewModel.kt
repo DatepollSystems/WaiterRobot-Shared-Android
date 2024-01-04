@@ -1,10 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -26,19 +23,19 @@ class TableListViewModel internal constructor(
 
     override suspend fun SimpleSyntax<TableListState, NavOrViewModelEffect<TableListEffect>>.onCreate() {
         coroutineScope {
-            launch { watchRefresh() }
+            launch { tableRepository.listen() }
+            launch {
+                tableRepository.flow.collect {
+                    reduce { state.copy(tableGroups = it) }
+                }
+            }
             launch { pollTablesWithOpenOrder() }
-            refreshChannel.send(ForceUpdate(false))
         }
     }
 
-    class ForceUpdate(val forceUpdate: Boolean)
-
-    private val refreshChannel: Channel<ForceUpdate> = Channel(Channel.BUFFERED)
-
     @DefaultArgumentInterop.Enabled
-    fun loadTables(forceUpdate: Boolean = false) = intent {
-        refreshChannel.send(ForceUpdate(forceUpdate))
+    fun refreshTables() = intent {
+        tableRepository.refresh()
     }
 
     fun toggleFilter(tableGroup: TableGroup) = intent {
@@ -61,15 +58,6 @@ class TableListViewModel internal constructor(
         navigator.push(Screen.SettingsScreen)
     }
 
-    private suspend fun IntentContext<TableListState, TableListEffect>.watchRefresh() {
-        refreshChannel.receiveAsFlow().collectLatest {
-            logger.d { "Load tables (forceUpdate=${it.forceUpdate})..." }
-            tableRepository.getTableGroupsFlow(it.forceUpdate).collect {
-                reduce { state.copy(tableGroups = it) }
-            }
-        }
-    }
-
     private suspend fun IntentContext<TableListState, TableListEffect>.pollTablesWithOpenOrder() {
         repeatOnSubscription {
             repeatUntilCanceled(1.minutes) {
@@ -79,6 +67,6 @@ class TableListViewModel internal constructor(
     }
 
     override fun update() {
-        loadTables(true)
+        refreshTables()
     }
 }

@@ -1,14 +1,11 @@
 package org.datepollsystems.waiterrobot.shared.features.table.repository
 
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.core.data.mapResource
-import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
+import org.datepollsystems.waiterrobot.shared.core.repository.CachedRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
 import org.datepollsystems.waiterrobot.shared.features.table.api.TableApi
 import org.datepollsystems.waiterrobot.shared.features.table.api.models.TableGroupResponseDto
@@ -21,47 +18,16 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
-import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.hours
 
-internal class TableRepository : AbstractRepository() {
-    private val tableApi: TableApi by inject()
-    private val billingApi: BillingApi by inject()
-    private val tableDb: TableDatabase by inject()
-    private val coroutineScope: CoroutineScope by inject()
+internal class TableRepository(
+    private val tableApi: TableApi,
+    private val billingApi: BillingApi,
+    private val tableDb: TableDatabase,
+) : CachedRepository<List<TableGroupEntry>, List<TableGroup>>() {
 
-    init {
-        // Delete outdated at app start
-        coroutineScope.launch {
-            tableDb.deleteOlderThan(maxAge)
-        }
-    }
-
-    fun getTableGroupsFlow(forceUpdate: Boolean): Flow<Resource<List<TableGroup>>> =
-        cachedRemoteResource(
-            query = { tableDb.getForEventFlow(CommonApp.settings.selectedEventId) },
-            update = ::refreshTableGroups,
-            shouldFetch = { cachedGroups ->
-                forceUpdate || cachedGroups.isEmpty() ||
-                    cachedGroups.any { it.updated.olderThan(maxAge) }
-            },
-            mapDbEntity = { it.map(TableGroupEntry::toModel) },
-        ).mapResource { groups ->
-            groups?.filter { it.tables.isNotEmpty() } // Do not show groups that do not have tables at all
-                ?.sortedBy { it.name.lowercase() } // Sort groups with same position by name
-                ?.sortedBy(TableGroup::position)
-        }
-
-    suspend fun refreshTableGroups() {
-        logger.i { "Loading Tables from api ..." }
-
-        val timestamp = Now()
-        val apiTables = tableApi.getTableGroups()
-        logger.d { "Got ${apiTables.count()} table groups with ${apiTables.sumOf { it.tables.count() }} from api" }
-
-        logger.d { "Update tables in DB ..." }
-        val tableIdsWithOrders = tableApi.getTableIdsOfTablesWithOpenOrder()
-        tableDb.replace(apiTables.map { it.toEntry(timestamp) }, tableIdsWithOrders)
+    override suspend fun onStart() {
+        tableDb.deleteOlderThan(maxAge)
     }
 
     suspend fun updateTablesWithOpenOrder() {
@@ -94,6 +60,29 @@ internal class TableRepository : AbstractRepository() {
                 OrderedItem(it.id, it.name, it.amount)
             }
         }
+
+    override fun query(): Flow<List<TableGroupEntry>> =
+        tableDb.getForEventFlow(CommonApp.settings.selectedEventId)
+
+    override suspend fun update() {
+        logger.i { "Loading Tables from api ..." }
+
+        val timestamp = Now()
+        val apiTables = tableApi.getTableGroups()
+        logger.d { "Got ${apiTables.count()} table groups with ${apiTables.sumOf { it.tables.count() }} from api" }
+
+        logger.d { "Update tables in DB ..." }
+        val tableIdsWithOrders = tableApi.getTableIdsOfTablesWithOpenOrder()
+        tableDb.replace(apiTables.map { it.toEntry(timestamp) }, tableIdsWithOrders)
+    }
+
+    override fun mapDbEntity(dbEntity: List<TableGroupEntry>): List<TableGroup> =
+        dbEntity.map(TableGroupEntry::toModel)
+
+    override fun shouldFetch(cache: List<TableGroupEntry>): Boolean {
+        return cache.isEmpty() ||
+            cache.any { it.updated.olderThan(maxAge) }
+    }
 
     companion object {
         private val maxAge = 24.hours
