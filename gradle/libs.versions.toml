@@ -1,0 +1,112 @@
+[versions]
+# Shared
+kotlin = "1.9.21" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
+ksp = "1.9.21-1.0.16" # First part must match the kotlin version
+detektFormatting = "1.23.4"
+kermit = "1.2.2"
+koin = "3.5.3"
+orbitMvi = "6.1.0"
+mokoMvvm = "0.16.1"
+ktor = "2.3.7"
+settings = "1.1.1"
+realm = "1.13.0"
+detekt = "1.23.4"
+kotlinx-serialization-json = "1.6.2"
+kotlinx-datetime = "0.5.0"
+buildkonfig = "0.15.1"
+skie = "0.6.1"
+kmmbridge = "0.5.1"
+kmmresources = "1.0.0-alpha11"
+
+# Android
+android-minSdk = "24"
+android-targetSdk = "33"
+android-compileSdk = "34"
+android-buildTools = "34.0.0"
+android-gradle = "8.2.0"
+android-camera = "1.3.1"
+android-desugar = "2.0.4"
+androidx-lifecycle = "2.6.2"
+androidx-appcompat = "1.6.1"
+androidx-compose = "1.5.4"
+androidx-compose-compiler = "1.5.7"
+androidx-compose-activity = "1.8.2"
+compose-destinations = "1.9.56"
+play-publisher = "3.8.6"
+accompanistPermissions = "0.32.0"
+koinCompose = "3.5.3"
+appUpdate = "2.1.0"
+barcodeScanning = "17.2.0"
+
+[libraries]
+
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+android-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "android-desugar" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "android-camera" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "android-camera" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "android-camera" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "androidx-compose-compiler" }
+androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-compose-activity" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
+androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "androidx-compose" }
+androidx-compose-ui-core = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "androidx-compose" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose" }
+androidx-compose-material-core = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
+androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-core", version.ref = "androidx-compose" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidx-compose" }
+
+app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdate" }
+app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdate" }
+barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
+compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
+compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
+
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormatting" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
+touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+touchlab-skie-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+realm = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "settings" }
+settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "settings" }
+
+orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbitMvi" }
+orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbitMvi" }
+moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
+
+[bundles]
+android-compose = ["androidx-compose-activity", "androidx-compose-foundation", "androidx-compose-foundation-layout", "androidx-compose-ui-core", "androidx-compose-ui-graphics", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-material-core", "androidx-compose-material-icons", "androidx-compose-material-icons-extended"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradle" }
+android-library = { id = "com.android.library", version.ref = "android-gradle" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+play-publisher = { id = "com.github.triplet.play", version.ref = "play-publisher" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
+touchlab-skie = { id = "co.touchlab.skie", version.ref = "skie" }
+touchlab-kmmbridge = { id = "co.touchlab.kmmbridge", version.ref = "kmmbridge" }
+kmmresources = { id = "dev.jamiecraane.plugins.kmmresources", version.ref = "kmmresources" }
+realm = { id = "io.realm.kotlin", version.ref = "realm" }
