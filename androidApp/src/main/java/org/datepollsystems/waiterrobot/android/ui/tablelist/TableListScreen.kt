@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -74,7 +75,8 @@ fun TableListScreen(
                     toggleFilter = vm::toggleFilter,
                     showAll = vm::showAll,
                     hideAll = vm::hideAll,
-                    onTableClick = vm::onTableClick
+                    onTableClick = vm::onTableClick,
+                    refresh = vm::refreshTables
                 )
             }
         }
@@ -87,7 +89,8 @@ private fun TableGrid(
     toggleFilter: (TableGroup) -> Unit,
     showAll: () -> Unit,
     hideAll: () -> Unit,
-    onTableClick: (Table) -> Unit
+    onTableClick: (Table) -> Unit,
+    refresh: () -> Unit
 ) {
     val tableGroups = groupsResource.data
     Column {
@@ -99,14 +102,17 @@ private fun TableGrid(
                 hideAll = hideAll
             )
         }
-        if (groupsResource is Resource.Error) {
-            ErrorBar(exception = groupsResource.exception)
-        }
         if (tableGroups.isNullOrEmpty()) {
-            CenteredText(text = L.tableList.noTableFound(), scrollAble = true)
+            CenteredText(
+                modifier = Modifier.weight(1f),
+                text = L.tableList.noTableFound(),
+                scrollAble = true
+            )
         } else {
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentPadding = PaddingValues(
                     start = 20.dp,
                     end = 20.dp,
@@ -131,6 +137,12 @@ private fun TableGrid(
                         }
                     }
             }
+        }
+        if (groupsResource is Resource.Error) {
+            ErrorBar(
+                exception = groupsResource.exception,
+                retryAction = refresh
+            )
         }
     }
 }

@@ -13,9 +13,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CenteredText(text: String, scrollAble: Boolean) {
+fun CenteredText(modifier: Modifier = Modifier, text: String, scrollAble: Boolean) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(20.dp)
             .let {

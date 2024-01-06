@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -96,18 +97,16 @@ fun TableDetailScreen(
             } else {
                 Column {
                     val res = state.orderedItemsResource
-                    if (res is Resource.Error) {
-                        ErrorBar(exception = res.exception)
-                    }
                     val orderedItems = state.orderedItemsResource.data
                     if (orderedItems.isNullOrEmpty()) {
                         CenteredText(
+                            modifier = Modifier.weight(1f),
                             text = L.tableDetail.noOrder(table.number.toString(), table.groupName),
                             scrollAble = true
                         )
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxWidth().weight(1f)
                         ) {
                             items(orderedItems, key = OrderedItem::id) { item ->
                                 OrderedItem(item = item) {
@@ -115,6 +114,10 @@ fun TableDetailScreen(
                                 }
                             }
                         }
+                    }
+                    // TODO retry action is covered by FAB...
+                    if (res is Resource.Error) {
+                        ErrorBar(exception = res.exception, retryAction = vm::refreshOrder)
                     }
                 }
             }
