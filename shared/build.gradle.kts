@@ -38,6 +38,7 @@ kotlin {
         it.binaries.framework {
             // Must be set to false for shared localization (otherwise resources are not available)
             isStatic = false
+            freeCompilerArgs += "-Xobjc-generics"
         }
     }
 
