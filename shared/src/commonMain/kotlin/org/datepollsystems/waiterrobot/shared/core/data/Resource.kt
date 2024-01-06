@@ -22,3 +22,12 @@ sealed class Resource<T> {
 
 fun <T> Flow<Resource<T>>.mapResource(transform: (T?) -> T?): Flow<Resource<T>> =
     this.map { it.map(transform) }
+
+fun <I, O> Resource<I>.mapType(transform: (I?) -> O?): Resource<O> {
+    @Suppress("UNCHECKED_CAST")
+    return when (this) {
+        is Resource.Error -> Resource.Error(exception, transform(data))
+        is Resource.Loading -> Resource.Loading(transform(data))
+        is Resource.Success -> Resource.Success(transform(data) as O)
+    }
+}
