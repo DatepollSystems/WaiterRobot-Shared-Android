@@ -5,8 +5,6 @@ import org.datepollsystems.waiterrobot.shared.core.data.mapType
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
-import kotlin.experimental.ExperimentalObjCName
-import kotlin.native.ObjCName
 
 data class TableListState(
     val tableGroups: Resource<List<TableGroup>> = Resource.Loading(),
