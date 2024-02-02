@@ -94,6 +94,7 @@ private fun TableGrid(
 ) {
     val tableGroups = groupsResource.data
     Column {
+        // TODO filter will be moved in a extra view
         if (tableGroups?.size?.let { it > 1 } == true) {
             TableGroupFilter(
                 groups = tableGroups,
@@ -102,6 +103,11 @@ private fun TableGrid(
                 hideAll = hideAll
             )
         }
+
+        if (groupsResource is Resource.Error) {
+            ErrorBar(exception = groupsResource.exception, retryAction = refresh)
+        }
+
         if (tableGroups.isNullOrEmpty()) {
             CenteredText(
                 modifier = Modifier.weight(1f),
@@ -137,12 +143,6 @@ private fun TableGrid(
                         }
                     }
             }
-        }
-        if (groupsResource is Resource.Error) {
-            ErrorBar(
-                exception = groupsResource.exception,
-                retryAction = refresh
-            )
         }
     }
 }

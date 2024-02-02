@@ -14,7 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.retry
 import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 
 @Composable
@@ -44,11 +47,12 @@ fun ErrorBar(
         )
         if (retryAction != null) {
             TextButton(
-                modifier = Modifier.padding(start = 16.dp),
+                modifier = Modifier
+                    .padding(start = 16.dp),
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.onError),
                 onClick = retryAction
             ) {
-                Text(text = "Retry", fontWeight = FontWeight.Bold)
+                Text(text = L.exceptions.retry(), fontWeight = FontWeight.Bold, maxLines = 2)
             }
         }
     }
@@ -60,3 +64,9 @@ fun ErrorBar(
     exception: Throwable,
     retryAction: (() -> Unit)? = null
 ) = ErrorBar(modifier, exception.getLocalizedUserMessage(), retryAction)
+
+@Preview
+@Composable
+private fun ErrorBarPreview() = Preview {
+    ErrorBar(message = "Some exception message. Please try again.", retryAction = {})
+}

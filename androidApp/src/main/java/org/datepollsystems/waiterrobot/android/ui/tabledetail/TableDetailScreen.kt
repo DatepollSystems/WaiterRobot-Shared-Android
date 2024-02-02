@@ -98,6 +98,11 @@ fun TableDetailScreen(
                 Column {
                     val res = state.orderedItemsResource
                     val orderedItems = state.orderedItemsResource.data
+
+                    if (res is Resource.Error) {
+                        ErrorBar(exception = res.exception, retryAction = vm::refreshOrder)
+                    }
+
                     if (orderedItems.isNullOrEmpty()) {
                         CenteredText(
                             modifier = Modifier.weight(1f),
@@ -114,10 +119,6 @@ fun TableDetailScreen(
                                 }
                             }
                         }
-                    }
-                    // TODO retry action is covered by FAB...
-                    if (res is Resource.Error) {
-                        ErrorBar(exception = res.exception, retryAction = vm::refreshOrder)
                     }
                 }
             }

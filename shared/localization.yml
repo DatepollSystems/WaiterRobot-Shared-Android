@@ -251,6 +251,9 @@ settings:
     en: Privacy Policy
     de: Datenschutz
 exceptions:
+  retry:
+    en: Retry
+    de: Erneut versuchen
   title:
     en: Error
     de: Fehler
