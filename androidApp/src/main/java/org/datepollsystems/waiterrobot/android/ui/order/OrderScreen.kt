@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -43,6 +44,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
+import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderState
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -81,13 +83,7 @@ fun OrderScreen(
         skipHalfExpanded = true
     )
 
-    LaunchedEffect(bottomSheetState.targetValue) {
-        if (bottomSheetState.targetValue == ModalBottomSheetValue.Hidden) {
-            focusManager.clearFocus() // Close keyboard on sheet closing
-        }
-    }
-
-    fun goBack() {
+    fun goBack(state: OrderState, bottomSheetState: ModalBottomSheetState) {
         when {
             bottomSheetState.targetValue != ModalBottomSheetValue.Hidden -> {
                 // When Product search sheet is opened back press should only close the sheet
@@ -99,7 +95,13 @@ fun OrderScreen(
         }
     }
 
-    BackHandler(onBack = ::goBack)
+    LaunchedEffect(bottomSheetState.targetValue) {
+        if (bottomSheetState.targetValue == ModalBottomSheetValue.Hidden) {
+            focusManager.clearFocus() // Close keyboard on sheet closing
+        }
+    }
+
+    BackHandler(onBack = { goBack(state, bottomSheetState) })
 
     if (showConfirmGoBack) {
         ConfirmDialog(
@@ -145,7 +147,7 @@ fun OrderScreen(
             state = state,
             title = L.order.title(table.number.toString(), table.groupName),
             navigationIcon = {
-                IconButton(onClick = ::goBack) {
+                IconButton(onClick = { goBack(state, bottomSheetState) }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             },

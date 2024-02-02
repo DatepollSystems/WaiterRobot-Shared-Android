@@ -11,6 +11,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -37,6 +38,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
+import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingState
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -69,7 +71,7 @@ fun BillingScreen(
         skipHalfExpanded = true
     )
 
-    fun goBack() {
+    fun goBack(state: BillingState, paymentSheetState: ModalBottomSheetState) {
         when {
             paymentSheetState.targetValue != ModalBottomSheetValue.Hidden -> {
                 coroutineScope.launch { paymentSheetState.hide() }
@@ -80,7 +82,7 @@ fun BillingScreen(
         }
     }
 
-    BackHandler(onBack = ::goBack)
+    BackHandler(onBack = { goBack(state, paymentSheetState) })
 
     LaunchedEffect(paymentSheetState.targetValue) {
         if (paymentSheetState.targetValue == ModalBottomSheetValue.Hidden) {
@@ -134,7 +136,7 @@ fun BillingScreen(
                 }
             },
             navigationIcon = {
-                IconButton(onClick = ::goBack) {
+                IconButton(onClick = { goBack(state, paymentSheetState) }) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
