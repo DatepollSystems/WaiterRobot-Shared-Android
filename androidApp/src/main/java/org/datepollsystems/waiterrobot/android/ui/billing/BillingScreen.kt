@@ -3,6 +3,7 @@ package org.datepollsystems.waiterrobot.android.ui.billing
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FabPosition
@@ -118,6 +119,7 @@ fun BillingScreen(
             )
         },
         sheetState = paymentSheetState,
+        sheetShape = RoundedCornerShape(topStartPercent = 5, topEndPercent = 5),
         sheetGesturesEnabled = false
     ) {
         ScaffoldView(

@@ -56,7 +56,7 @@ internal abstract class AbstractRepository : KoinComponent {
  * @param mapDbEntity mapper that maps the [EntityType] to [ModelType]
  */
 internal abstract class CachedRepository<EntityType, ModelType> : AbstractRepository() {
-    private val _flow = MutableStateFlow<Resource<ModelType>?>(null)
+    private val _flow = MutableStateFlow<Resource<ModelType>>(Resource.Loading())
     val flow: Flow<Resource<ModelType>> = _flow.filterNotNull()
 
     protected abstract fun query(): Flow<EntityType>
@@ -80,7 +80,15 @@ internal abstract class CachedRepository<EntityType, ModelType> : AbstractReposi
         _flow.emitAll(query().map { Resource.Success(mapDbEntity(it)) })
     }
 
-    suspend fun refresh() = safeRefresh(_flow.value?.data)
+    suspend fun requery() {
+        _flow.emit(
+            query().first().let {
+                _flow.value.map { it }
+            }
+        )
+    }
+
+    suspend fun refresh() = safeRefresh(_flow.value.data)
 
     private suspend fun safeRefresh(currentDate: ModelType?) {
         _flow.emit(Resource.Loading(currentDate))

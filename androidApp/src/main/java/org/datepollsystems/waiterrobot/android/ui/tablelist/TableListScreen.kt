@@ -1,16 +1,13 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -19,7 +16,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +24,7 @@ import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
@@ -36,12 +33,12 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun TableListScreen(
-    vm: TableListViewModel = getViewModel(),
+    vm: TableListViewModel = koinViewModel(),
     navigator: NavController,
 ) {
     val state = vm.collectAsState().value
@@ -66,9 +63,7 @@ fun TableListScreen(
             onRefresh = vm::refreshTables,
         ) {
             if (state.tableGroups is Resource.Loading && state.tableGroups.data == null) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+                LoadingView()
             } else {
                 TableGrid(
                     groupsResource = state.tableGroups,
@@ -105,7 +100,7 @@ private fun TableGrid(
         }
 
         if (groupsResource is Resource.Error) {
-            ErrorBar(exception = groupsResource.exception, retryAction = refresh)
+            ErrorBar(message = groupsResource.userMessage, retryAction = refresh)
         }
 
         if (tableGroups.isNullOrEmpty()) {

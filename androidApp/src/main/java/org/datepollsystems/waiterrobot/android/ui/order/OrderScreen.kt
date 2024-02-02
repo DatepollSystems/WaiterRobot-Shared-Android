@@ -36,8 +36,11 @@ import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
+import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
@@ -48,7 +51,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepOrder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -59,7 +62,7 @@ fun OrderScreen(
     table: Table,
     initialItemId: Long? = null,
     navigator: NavController,
-    vm: OrderViewModel = getViewModel(parameters = { parametersOf(table, initialItemId) })
+    vm: OrderViewModel = koinViewModel { parametersOf(table, initialItemId) }
 ) {
     val state = vm.collectAsState().value
     vm.handleSideEffects(navigator)
@@ -91,7 +94,7 @@ fun OrderScreen(
                 coroutineScope.launch { bottomSheetState.hide() }
             }
 
-            state.currentOrder.isNotEmpty() -> showConfirmGoBack = true
+            state.currentOrder.data.orEmpty().isNotEmpty() -> showConfirmGoBack = true
             else -> vm.abortOrder()
         }
     }
@@ -125,15 +128,16 @@ fun OrderScreen(
         sheetShape = RoundedCornerShape(topStartPercent = 5, topEndPercent = 5),
         sheetContent = {
             ProductSearch(
-                productGroups = state.productGroups,
+                productGroupsResource = state.productGroups,
                 onSelect = {
                     vm.addItem(it, 1)
                     coroutineScope.launch {
                         bottomSheetState.hide()
                     }
                 },
-                onFilter = { vm.filterProducts(it) },
-                close = { coroutineScope.launch { bottomSheetState.hide() } }
+                onFilter = vm::filterProducts,
+                close = { coroutineScope.launch { bottomSheetState.hide() } },
+                refreshProducts = vm::refreshProducts
             )
         }
     ) {
@@ -147,7 +151,7 @@ fun OrderScreen(
             },
             floatingActionButton = {
                 Column {
-                    if (state.currentOrder.isNotEmpty()) {
+                    if (state.currentOrder.data.orEmpty().isNotEmpty()) {
                         FloatingActionButton(
                             modifier = Modifier.scale(0.85f),
                             enabled = state.viewState == ViewState.Idle,
@@ -166,21 +170,38 @@ fun OrderScreen(
                 }
             }
         ) {
-            if (state.currentOrder.isEmpty()) {
-                CenteredText(text = L.order.addProduct(), scrollAble = false)
+            val orderResource = state.currentOrder
+            val orderItems = orderResource.data
+
+            if (orderResource is Resource.Loading && orderItems == null) {
+                LoadingView()
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(state.currentOrder, key = { it.product.id }) { orderItem ->
-                        OrderListItem(
-                            id = orderItem.product.id,
-                            name = orderItem.product.name,
-                            amount = orderItem.amount,
-                            note = orderItem.note,
-                            addAction = vm::addItem,
-                            onLongClick = { noteDialogItem = orderItem }
+                Column {
+                    if (orderResource is Resource.Error) {
+                        ErrorBar(message = orderResource.userMessage) // TODO retry action (not always the same)
+                    }
+
+                    if (orderItems.isNullOrEmpty()) {
+                        CenteredText(
+                            modifier = Modifier.weight(1f),
+                            text = L.order.addProduct(),
+                            scrollAble = false
                         )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(orderItems, key = { it.product.id }) { orderItem ->
+                                OrderListItem(
+                                    id = orderItem.product.id,
+                                    name = orderItem.product.name,
+                                    amount = orderItem.amount,
+                                    note = orderItem.note,
+                                    addAction = vm::addItem,
+                                    onLongClick = { noteDialogItem = orderItem }
+                                )
+                            }
+                        }
                     }
                 }
             }

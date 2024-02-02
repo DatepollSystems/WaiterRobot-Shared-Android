@@ -1,7 +1,13 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -9,12 +15,24 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -23,6 +41,9 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
+import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
+import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -34,10 +55,11 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.title
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductSearch(
-    productGroups: List<ProductGroup>,
+    productGroupsResource: Resource<List<ProductGroup>>,
     onSelect: (Product) -> Unit,
     onFilter: (String) -> Unit,
-    close: () -> Unit
+    close: () -> Unit,
+    refreshProducts: () -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -82,54 +104,75 @@ fun ProductSearch(
             )
         }
 
-        if (productGroups.isEmpty()) {
-            CenteredText(text = L.productSearch.noProductFound(), scrollAble = false)
+        if (productGroupsResource is Resource.Loading && productGroupsResource.data == null) {
+            LoadingView()
         } else {
-            val coScope = rememberCoroutineScope()
-            val pagerState =
-                rememberPagerState { productGroups.size + 1 } // One additional "all" page
-
-            ScrollableTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                backgroundColor = MaterialTheme.colors.surface,
-                edgePadding = 0.dp,
-                divider = {} // Add divider externally as otherwise it does not span the whole width
-            ) {
-                Tab(
-                    selected = pagerState.currentPage == 0,
-                    onClick = { coScope.launch { pagerState.scrollToPage(0) } },
-                    text = { Text(L.productSearch.allGroups()) }
-                )
-                productGroups.forEachIndexed { index, productGroup ->
-                    Tab(
-                        selected = pagerState.currentPage == index + 1,
-                        onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
-                        text = { Text(productGroup.name) }
-                    )
-                }
+            if (productGroupsResource is Resource.Error) {
+                ErrorBar(message = productGroupsResource.userMessage, retryAction = refreshProducts)
             }
+            val productGroups = productGroupsResource.data
+            if (productGroups.isNullOrEmpty()) {
+                CenteredText(text = L.productSearch.noProductFound(), scrollAble = false)
+            } else {
+                val coScope = rememberCoroutineScope()
+                val pagerState =
+                    rememberPagerState { productGroups.size + 1 } // One additional "all" page
 
-            TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
+                ScrollableTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    backgroundColor = MaterialTheme.colors.surface,
+                    edgePadding = 0.dp,
+                    divider = {} // Add divider externally as otherwise it does not span the whole width
+                ) {
+                    Tab(
+                        selected = pagerState.currentPage == 0,
+                        onClick = { coScope.launch { pagerState.scrollToPage(0) } },
+                        text = { Text(L.productSearch.allGroups()) }
+                    )
+                    productGroups.forEachIndexed { index, productGroup ->
+                        Tab(
+                            selected = pagerState.currentPage == index + 1,
+                            onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
+                            text = { Text(productGroup.name) }
+                        )
+                    }
+                }
 
-            HorizontalPager(pagerState) { pageIndex ->
-                if (pageIndex == 0) {
-                    ProductLazyVerticalGrid {
-                        productGroups.forEach { productGroup ->
-                            if (productGroup.products.isNotEmpty()) {
-                                sectionHeader(
-                                    key = "group-${productGroup.id}",
-                                    title = productGroup.name
-                                )
-                                items(productGroup.products, key = Product::id) { product ->
-                                    Product(product = product, onSelect = { onSelect(product) })
+                TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
+
+                HorizontalPager(pagerState) { pageIndex ->
+                    if (pageIndex == 0) {
+                        if (productGroups.all { it.products.isEmpty() }) {
+                            CenteredText(text = "No products", scrollAble = false)
+                        } else {
+                            ProductLazyVerticalGrid {
+                                productGroups.forEach { productGroup ->
+                                    if (productGroup.products.isNotEmpty()) {
+                                        sectionHeader(
+                                            key = "group-${productGroup.id}",
+                                            title = productGroup.name
+                                        )
+                                        items(productGroup.products, key = Product::id) { product ->
+                                            Product(
+                                                product = product,
+                                                onSelect = { onSelect(product) })
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                } else {
-                    ProductLazyVerticalGrid {
-                        items(productGroups[pageIndex - 1].products, key = Product::id) { product ->
-                            Product(product = product, onSelect = { onSelect(product) })
+                    } else {
+                        if (productGroups[pageIndex - 1].products.isEmpty()) {
+                            CenteredText(text = "No products", scrollAble = false)
+                        } else {
+                            ProductLazyVerticalGrid {
+                                items(
+                                    productGroups[pageIndex - 1].products,
+                                    key = Product::id
+                                ) { product ->
+                                    Product(product = product, onSelect = { onSelect(product) })
+                                }
+                            }
                         }
                     }
                 }
