@@ -3,9 +3,7 @@ package org.datepollsystems.waiterrobot.android.ui.billing
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomAppBar
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
@@ -14,7 +12,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
@@ -32,6 +29,7 @@ import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
+import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -43,7 +41,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepBill
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.generated.localization.total
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -53,12 +51,12 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun BillingScreen(
     table: Table,
     navigator: NavController,
-    vm: BillingViewModel = getViewModel(parameters = { parametersOf(table) })
+    vm: BillingViewModel = koinViewModel { parametersOf(table) }
 ) {
     val state = vm.collectAsState().value
     vm.handleSideEffects(navigator)
 
-    val bottomSheetState = rememberModalBottomSheetState(
+    val paymentSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
@@ -66,32 +64,21 @@ fun BillingScreen(
     BackHandler(onBack = vm::goBack)
 
     if (state.showConfirmationDialog) {
-        AlertDialog(
-            onDismissRequest = vm::keepBill,
-            confirmButton = {
-                TextButton(onClick = vm::abortBill) {
-                    Text(text = L.dialog.closeAnyway())
-                }
-            },
-            dismissButton = {
-                Button(onClick = vm::keepBill) {
-                    Text(L.billing.keepBill())
-                }
-            },
-            title = {
-                Text(text = L.billing.notSent.title())
-            },
-            text = {
-                Text(text = L.billing.notSent.desc())
-            }
+        ConfirmDialog(
+            title = L.billing.notSent.title(),
+            text = L.billing.notSent.desc(),
+            confirmText = L.dialog.closeAnyway(),
+            onConfirm = vm::abortBill,
+            dismissText = L.billing.keepBill(),
+            onDismiss = vm::keepBill,
         )
     }
 
     val coroutineScope = rememberCoroutineScope()
     val focusRequest = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(bottomSheetState.isVisible) {
-        if (bottomSheetState.isVisible) {
+    LaunchedEffect(paymentSheetState.isVisible) {
+        if (paymentSheetState.isVisible) {
             focusRequest.requestFocus()
         } else {
             focusManager.clearFocus()
@@ -109,12 +96,12 @@ fun BillingScreen(
                     vm.paySelection()
                     coroutineScope.launch {
                         focusManager.clearFocus()
-                        bottomSheetState.hide()
+                        paymentSheetState.hide()
                     }
                 }
             )
         },
-        sheetState = bottomSheetState,
+        sheetState = paymentSheetState,
         sheetGesturesEnabled = false
     ) {
         ScaffoldView(
@@ -154,7 +141,7 @@ fun BillingScreen(
                     enabled = state.viewState == ViewState.Idle && state.hasSelectedItems,
                     onClick = {
                         coroutineScope.launch {
-                            bottomSheetState.show()
+                            paymentSheetState.show()
                         }
                     }
                 ) {

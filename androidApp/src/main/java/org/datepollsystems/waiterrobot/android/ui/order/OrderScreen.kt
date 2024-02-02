@@ -1,16 +1,31 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -20,13 +35,19 @@ import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
+import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.*
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.addProduct
+import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.keepOrder
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
@@ -72,24 +93,13 @@ fun OrderScreen(
     }
 
     if (state.showConfirmationDialog) {
-        AlertDialog(
-            onDismissRequest = vm::keepOrder,
-            confirmButton = {
-                TextButton(onClick = vm::abortOrder) {
-                    Text(L.dialog.closeAnyway())
-                }
-            },
-            dismissButton = {
-                Button(onClick = vm::keepOrder) {
-                    Text(L.order.keepOrder())
-                }
-            },
-            title = {
-                Text(text = L.order.notSent.title())
-            },
-            text = {
-                Text(text = L.order.notSent.desc())
-            }
+        ConfirmDialog(
+            title = L.order.notSent.title(),
+            text = L.order.notSent.desc(),
+            confirmText = L.dialog.closeAnyway(),
+            onConfirm = vm::abortOrder,
+            dismissText = L.order.keepOrder(),
+            onDismiss = vm::keepOrder
         )
     }
 
