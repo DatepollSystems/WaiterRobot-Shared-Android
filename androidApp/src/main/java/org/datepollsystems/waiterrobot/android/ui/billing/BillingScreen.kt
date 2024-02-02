@@ -68,7 +68,7 @@ fun BillingScreen(
     var showConfirmGoBack by remember { mutableStateOf(false) }
     val paymentSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true
+        skipHalfExpanded = true,
     )
 
     fun goBack(state: BillingState, paymentSheetState: ModalBottomSheetState) {
@@ -84,11 +84,11 @@ fun BillingScreen(
 
     BackHandler(onBack = { goBack(state, paymentSheetState) })
 
-    LaunchedEffect(paymentSheetState.targetValue) {
-        if (paymentSheetState.targetValue == ModalBottomSheetValue.Hidden) {
-            focusManager.clearFocus()
-        } else {
+    LaunchedEffect(paymentSheetState.isVisible) {
+        if (paymentSheetState.isVisible) {
             focusRequest.requestFocus()
+        } else {
+            focusManager.clearFocus()
         }
     }
 
