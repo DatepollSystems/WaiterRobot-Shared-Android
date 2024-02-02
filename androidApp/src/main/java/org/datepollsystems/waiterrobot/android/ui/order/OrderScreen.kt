@@ -68,6 +68,7 @@ fun OrderScreen(
     val focusManager = LocalFocusManager.current
 
     var noteDialogItem: OrderItem? by remember { mutableStateOf(null) }
+    var showConfirmGoBack: Boolean by remember { mutableStateOf(false) }
 
     val bottomSheetState = rememberModalBottomSheetState(
         // When opening the order screen waiter most likely wants to add a new product
@@ -83,23 +84,28 @@ fun OrderScreen(
         }
     }
 
-    BackHandler {
-        if (bottomSheetState.currentValue != ModalBottomSheetValue.Hidden) {
-            // When Product search sheet is opened back press should only close it
-            coroutineScope.launch { bottomSheetState.hide() }
-        } else {
-            vm.goBack()
+    fun goBack() {
+        when {
+            bottomSheetState.targetValue != ModalBottomSheetValue.Hidden -> {
+                // When Product search sheet is opened back press should only close the sheet
+                coroutineScope.launch { bottomSheetState.hide() }
+            }
+
+            state.currentOrder.isNotEmpty() -> showConfirmGoBack = true
+            else -> vm.abortOrder()
         }
     }
 
-    if (state.showConfirmationDialog) {
+    BackHandler(onBack = ::goBack)
+
+    if (showConfirmGoBack) {
         ConfirmDialog(
             title = L.order.notSent.title(),
             text = L.order.notSent.desc(),
             confirmText = L.dialog.closeAnyway(),
             onConfirm = vm::abortOrder,
-            dismissText = L.order.keepOrder(),
-            onDismiss = vm::keepOrder
+            cancelText = L.order.keepOrder(),
+            onCancel = { showConfirmGoBack = false }
         )
     }
 
@@ -135,7 +141,7 @@ fun OrderScreen(
             state = state,
             title = L.order.title(table.number.toString(), table.groupName),
             navigationIcon = {
-                IconButton(onClick = vm::goBack) {
+                IconButton(onClick = ::goBack) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             },

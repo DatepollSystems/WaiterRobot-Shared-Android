@@ -86,22 +86,7 @@ class BillingViewModel internal constructor(
         }
     }
 
-    fun goBack() = intent {
-        if (state.hasSelectedItems) {
-            reduce { state.copy(showConfirmationDialog = true) }
-        } else {
-            navigator.pop()
-        }
-    }
-
     fun abortBill() = intent {
-        // Hide the confirmation dialog before navigation away,
-        // as otherwise on iOS it would be still shown on the new screen
-        reduce { state.copy(showConfirmationDialog = false) }
         navigator.pop()
-    }
-
-    fun keepBill() = intent {
-        reduce { state.copy(showConfirmationDialog = false) }
     }
 }

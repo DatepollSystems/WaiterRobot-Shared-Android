@@ -9,7 +9,6 @@ data class BillingState(
     override val viewState: ViewState = ViewState.Idle,
     val moneyGivenText: String = "",
     val changeText: String = "0.00 €",
-    val showConfirmationDialog: Boolean = false,
     @Suppress("ConstructorParameterNaming")
     internal val _billItems: Map<Long, BillItem> = emptyMap()
 ) : ViewModelState() {

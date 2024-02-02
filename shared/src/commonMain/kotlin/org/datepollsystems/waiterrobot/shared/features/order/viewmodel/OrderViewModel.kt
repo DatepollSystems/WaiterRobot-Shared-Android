@@ -11,7 +11,11 @@ import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRep
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.*
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.descOrderAdd
+import org.datepollsystems.waiterrobot.shared.generated.localization.descOrderSent
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -82,23 +86,8 @@ class OrderViewModel internal constructor(
         reduce { state.copy(_currentOrder = state._currentOrder.minus(productId)) }
     }
 
-    fun goBack() = intent {
-        if (state._currentOrder.isEmpty()) {
-            navigator.pop()
-        } else {
-            reduce { state.copy(showConfirmationDialog = true) }
-        }
-    }
-
     fun abortOrder() = intent {
-        // Hide the confirmation dialog before navigation away,
-        // as otherwise on iOS it would be still shown on the new screen
-        reduce { state.copy(showConfirmationDialog = false) }
         navigator.pop()
-    }
-
-    fun keepOrder() = intent {
-        reduce { state.copy(showConfirmationDialog = false) }
     }
 
     private fun addItem(id: Long, amount: Int, fallback: suspend () -> Product?) = intent {

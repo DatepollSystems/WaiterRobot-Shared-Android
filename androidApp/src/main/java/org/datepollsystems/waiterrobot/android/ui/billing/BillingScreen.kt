@@ -20,8 +20,11 @@ import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,34 +59,47 @@ fun BillingScreen(
     val state = vm.collectAsState().value
     vm.handleSideEffects(navigator)
 
+    val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val focusRequest = remember { FocusRequester() }
+    var showConfirmGoBack by remember { mutableStateOf(false) }
     val paymentSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
 
-    BackHandler(onBack = vm::goBack)
+    fun goBack() {
+        when {
+            paymentSheetState.targetValue != ModalBottomSheetValue.Hidden -> {
+                coroutineScope.launch { paymentSheetState.hide() }
+            }
 
-    if (state.showConfirmationDialog) {
+            state.hasSelectedItems -> showConfirmGoBack = true
+            else -> vm.abortBill()
+        }
+    }
+
+    BackHandler(onBack = ::goBack)
+
+    LaunchedEffect(paymentSheetState.targetValue) {
+        if (paymentSheetState.targetValue == ModalBottomSheetValue.Hidden) {
+            focusManager.clearFocus()
+        } else {
+            focusRequest.requestFocus()
+        }
+    }
+
+    if (showConfirmGoBack) {
         ConfirmDialog(
             title = L.billing.notSent.title(),
             text = L.billing.notSent.desc(),
             confirmText = L.dialog.closeAnyway(),
             onConfirm = vm::abortBill,
-            dismissText = L.billing.keepBill(),
-            onDismiss = vm::keepBill,
+            cancelText = L.billing.keepBill(),
+            onCancel = { showConfirmGoBack = false },
         )
     }
 
-    val coroutineScope = rememberCoroutineScope()
-    val focusRequest = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    LaunchedEffect(paymentSheetState.isVisible) {
-        if (paymentSheetState.isVisible) {
-            focusRequest.requestFocus()
-        } else {
-            focusManager.clearFocus()
-        }
-    }
     ModalBottomSheetLayout(
         sheetContent = {
             PaymentView(
@@ -116,7 +132,7 @@ fun BillingScreen(
                 }
             },
             navigationIcon = {
-                IconButton(onClick = vm::goBack) {
+                IconButton(onClick = ::goBack) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
