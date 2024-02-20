@@ -6,9 +6,8 @@ import kotlin.math.abs
 
 typealias Cents = Int
 
-class Money constructor(
-    private val cents: Int
-) {
+@Suppress("TooManyFunctions")
+class Money constructor(val cents: Int) : Comparable<Money> {
     constructor(euro: Int, cents: Int) : this(
         kotlin.run {
             require(cents in -99..99) { "Cents must be between -99 and 99" }
@@ -28,9 +27,7 @@ class Money constructor(
     /** Use with caution this rounds down to the next full cents */
     operator fun div(n: Int): Money = Money(cents / n)
 
-    fun serialize(): Int = cents
-
-    fun isNegative(): Boolean = cents < 0
+    val isNegative get(): Boolean = cents < 0
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
@@ -42,6 +39,20 @@ class Money constructor(
 
     override fun toString(): String = (if (cents < 0) "- " else "") +
         "${abs(cents) / 100}.${(abs(cents) % 100).toString().padStart(2, '0')} €"
+
+    fun toFullString(): String = buildString {
+        val absCents = abs(cents)
+        if (absCents >= 100) {
+            append(absCents / 100)
+            append(" Euro ")
+        }
+        if (absCents % 100 > 0) {
+            append(absCents % 100)
+            append(" Cent")
+        }
+    }.trim()
+
+    override operator fun compareTo(other: Money): Int = cents.compareTo(other.cents)
 }
 
 val String.euro

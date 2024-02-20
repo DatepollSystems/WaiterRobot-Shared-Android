@@ -110,7 +110,9 @@ fun BillingScreen(
                 moneyGivenText = state.moneyGivenText,
                 moneyGiven = vm::moneyGiven,
                 moneyGivenInputFocusRequester = focusRequest,
-                change = state.changeText,
+                change = state.change,
+                breakDownChange = vm::breakDownChange,
+                resetChangeBreakUp = vm::resetChange,
                 onPayClick = {
                     vm.paySelection()
                     coroutineScope.launch {

@@ -31,8 +31,8 @@ class LoginScannerViewModel internal constructor(
             }
         } catch (e: CancellationException) {
             throw e
-        } catch (_: Exception) {
-            logger.d { "Error with scanned login code: $code" }
+        } catch (e: Exception) {
+            logger.d(e) { "Error with scanned login code: $code" }
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())
         }
     }

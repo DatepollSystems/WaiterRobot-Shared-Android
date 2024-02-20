@@ -187,7 +187,7 @@ dependencies {
 
     coreLibraryDesugaring(libs.android.desugar)
 
-    // Compose
+    // Compose TODO switch to BillOfMaterial (compose-bom)
     runtimeOnly(libs.androidx.compose.compiler)
     implementation(libs.bundles.android.compose)
 
