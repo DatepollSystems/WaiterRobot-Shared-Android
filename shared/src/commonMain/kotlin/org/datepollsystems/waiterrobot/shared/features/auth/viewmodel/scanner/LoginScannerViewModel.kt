@@ -17,6 +17,7 @@ class LoginScannerViewModel internal constructor(
 ) : AbstractViewModel<LoginScannerState, LoginScannerEffect>(LoginScannerState()) {
 
     fun onCode(code: String) = intent {
+        @Suppress("TooGenericExceptionCaught")
         try {
             when (val deepLink = DeepLink.createFromUrl(code)) {
                 is DeepLink.Auth.LoginLink -> {
@@ -25,6 +26,7 @@ class LoginScannerViewModel internal constructor(
                     navigator.popUpToRoot()
                     reduce { state.withViewState(ViewState.Idle) }
                 }
+
                 is DeepLink.Auth.RegisterLink -> {
                     navigator.push(Screen.RegisterScreen(deepLink.token))
                 }

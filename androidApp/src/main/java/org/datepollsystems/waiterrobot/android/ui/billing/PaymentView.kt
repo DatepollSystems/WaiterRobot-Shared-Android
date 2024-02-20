@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Chip
@@ -18,8 +20,8 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallSplit
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,7 +55,6 @@ fun PaymentView(
     Column(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
             text = sum,
@@ -61,6 +62,8 @@ fun PaymentView(
         )
 
         /* TODO only show when there are other payment options available
+        Spacer(Modifier.height(10.dp))
+
         Row {
             // TODO one button for each available payment option (except cash)
             Button(
@@ -72,6 +75,8 @@ fun PaymentView(
                 Text("Contactless")
             }
         }*/
+
+        Spacer(Modifier.height(10.dp))
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
@@ -92,11 +97,16 @@ fun PaymentView(
             }
         )
 
+        Spacer(Modifier.height(20.dp))
+
         Change(change = change, breakDownChange, resetChangeBreakUp)
 
+        Spacer(Modifier.height(20.dp))
+
         ExtendedFloatingActionButton(
+            modifier = Modifier.fillMaxWidth(0.8f),
             onClick = onPayClick,
-            icon = { Icon(Icons.Filled.AttachMoney, contentDescription = "Cash") },
+            icon = { Icon(Icons.Filled.EuroSymbol, contentDescription = "Cash") },
             text = { Text("Cash") }
         )
     }

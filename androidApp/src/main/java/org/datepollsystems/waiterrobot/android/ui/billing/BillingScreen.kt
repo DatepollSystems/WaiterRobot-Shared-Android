@@ -16,8 +16,8 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -167,7 +167,7 @@ fun BillingScreen(
                         }
                     }
                 ) {
-                    Icon(Icons.Filled.AttachMoney, contentDescription = "Cash")
+                    Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
                 }
             },
             floatingActionButtonPosition = FabPosition.Center,
