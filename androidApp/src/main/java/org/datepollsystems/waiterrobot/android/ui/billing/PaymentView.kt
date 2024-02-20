@@ -19,7 +19,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.runtime.Composable
@@ -166,13 +165,7 @@ fun Change(
 @Composable
 private fun ChangeChip(quantity: Int, amount: Money, onClick: () -> Unit) {
     Chip(onClick = onClick) {
-        Text(text = "$quantity x ${amount.toFullString()}")
-        // TODO Material 3 switch to ArrowSplit
-        Icon(
-            modifier = Modifier.padding(start = 2.dp),
-            imageVector = Icons.AutoMirrored.Filled.CallSplit,
-            contentDescription = "Split down"
-        )
+        Text(text = "${quantity}x ${amount.toFullString()}")
     }
 }
 
