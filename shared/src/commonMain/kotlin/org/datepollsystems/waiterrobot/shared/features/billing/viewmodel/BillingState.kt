@@ -9,6 +9,7 @@ import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.datepollsystems.waiterrobot.shared.utils.sumOf
 import kotlin.math.abs
+import kotlin.native.HiddenFromObjC
 
 data class BillingState(
     override val viewState: ViewState = ViewState.Idle,
@@ -17,11 +18,15 @@ data class BillingState(
     @Suppress("ConstructorParameterNaming")
     internal val _billItems: Map<Long, BillItem> = emptyMap()
 ) : ViewModelState() {
+    @HiddenFromObjC
     val billItems: List<BillItem> by lazy { _billItems.values.toList() }
 
-    val priceSum by lazy { _billItems.values.sumOf(BillItem::priceSum) }
+    @Suppress("unused") // iOS only
+    val billItemsArray: Array<BillItem> by lazy { billItems.toTypedArray() }
 
-    val hasSelectedItems by lazy { _billItems.any { it.value.selectedForBill > 0 } }
+    val priceSum: Money by lazy { _billItems.values.sumOf(BillItem::priceSum) }
+
+    val hasSelectedItems: Boolean by lazy { _billItems.any { it.value.selectedForBill > 0 } }
 
     override fun withViewState(viewState: ViewState): BillingState = copy(viewState = viewState)
 
@@ -30,9 +35,8 @@ data class BillingState(
         val breakUp: List<ChangeBreakUp> = amount.breakUp(),
         val brokenDown: Boolean = false
     ) {
-        val breakUpArray by lazy {
-            breakUp.toTypedArray()
-        }
+        @Suppress("unused") // iOS only
+        val breakUpArray: Array<ChangeBreakUp> by lazy { breakUp.toTypedArray() }
     }
 }
 

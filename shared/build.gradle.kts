@@ -50,6 +50,11 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCRefinement")
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+        }
+
         commonMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/commonMain/kotlin")
