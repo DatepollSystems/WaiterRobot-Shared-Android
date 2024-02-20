@@ -155,7 +155,8 @@ fun ProductSearch(
                                         items(productGroup.products, key = Product::id) { product ->
                                             Product(
                                                 product = product,
-                                                onSelect = { onSelect(product) })
+                                                onSelect = { onSelect(product) }
+                                            )
                                         }
                                     }
                                 }
