@@ -4,6 +4,7 @@ import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffe
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
+import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -21,7 +22,7 @@ class BillingViewModel internal constructor(
         loadBill()
     }
 
-    fun loadBill() = intent {
+    private fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
         val items = billingRepository.getBillForTable(table).associateBy { it.productId }
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
@@ -33,7 +34,9 @@ class BillingViewModel internal constructor(
 
         loadBill()
 
-        reduce { state.copy(changeText = "0", moneyGivenText = "") }
+        reduce {
+            state.copy(change = null, moneyGivenText = "")
+        }
     }
 
     @OptIn(OrbitExperimental::class)
@@ -45,11 +48,34 @@ class BillingViewModel internal constructor(
                 val given = givenText.euro
                 state.copy(
                     moneyGivenText = givenText,
-                    changeText = (given - state.priceSum).toString()
+                    change = BillingState.Change(amount = given - state.priceSum),
                 )
             } catch (_: Exception) {
-                state.copy(moneyGivenText = givenText, changeText = "NaN")
+                state.copy(
+                    moneyGivenText = givenText,
+                    change = null,
+                )
             }
+        }
+    }
+
+    fun breakDownChange(changeBreakUp: ChangeBreakUp) = intent {
+        reduce {
+            val change = state.change
+            state.copy(
+                change = change?.copy(
+                    breakUp = change.breakUp.breakDown(changeBreakUp),
+                    brokenDown = true
+                )
+            )
+        }
+    }
+
+    fun resetChange() = intent {
+        reduce {
+            state.copy(
+                change = state.change?.amount?.let { BillingState.Change(it) }
+            )
         }
     }
 
@@ -66,7 +92,11 @@ class BillingViewModel internal constructor(
 
             val newItem = item.copy(selectedForBill = newAmount)
             val newBill = state._billItems.plus(newItem.productId to newItem)
-            state.copy(_billItems = newBill)
+            state.copy(
+                _billItems = newBill,
+                moneyGivenText = "",
+                change = null
+            )
         }
     }
 
@@ -75,33 +105,26 @@ class BillingViewModel internal constructor(
             val newBill = state._billItems.mapValues {
                 it.value.copy(selectedForBill = it.value.ordered)
             }
-            state.copy(_billItems = newBill)
+            state.copy(
+                _billItems = newBill,
+                moneyGivenText = "",
+                change = null
+            )
         }
     }
 
     fun unselectAll() = intent {
         reduce {
             val newBill = state._billItems.mapValues { it.value.copy(selectedForBill = 0) }
-            state.copy(_billItems = newBill)
-        }
-    }
-
-    fun goBack() = intent {
-        if (state.hasSelectedItems) {
-            reduce { state.copy(showConfirmationDialog = true) }
-        } else {
-            navigator.pop()
+            state.copy(
+                _billItems = newBill,
+                moneyGivenText = "",
+                change = null
+            )
         }
     }
 
     fun abortBill() = intent {
-        // Hide the confirmation dialog before navigation away,
-        // as otherwise on iOS it would be still shown on the new screen
-        reduce { state.copy(showConfirmationDialog = false) }
         navigator.pop()
-    }
-
-    fun keepBill() = intent {
-        reduce { state.copy(showConfirmationDialog = false) }
     }
 }

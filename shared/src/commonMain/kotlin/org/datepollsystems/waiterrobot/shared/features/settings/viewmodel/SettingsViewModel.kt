@@ -28,7 +28,7 @@ class SettingsViewModel internal constructor(
         coroutineScope {
             listOf(
                 launchCatching(logger) { tableRepo.refresh() },
-                launchCatching(logger) { productRepo.getProductGroups(true) }
+                launchCatching(logger) { productRepo.refresh() }
             ).joinAll()
         }
         updateParent<TableListViewModel>()
