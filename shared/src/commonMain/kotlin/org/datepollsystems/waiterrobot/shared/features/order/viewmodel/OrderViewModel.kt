@@ -53,9 +53,10 @@ class OrderViewModel internal constructor(
                     }
                 }
             }
-        }
-        if (initialItemId != null) {
-            addItem(initialItemId, 1)
+
+            if (initialItemId != null) {
+                addItem(initialItemId, 1)
+            }
         }
     }
 
