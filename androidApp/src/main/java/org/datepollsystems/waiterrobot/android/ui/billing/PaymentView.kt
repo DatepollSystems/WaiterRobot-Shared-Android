@@ -21,7 +21,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CallSplit
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,6 +37,8 @@ import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.Billing
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.change
+import org.datepollsystems.waiterrobot.shared.generated.localization.given
+import org.datepollsystems.waiterrobot.shared.generated.localization.pay
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
@@ -80,7 +81,7 @@ fun PaymentView(
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
-            label = { Text(text = "Gegeben") },
+            label = { Text(text = L.billing.given()) },
             placeholder = { Text(text = "0.00") },
             singleLine = true,
             modifier = Modifier
@@ -106,8 +107,7 @@ fun PaymentView(
         ExtendedFloatingActionButton(
             modifier = Modifier.fillMaxWidth(0.8f),
             onClick = onPayClick,
-            icon = { Icon(Icons.Filled.EuroSymbol, contentDescription = "Cash") },
-            text = { Text("Cash") }
+            text = { Text(L.billing.pay()) }
         )
     }
 }
@@ -176,7 +176,7 @@ private fun ChangeChip(quantity: Int, amount: Money, onClick: () -> Unit) {
     }
 }
 
-@Preview
+@Preview(locale = "en")
 @PreviewFontScale
 @PreviewLightDark
 @Composable

@@ -198,8 +198,8 @@ billing:
     en: Change
     de: Rückgeld
   pay:
-    en: Pay
-    de: Bezahlen
+    en: Pay Cash
+    de: Bar Bezahlen
   given:
     en: Given
     de: Gegeben
