@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.util.Date
 import java.util.Properties
@@ -143,6 +144,10 @@ android {
                     .writeText(this@variant.versionName)
             }
         }
+    }
+
+    tasks.withType<KotlinCompilationTask<*>> {
+        compilerOptions.freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }
 

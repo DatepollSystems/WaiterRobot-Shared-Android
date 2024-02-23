@@ -45,14 +45,14 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepLoggedIn
 import org.datepollsystems.waiterrobot.shared.generated.localization.privacyPolicy
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 @Destination
 fun SettingsScreen(
     navigator: NavController,
-    vm: SettingsViewModel = getViewModel()
+    vm: SettingsViewModel = koinViewModel()
 ) {
     val state = vm.collectAsState().value
 

@@ -1,25 +1,26 @@
 package org.datepollsystems.waiterrobot.android.ui.billing
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,14 +31,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
-import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingState
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
@@ -143,9 +143,7 @@ fun BillingScreen(
                 }
             },
             bottomBar = {
-                BottomAppBar(
-                    cutoutShape = CircleShape
-                ) {
+                BottomAppBar(contentPadding = PaddingValues(horizontal = 16.dp)) {
                     Text(
                         text = L.billing.total() + ":",
                         style = MaterialTheme.typography.h6
@@ -158,20 +156,19 @@ fun BillingScreen(
                 }
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    shape = CircleShape,
-                    enabled = state.viewState == ViewState.Idle && state.hasSelectedItems,
-                    onClick = {
-                        coroutineScope.launch {
-                            paymentSheetState.show()
+                if (state.hasSelectedItems) {
+                    FloatingActionButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                paymentSheetState.show()
+                            }
                         }
+                    ) {
+                        Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
                     }
-                ) {
-                    Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
                 }
             },
-            floatingActionButtonPosition = FabPosition.Center,
-            isFloatingActionButtonDocked = true
+            floatingActionButtonPosition = FabPosition.Center
         ) {
             BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
         }

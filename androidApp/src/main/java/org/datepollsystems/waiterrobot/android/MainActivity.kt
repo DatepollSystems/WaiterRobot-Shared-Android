@@ -38,11 +38,11 @@ class MainActivity : AppCompatActivity() {
         // Switch from SplashScreenTheme to AppTheme
         setTheme(R.style.Theme_WaiterRobot_Main)
 
-        checkForUpdate()
-
         setContent {
             RootView(vm, ::onAppThemeChange)
         }
+
+        checkForUpdate()
 
         // Only handle the deep-links when the app is created the first time (but not when it gets recreated)
         if (savedInstanceState == null) {

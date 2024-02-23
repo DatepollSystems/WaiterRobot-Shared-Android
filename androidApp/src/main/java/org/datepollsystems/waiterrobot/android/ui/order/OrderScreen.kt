@@ -9,8 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
@@ -20,6 +18,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,22 +29,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
-import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderState
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
@@ -152,12 +152,10 @@ fun OrderScreen(
                 }
             },
             floatingActionButton = {
-                Column {
+                Column(horizontalAlignment = Alignment.End) {
                     if (state.currentOrder.data.orEmpty().isNotEmpty()) {
-                        FloatingActionButton(
-                            modifier = Modifier.scale(0.85f),
-                            enabled = state.viewState == ViewState.Idle,
-                            backgroundColor = MaterialTheme.colors.secondaryVariant,
+                        SmallFloatingActionButton(
+                            containerColor = MaterialTheme.colors.secondaryVariant,
                             onClick = vm::sendOrder
                         ) {
                             Icon(Icons.Filled.Send, contentDescription = "Send Order")
