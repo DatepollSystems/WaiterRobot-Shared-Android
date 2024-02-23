@@ -15,18 +15,17 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -120,7 +119,6 @@ fun ProductSearch(
 
                 ScrollableTabRow(
                     selectedTabIndex = pagerState.currentPage,
-                    backgroundColor = MaterialTheme.colors.surface,
                     edgePadding = 0.dp,
                     divider = {} // Add divider externally as otherwise it does not span the whole width
                 ) {
@@ -138,7 +136,7 @@ fun ProductSearch(
                     }
                 }
 
-                TabRowDefaults.Divider(modifier = Modifier.fillMaxWidth())
+                HorizontalDivider()
 
                 HorizontalPager(pagerState) { pageIndex ->
                     if (pageIndex == 0) {
