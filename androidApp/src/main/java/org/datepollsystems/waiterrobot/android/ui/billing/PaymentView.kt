@@ -10,17 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Chip
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -106,7 +106,8 @@ fun PaymentView(
         ExtendedFloatingActionButton(
             modifier = Modifier.fillMaxWidth(0.8f),
             onClick = onPayClick,
-            text = { Text(L.billing.pay()) }
+            text = { Text(L.billing.pay()) },
+            icon = {}
         )
     }
 }
@@ -147,26 +148,28 @@ fun Change(
                     )
                 }
                 if (change.brokenDown) {
-                    Chip(onClick = resetChangeBreakUp) {
-                        Icon(
-                            modifier = Modifier.padding(end = 2.dp),
-                            imageVector = Icons.Filled.Restore,
-                            contentDescription = "Reset"
-                        )
-                        Text(text = "Reset")
-                    }
+                    AssistChip(
+                        onClick = resetChangeBreakUp,
+                        label = { Text(text = "Reset") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Restore,
+                                contentDescription = "Reset"
+                            )
+                        }
+                    )
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ChangeChip(quantity: Int, amount: Money, onClick: () -> Unit) {
-    Chip(onClick = onClick) {
-        Text(text = "${quantity}x ${amount.toFullString()}")
-    }
+    AssistChip(
+        onClick = onClick,
+        label = { Text(text = "${quantity}x ${amount.toFullString()}") },
+    )
 }
 
 @Preview(locale = "en")
