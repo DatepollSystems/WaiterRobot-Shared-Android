@@ -1,13 +1,12 @@
 package org.datepollsystems.waiterrobot.android.ui.core.view
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.datepollsystems.waiterrobot.android.ui.common.pullrefresh.PullRefreshIndicator
+import org.datepollsystems.waiterrobot.android.ui.common.pullrefresh.pullRefresh
+import org.datepollsystems.waiterrobot.android.ui.common.pullrefresh.rememberPullRefreshState
 
 /**
  * [content] must be vertical scrollable
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
  *
  * Also make sure that the [content] fills the whole screen/view height
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RefreshableView(
     loading: Boolean,
