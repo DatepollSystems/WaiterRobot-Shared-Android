@@ -192,16 +192,15 @@ dependencies {
 
     coreLibraryDesugaring(libs.android.desugar)
 
-    // Compose TODO switch to BillOfMaterial (compose-bom)
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
     runtimeOnly(libs.androidx.compose.compiler)
     implementation(libs.androidx.compose.activity)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.core)
     implementation(libs.androidx.compose.ui.graphics)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material.core)
     implementation(libs.androidx.compose.material3.core)
     implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.compose.material.icons.extended)

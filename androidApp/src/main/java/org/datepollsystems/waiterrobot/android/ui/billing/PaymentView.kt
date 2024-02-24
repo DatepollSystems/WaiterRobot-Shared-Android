@@ -62,8 +62,7 @@ fun PaymentView(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        // TODO only show when there are other payment options available
-
+        /* TODO only show when there are other payment options available
         Row {
             // TODO one button for each available payment option (except cash)
             Button(
@@ -74,7 +73,7 @@ fun PaymentView(
                 Spacer(Modifier.width(12.dp))
                 Text("Contactless")
             }
-        }
+        }*/
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
