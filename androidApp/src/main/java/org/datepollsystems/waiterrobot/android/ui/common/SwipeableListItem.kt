@@ -74,9 +74,11 @@ fun SwipeableListItem(
                         SwipeToDismissBoxValue.EndToStart -> Color(0xFFE74C3C)
                         SwipeToDismissBoxValue.Settled -> error("Invalid direction")
                     }.let {
-                        if (dismissState.targetValue != SwipeToDismissBoxValue.Settled) it else it.copy(
-                            0.6f
-                        )
+                        if (dismissState.targetValue != SwipeToDismissBoxValue.Settled) {
+                            it
+                        } else {
+                            it.copy(0.6f)
+                        }
                     },
                     label = "DismissColor"
                 )
