@@ -54,7 +54,7 @@ fun SettingsScreen(
     navigator: NavController,
     vm: SettingsViewModel = koinViewModel()
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
 
     vm.handleSideEffects(navigator)
 

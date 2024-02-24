@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +58,7 @@ fun OrderScreen(
     navigator: NavController,
     vm: OrderViewModel = koinViewModel { parametersOf(table, initialItemId) }
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
 
     val coroutineScope = rememberCoroutineScope()
@@ -76,11 +75,9 @@ fun OrderScreen(
         skipPartiallyExpanded = true,
     )
 
-    val currentOrderState by rememberUpdatedState(state)
-
     fun goBack() {
         when {
-            currentOrderState.currentOrder.data.orEmpty().isNotEmpty() -> showConfirmGoBack = true
+            state.currentOrder.data.orEmpty().isNotEmpty() -> showConfirmGoBack = true
             else -> vm.abortOrder()
         }
     }

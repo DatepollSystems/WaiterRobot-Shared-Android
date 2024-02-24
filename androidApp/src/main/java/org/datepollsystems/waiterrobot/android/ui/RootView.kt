@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
@@ -24,7 +25,7 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
     val navEngine = rememberNavHostEngine()
     val navController = navEngine.rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navController) { handleSideEffects(it, snackbarHostState) }
 
     val useDarkTheme = when (state.selectedTheme) {

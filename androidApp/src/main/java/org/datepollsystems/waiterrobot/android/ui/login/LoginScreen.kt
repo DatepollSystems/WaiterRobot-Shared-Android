@@ -34,7 +34,7 @@ fun LoginScreen(
     vm: LoginViewModel = koinViewModel(),
     navigator: NavController,
 ) {
-    // val state = vm.collectAsState().value
+    // val state by vm.collectAsState()
 
     vm.handleSideEffects(navigator)
 

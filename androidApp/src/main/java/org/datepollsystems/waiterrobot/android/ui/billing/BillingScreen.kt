@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -54,7 +53,7 @@ fun BillingScreen(
     navigator: NavController,
     vm: BillingViewModel = koinViewModel { parametersOf(table) }
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
 
     val coroutineScope = rememberCoroutineScope()
@@ -66,10 +65,9 @@ fun BillingScreen(
         skipPartiallyExpanded = true
     )
 
-    val currentBillingState by rememberUpdatedState(state)
     fun goBack() {
         when {
-            currentBillingState.hasSelectedItems -> showConfirmGoBack = true
+            state.hasSelectedItems -> showConfirmGoBack = true
             else -> vm.abortBill()
         }
     }

@@ -34,17 +34,17 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.login
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 @Destination
 fun RegisterScreen(
-    vm: RegisterViewModel = getViewModel(),
+    vm: RegisterViewModel = koinViewModel(),
     navigator: NavController,
     createToken: String
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
 
     val focusManager = LocalFocusManager.current
