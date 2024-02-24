@@ -13,17 +13,14 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,7 +30,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SwipeableListItem(
     modifier: Modifier = Modifier,
@@ -43,89 +40,94 @@ fun SwipeableListItem(
     onLongClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit
 ) {
-    val dismissState = rememberDismissState(
-        confirmStateChange = { dismissValue ->
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue ->
             when (dismissValue) {
-                DismissValue.DismissedToEnd -> swipeAdd?.invoke()
-                DismissValue.DismissedToStart -> swipeRemove?.invoke()
+                SwipeToDismissBoxValue.StartToEnd -> swipeAdd?.invoke()
+                SwipeToDismissBoxValue.EndToStart -> swipeRemove?.invoke()
                 else -> Unit
             }
             false // Always return false, as action is repeatable
         }
     )
 
-    val directions = remember(swipeRemove, swipeAdd) {
-        when {
-            swipeRemove != null && swipeAdd != null -> {
-                setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd)
-            }
-            swipeRemove != null -> setOf(DismissDirection.EndToStart)
-            swipeAdd != null -> setOf(DismissDirection.StartToEnd)
-            else -> emptySet()
-        }
-    }
-
     val modifiers = remember(onClick, onLongClick) {
         when {
             onLongClick != null -> {
                 modifier.combinedClickable(onClick = onClick ?: {}, onLongClick = onLongClick)
             }
+
             onClick != null -> modifier.clickable(onClick = onClick)
             else -> modifier
         }
     }
 
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = dismissState,
         modifier = modifiers,
-        directions = directions,
-        dismissThresholds = { FractionalThreshold(0.16f) },
-        background = {
-            val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-
-            val color by animateColorAsState(
-                when (direction) {
-                    DismissDirection.StartToEnd -> Color(0xFF2ECC71)
-                    DismissDirection.EndToStart -> Color(0xFFE74C3C)
-                }.let {
-                    if (dismissState.targetValue != DismissValue.Default) it else it.copy(0.6f)
-                }
-            )
-            val alignment = when (direction) {
-                DismissDirection.StartToEnd -> Alignment.CenterStart
-                DismissDirection.EndToStart -> Alignment.CenterEnd
-            }
-            val icon = when (direction) {
-                DismissDirection.StartToEnd -> Icons.Default.Add
-                DismissDirection.EndToStart -> Icons.Default.Remove
-            }
-            val description = when (direction) {
-                DismissDirection.StartToEnd -> "Increase"
-                DismissDirection.EndToStart -> "Decrease"
-            }
-            val scale by animateFloatAsState(
-                if (dismissState.targetValue == DismissValue.Default) 0.6f else 1f
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = alignment
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = description,
-                    modifier = Modifier.scale(scale)
+        backgroundContent = {
+            val direction = dismissState.dismissDirection
+            if (direction != SwipeToDismissBoxValue.Settled) {
+                val color by animateColorAsState(
+                    when (direction) {
+                        SwipeToDismissBoxValue.StartToEnd -> Color(0xFF2ECC71)
+                        SwipeToDismissBoxValue.EndToStart -> Color(0xFFE74C3C)
+                        SwipeToDismissBoxValue.Settled -> error("Invalid direction")
+                    }.let {
+                        if (dismissState.targetValue != SwipeToDismissBoxValue.Settled) it else it.copy(
+                            0.6f
+                        )
+                    },
+                    label = "DismissColor"
                 )
+                val alignment = remember(direction) {
+                    when (direction) {
+                        SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                        SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                        SwipeToDismissBoxValue.Settled -> error("Invalid direction")
+                    }
+                }
+                val icon = remember(direction) {
+                    when (direction) {
+                        SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Add
+                        SwipeToDismissBoxValue.EndToStart -> Icons.Default.Remove
+                        SwipeToDismissBoxValue.Settled -> error("Invalid direction")
+                    }
+                }
+                val description = remember(direction) {
+                    when (direction) {
+                        SwipeToDismissBoxValue.StartToEnd -> "Increase"
+                        SwipeToDismissBoxValue.EndToStart -> "Decrease"
+                        SwipeToDismissBoxValue.Settled -> error("Invalid direction")
+                    }
+                }
+                val scale by animateFloatAsState(
+                    if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) 0.6f else 1f,
+                    label = "DismissScale"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color)
+                        .padding(horizontal = 20.dp),
+                    contentAlignment = alignment
+                ) {
+                    Icon(
+                        icon,
+                        contentDescription = description,
+                        modifier = Modifier.scale(scale)
+                    )
+                }
             }
-        }
+        },
+        enableDismissFromEndToStart = swipeRemove != null,
+        enableDismissFromStartToEnd = swipeAdd != null
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

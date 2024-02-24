@@ -4,16 +4,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
+import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.noOpenBill
+import org.datepollsystems.waiterrobot.shared.utils.euro
 
 @Composable
 fun BillList(
@@ -21,21 +25,23 @@ fun BillList(
     billItems: List<BillItem>,
     addAction: (id: Long, amount: Int) -> Unit
 ) {
-    Column {
-        if (billItems.isEmpty()) {
-            CenteredText(
-                text = L.billing.noOpenBill(table.number.toString(), table.groupName),
-                scrollAble = true
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(billItems, key = BillItem::productId) { billItem ->
-                    BillListItem(
-                        item = billItem,
-                        addAction = addAction
-                    )
+    Surface {
+        Column {
+            if (billItems.isEmpty()) {
+                CenteredText(
+                    text = L.billing.noOpenBill(table.number.toString(), table.groupName),
+                    scrollAble = true
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(billItems, key = BillItem::productId) { billItem ->
+                        BillListItem(
+                            item = billItem,
+                            addAction = addAction
+                        )
+                    }
                 }
             }
         }
@@ -74,5 +80,27 @@ private fun BillListItem(
         modifier = Modifier.weight(0.25f),
         textAlign = TextAlign.Right,
         text = item.priceSum.toString()
+    )
+}
+
+@PreviewLightDark
+@Composable
+private fun BillListPreview() = Preview {
+    BillList(
+        table = Table(1, 1, "Outside", false),
+        billItems = listOf(
+            BillItem(1, "Beer", 10, 5, 4.euro),
+            BillItem(2, "Fries", 5, 5, 3.euro),
+        ),
+        addAction = { _, _ -> }
+    )
+}
+
+@PreviewLightDark
+@Composable
+private fun BillListItemPreview() = Preview {
+    BillListItem(
+        item = BillItem(1, "Beer", 10, 5, 4.euro),
+        addAction = { _, _ -> }
     )
 }

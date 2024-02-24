@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -54,7 +54,7 @@ fun LoginScreen(
                     .aspectRatio(1f)
                     .padding(bottom = 20.dp)
             )
-            Text(text = L.login.title(), style = MaterialTheme.typography.h4)
+            Text(text = L.login.title(), style = MaterialTheme.typography.headlineMedium)
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
                 textAlign = TextAlign.Center,

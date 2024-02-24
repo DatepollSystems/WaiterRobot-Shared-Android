@@ -13,15 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -115,16 +112,13 @@ private fun RowScope.SettingsTitle(
         modifier = Modifier.weight(1f),
         verticalArrangement = Arrangement.Center
     ) {
-        ProvideTextStyle(value = MaterialTheme.typography.subtitle1) {
+        ProvideTextStyle(value = MaterialTheme.typography.titleMedium) {
             title()
         }
         if (subtitle != null) {
             Spacer(modifier = Modifier.size(2.dp))
-            ProvideTextStyle(value = MaterialTheme.typography.caption) {
-                CompositionLocalProvider(
-                    LocalContentAlpha provides ContentAlpha.medium,
-                    content = subtitle
-                )
+            ProvideTextStyle(value = MaterialTheme.typography.bodySmall) {
+                subtitle()
             }
         }
     }

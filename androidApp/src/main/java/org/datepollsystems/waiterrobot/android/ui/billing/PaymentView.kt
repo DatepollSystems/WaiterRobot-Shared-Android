@@ -7,18 +7,19 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Contactless
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -55,14 +55,14 @@ fun PaymentView(
     Column(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
             text = sum,
-            style = MaterialTheme.typography.h4
+            style = MaterialTheme.typography.headlineMedium
         )
 
-        /* TODO only show when there are other payment options available
-        Spacer(Modifier.height(10.dp))
+        // TODO only show when there are other payment options available
 
         Row {
             // TODO one button for each available payment option (except cash)
@@ -74,9 +74,7 @@ fun PaymentView(
                 Spacer(Modifier.width(12.dp))
                 Text("Contactless")
             }
-        }*/
-
-        Spacer(Modifier.height(10.dp))
+        }
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
@@ -97,11 +95,9 @@ fun PaymentView(
             }
         )
 
-        Spacer(Modifier.height(20.dp))
 
         Change(change = change, breakDownChange, resetChangeBreakUp)
 
-        Spacer(Modifier.height(20.dp))
 
         ExtendedFloatingActionButton(
             modifier = Modifier.fillMaxWidth(0.8f),
@@ -112,7 +108,7 @@ fun PaymentView(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Change(
     change: BillingState.Change?,
@@ -128,17 +124,17 @@ fun Change(
         ) {
             Text(
                 text = L.billing.change() + ":",
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = change?.amount?.toString() ?: "??? €",
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.titleLarge
             )
         }
         if (change != null && !change.amount.isNegative && change.breakUp.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 change.breakUp.forEach {
                     ChangeChip(
@@ -172,7 +168,6 @@ private fun ChangeChip(quantity: Int, amount: Money, onClick: () -> Unit) {
     )
 }
 
-@Preview(locale = "en")
 @PreviewFontScale
 @PreviewLightDark
 @Composable

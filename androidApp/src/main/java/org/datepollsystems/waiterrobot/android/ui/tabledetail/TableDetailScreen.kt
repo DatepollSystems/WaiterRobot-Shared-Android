@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
@@ -71,7 +71,7 @@ fun TableDetailScreen(
             Column(horizontalAlignment = Alignment.End) {
                 if (!state.orderedItemsResource.data.isNullOrEmpty()) {
                     SmallFloatingActionButton(
-                        containerColor = MaterialTheme.colors.secondaryVariant,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         onClick = vm::openBillingScreen
                     ) {
                         Icon(Icons.Filled.CreditCard, contentDescription = "Pay")

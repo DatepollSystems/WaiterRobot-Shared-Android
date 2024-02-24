@@ -70,6 +70,7 @@ fun ProductSearch(
                 Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
             }
 
+            // TODO replace with Searchbar when available (https://m3.material.io/components/search/overview)
             OutlinedTextField(
                 value = text,
                 onValueChange = {

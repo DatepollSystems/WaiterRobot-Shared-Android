@@ -18,6 +18,8 @@ style:
   UnusedPrivateMember:
     ignoreAnnotated:
       - Preview
+      - PreviewLightDark
+      - PreviewFontScale
   WildcardImport:
     active: false
   MagicNumber:

@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.retry
-import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 
 @Composable
 fun ErrorBar(
@@ -42,7 +41,7 @@ fun ErrorBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.error)
+            .background(MaterialTheme.colorScheme.errorContainer)
             .clickable { expanded = !expanded }
             .padding(
                 start = 16.dp,
@@ -59,14 +58,14 @@ fun ErrorBar(
             text = message,
             maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colors.onError,
+            color = MaterialTheme.colorScheme.onErrorContainer,
             textAlign = TextAlign.Start
         )
         Spacer(Modifier.width(16.dp))
         if (retryAction != null) {
             TextButton(
                 modifier = Modifier.weight(0.35f),
-                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.onError),
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onErrorContainer),
                 onClick = retryAction
             ) {
                 Text(
@@ -80,14 +79,7 @@ fun ErrorBar(
     }
 }
 
-@Composable
-fun ErrorBar(
-    modifier: Modifier = Modifier,
-    exception: Throwable,
-    retryAction: (() -> Unit)? = null
-) = ErrorBar(modifier, exception.getLocalizedUserMessage(), retryAction)
-
-@Preview
+@Preview(locale = "de")
 @PreviewLightDark
 @PreviewFontScale
 @Composable

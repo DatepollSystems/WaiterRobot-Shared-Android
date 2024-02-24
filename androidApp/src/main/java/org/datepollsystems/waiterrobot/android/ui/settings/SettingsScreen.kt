@@ -93,7 +93,7 @@ fun SettingsScreen(
     if (showThemeSelectDialog) {
         SingleSelectDialog(
             title = L.settings.darkMode.title(),
-            options = AppTheme.values().toList(),
+            options = AppTheme.entries,
             optionId = AppTheme::ordinal,
             optionText = { it.settingsText() },
             selected = state.currentAppTheme,

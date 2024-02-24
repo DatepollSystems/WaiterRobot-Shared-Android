@@ -3,14 +3,16 @@ package org.datepollsystems.waiterrobot.android.ui.order
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
-import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
+import org.datepollsystems.waiterrobot.android.ui.core.Preview
 
 @Composable
 fun OrderListItem(
@@ -26,41 +28,48 @@ fun OrderListItem(
     onClick = { addAction(id, 1) },
     onLongClick = onLongClick
 ) {
-    Column {
-        Row {
+    Row {
+        Text(
+            modifier = Modifier.weight(0.2f),
+            textAlign = TextAlign.Right,
+            text = "${amount}x"
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(
+            modifier = Modifier.weight(0.8f)
+        ) {
             Text(
-                modifier = Modifier.weight(0.15f),
-                textAlign = TextAlign.Right,
-                text = "$amount x"
-            )
-            Spacer(modifier = Modifier.weight(0.1f))
-            Text(
-                modifier = Modifier.weight(0.7f),
                 text = name
             )
-        }
-        if (note != null) {
-            Row {
-                Spacer(modifier = Modifier.weight(0.25f))
+            if (note != null) {
                 Text(
-                    modifier = Modifier.weight(0.7f),
                     text = note,
-                    fontSize = MaterialTheme.typography.caption.fontSize
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
     }
 }
 
-@Preview
 @Composable
-private fun OrderListItemPreview() {
-    WaiterRobotTheme {
+@PreviewFontScale
+private fun OrderListItemPreview() = Preview {
+    Column {
+        OrderListItem(
+            id = 1,
+            name = "Beer",
+            amount = 100,
+            note = "test Note",
+            addAction = { _, _ -> },
+            onLongClick = {}
+        )
         OrderListItem(
             id = 1,
             name = "Beer",
             amount = 10,
-            note = "test Note",
+            note = null,
             addAction = { _, _ -> },
             onLongClick = {}
         )
