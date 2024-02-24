@@ -30,6 +30,7 @@ fun Table(table: Table, onClick: (Table) -> Unit) {
         shape = cardShape,
         modifier = Modifier
             .aspectRatio(1f)
+            .clip(cardShape)
             .clickable { onClick(table) }
     ) {
         BoxWithConstraints(
