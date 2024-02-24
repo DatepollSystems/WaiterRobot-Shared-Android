@@ -30,15 +30,15 @@ fun OrderListItem(
 ) {
     Row {
         Text(
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier.weight(0.15f),
             textAlign = TextAlign.Right,
             text = "${amount}x"
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(24.dp))
 
         Column(
-            modifier = Modifier.weight(0.8f)
+            modifier = Modifier.weight(0.85f)
         ) {
             Text(
                 text = name

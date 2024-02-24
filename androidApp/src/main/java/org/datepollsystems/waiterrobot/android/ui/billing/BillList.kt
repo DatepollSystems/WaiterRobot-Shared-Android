@@ -2,6 +2,7 @@ package org.datepollsystems.waiterrobot.android.ui.billing
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
@@ -62,20 +64,20 @@ private fun BillListItem(
     Text(
         modifier = Modifier.weight(0.2f),
         textAlign = TextAlign.Right,
-        text = "${item.ordered} x"
+        text = "${item.ordered}x"
     )
-    Spacer(modifier = Modifier.weight(0.03f))
+    Spacer(modifier = Modifier.width(16.dp))
     Text(
         modifier = Modifier.weight(0.6f),
         text = item.name
     )
-    Spacer(modifier = Modifier.weight(0.03f))
+    Spacer(modifier = Modifier.width(16.dp))
     Text(
         modifier = Modifier.weight(0.15f),
         textAlign = TextAlign.Right,
         text = item.selectedForBill.toString()
     )
-    Spacer(modifier = Modifier.weight(0.03f))
+    Spacer(modifier = Modifier.width(16.dp))
     Text(
         modifier = Modifier.weight(0.25f),
         textAlign = TextAlign.Right,
@@ -90,7 +92,7 @@ private fun BillListPreview() = Preview {
         table = Table(1, 1, "Outside", false),
         billItems = listOf(
             BillItem(1, "Beer", 10, 5, 4.euro),
-            BillItem(2, "Fries", 5, 5, 3.euro),
+            BillItem(2, "Fries", 5, 0, 3.euro),
         ),
         addAction = { _, _ -> }
     )
