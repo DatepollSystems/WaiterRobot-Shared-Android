@@ -5,6 +5,7 @@ import org.datepollsystems.waiterrobot.shared.core.data.mapType
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
+import kotlin.native.ObjCName
 
 data class TableDetailState(
     override val viewState: ViewState = ViewState.Idle,
@@ -12,8 +13,10 @@ data class TableDetailState(
 ) : ViewModelState() {
 
     @Suppress("unused") // iOS only
+    @ObjCName("orderedItems")
     val orderedItemsArray by lazy {
         orderedItemsResource.mapType { it?.toTypedArray() }
     }
+
     override fun withViewState(viewState: ViewState): TableDetailState = copy(viewState = viewState)
 }
