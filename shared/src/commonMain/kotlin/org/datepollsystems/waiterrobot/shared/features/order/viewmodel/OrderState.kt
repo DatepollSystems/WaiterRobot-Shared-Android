@@ -38,5 +38,8 @@ data class OrderState(
         productGroups.mapType { it?.toTypedArray() }
     }
 
+    @Suppress("unused") // iOS only
+    val hasSelectedItems: Boolean by lazy { !currentOrder.data.isNullOrEmpty() }
+
     override fun withViewState(viewState: ViewState): OrderState = copy(viewState = viewState)
 }
