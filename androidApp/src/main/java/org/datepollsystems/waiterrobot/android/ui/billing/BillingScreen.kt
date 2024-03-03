@@ -1,15 +1,15 @@
 package org.datepollsystems.waiterrobot.android.ui.billing
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,14 +74,6 @@ fun BillingScreen(
 
     BackHandler(onBack = ::goBack)
 
-    LaunchedEffect(paymentSheetState.isVisible, showPaymentSheet) {
-        if (paymentSheetState.isVisible && showPaymentSheet) {
-            focusRequest.requestFocus()
-        } else {
-            focusManager.clearFocus()
-        }
-    }
-
     if (showConfirmGoBack) {
         ConfirmDialog(
             title = L.billing.notSent.title(),
@@ -96,44 +88,45 @@ fun BillingScreen(
     ScaffoldView(
         state = state,
         title = L.billing.title(table.number.toString(), table.groupName),
-        topBarActions = {
-            IconButton(onClick = vm::selectAll) {
-                Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
-            }
-            IconButton(onClick = vm::unselectAll) {
-                Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
-            }
-        },
         navigationIcon = {
             IconButton(onClick = ::goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
             }
         },
         bottomBar = {
-            BottomAppBar(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                Text(
-                    text = L.billing.total() + ":",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = state.priceSum.toString(),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        },
-        floatingActionButton = {
-            if (state.hasSelectedItems) {
-                FloatingActionButton(
-                    onClick = {
-                        showPaymentSheet = true
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = vm::selectAll) {
+                        Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
                     }
-                ) {
-                    Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
+                    IconButton(onClick = vm::unselectAll) {
+                        Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = L.billing.total() + ":",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = state.priceSum.toString(),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                floatingActionButton = {
+                    if (state.hasSelectedItems) {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(start = 16.dp),
+                            onClick = {
+                                showPaymentSheet = true
+                            }
+                        ) {
+                            Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
+                        }
+                    }
                 }
-            }
+            )
         },
-        floatingActionButtonPosition = FabPosition.Center
     ) {
         BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
 
