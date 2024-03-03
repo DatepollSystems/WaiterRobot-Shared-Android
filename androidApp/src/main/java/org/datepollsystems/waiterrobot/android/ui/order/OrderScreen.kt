@@ -11,12 +11,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.addProduct
 import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.descAddProduct
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepOrder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.koinViewModel
@@ -117,7 +119,7 @@ fun OrderScreen(
         floatingActionButton = {
             Column(horizontalAlignment = Alignment.End) {
                 if (state.currentOrder.data.orEmpty().isNotEmpty()) {
-                    SmallFloatingActionButton(
+                    FloatingActionButton(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         onClick = vm::sendOrder
                     ) {
@@ -125,11 +127,11 @@ fun OrderScreen(
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
-                FloatingActionButton(
-                    onClick = { showProductSheet = true }
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Product")
-                }
+                ExtendedFloatingActionButton(
+                    onClick = { showProductSheet = true },
+                    icon = { Icon(Icons.Filled.Add, contentDescription = "Add Product") },
+                    text = { Text(L.order.addProduct()) }
+                )
             }
         }
     ) {
@@ -147,7 +149,7 @@ fun OrderScreen(
                 if (orderItems.isNullOrEmpty()) {
                     CenteredText(
                         modifier = Modifier.weight(1f),
-                        text = L.order.addProduct(),
+                        text = L.order.descAddProduct(),
                         scrollAble = false
                     )
                 } else {

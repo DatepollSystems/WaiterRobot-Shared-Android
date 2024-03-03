@@ -11,12 +11,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,6 +38,7 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.newOrder
 import org.datepollsystems.waiterrobot.shared.generated.localization.noOrder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.koinViewModel
@@ -70,7 +71,7 @@ fun TableDetailScreen(
         floatingActionButton = {
             Column(horizontalAlignment = Alignment.End) {
                 if (!state.orderedItemsResource.data.isNullOrEmpty()) {
-                    SmallFloatingActionButton(
+                    FloatingActionButton(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         onClick = vm::openBillingScreen
                     ) {
@@ -78,9 +79,16 @@ fun TableDetailScreen(
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
-                FloatingActionButton(onClick = vm::openOrderScreen) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Order")
-                }
+                ExtendedFloatingActionButton(
+                    onClick = vm::openOrderScreen,
+                    icon = {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = L.tableDetail.newOrder()
+                        )
+                    },
+                    text = { Text(L.tableDetail.newOrder()) }
+                )
             }
         }
     ) {
