@@ -34,6 +34,9 @@ import androidx.core.graphics.toColorInt
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.groupFilter
+import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
 
 @Composable
 fun ColumnScope.TableGroupFilter(
@@ -44,13 +47,13 @@ fun ColumnScope.TableGroupFilter(
 ) {
     if (tableGroups == null) {
         // Should not happen as open filter is only shown when there are groups
-        CenteredText(text = "Table groups not loaded...", scrollAble = false)
+        CenteredText(text = L.tableList.noTableFound(), scrollAble = false)
     } else {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Tischgruppen", style = MaterialTheme.typography.headlineSmall)
+            Text(text = L.tableList.groupFilter(), style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.weight(1f))
 
             // TODO replace with SegmentedButton when available for compose
