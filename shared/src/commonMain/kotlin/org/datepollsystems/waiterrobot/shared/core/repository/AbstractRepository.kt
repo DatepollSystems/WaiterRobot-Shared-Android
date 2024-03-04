@@ -4,7 +4,6 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -57,7 +56,7 @@ internal abstract class AbstractRepository : KoinComponent {
  */
 internal abstract class CachedRepository<EntityType, ModelType> : AbstractRepository() {
     private val _flow = MutableStateFlow<Resource<ModelType>>(Resource.Loading())
-    val flow: Flow<Resource<ModelType>> = _flow.filterNotNull()
+    val flow: Flow<Resource<ModelType>> = _flow
 
     protected abstract fun query(): Flow<EntityType>
     protected abstract suspend fun update()
@@ -100,7 +99,7 @@ internal abstract class CachedRepository<EntityType, ModelType> : AbstractReposi
             throw e
         } catch (e: Exception) {
             logger.i(e) { "Update of cachedRemoteResource failed" }
-            _flow.emit(Resource.Error(e, _flow.value?.data))
+            _flow.emit(Resource.Error(e, _flow.value.data))
         }
     }
 }

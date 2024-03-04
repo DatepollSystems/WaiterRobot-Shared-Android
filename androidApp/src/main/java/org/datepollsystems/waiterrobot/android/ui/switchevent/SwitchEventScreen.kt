@@ -11,14 +11,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -26,27 +28,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
+import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.noEventFound
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 @Destination
 fun SwitchEventScreen(
     navigator: NavController,
-    vm: SwitchEventViewModel = getViewModel()
+    vm: SwitchEventViewModel = koinViewModel()
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
 
     vm.handleSideEffects(navigator)
 
-    Scaffold(scaffoldState = LocalScaffoldState.current) {
+    Scaffold(snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) }) {
         Column(modifier = Modifier.padding(it)) {
             // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be
             // on top of this part of the view

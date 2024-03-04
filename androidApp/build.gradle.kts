@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.util.Date
 import java.util.Properties
@@ -144,6 +145,10 @@ android {
             }
         }
     }
+
+    tasks.withType<KotlinCompilationTask<*>> {
+        compilerOptions.freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+    }
 }
 
 ksp {
@@ -187,9 +192,18 @@ dependencies {
 
     coreLibraryDesugaring(libs.android.desugar)
 
-    // Compose TODO switch to BillOfMaterial (compose-bom)
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
     runtimeOnly(libs.androidx.compose.compiler)
-    implementation(libs.bundles.android.compose)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.core)
+    implementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3.core)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Compose helpers
     implementation(libs.accompanist.permissions)

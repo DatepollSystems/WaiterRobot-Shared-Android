@@ -5,9 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -21,16 +22,16 @@ import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.Lo
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 @Destination
 fun LoginScannerScreen(
-    vm: LoginScannerViewModel = getViewModel(),
+    vm: LoginScannerViewModel = koinViewModel(),
     navigator: NavController
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
 
     View(state) {

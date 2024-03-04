@@ -49,6 +49,9 @@ tableList:
   noTableFound:
     en: There are no tables for this event.
     de: Für dieses Event sind keine Tische verfügbar.
+  groupFilter:
+    en: Table groups
+    de: Tischgruppen
 tableDetail:
   title:
     en: Table %1$s (%2$s)
@@ -56,6 +59,9 @@ tableDetail:
   noOrder:
     en: There is currently no unpaid order for table %1$s (%2$s).
     de: Für den Tisch %1$s (%2$s) gibt es zurzeit keine unbezahlte Bestellungen.
+  newOrder:
+    en: New Order
+    de: Neue Bestellung
 login:
   title:
     en: Waiter login
@@ -134,6 +140,9 @@ order:
     en: Order for table %1$s (%2$s)
     de: Bestellung für Tisch %1$s (%2$s)
   addProduct:
+    en: Add Product
+    de: Produkt Hinzufügen
+  descAddProduct:
     en: Add a product to the order
     de: Füge ein Produkt zur Bestellung hinzu
   productSoldOut:

@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.root
 
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
@@ -19,6 +20,7 @@ import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import kotlin.time.Duration.Companion.seconds
 
 class RootViewModel internal constructor(
     private val authRepo: AuthRepository,
@@ -53,6 +55,10 @@ class RootViewModel internal constructor(
         deepLink: DeepLink.Auth
     ) {
         if (CommonApp.isLoggedIn.value) {
+            // TODO temporary fix, on android directly after start collectSideEffect is cancelled
+            //  and relaunched, therefor the snackbar would be also cancelled.
+            //  -> find a better solution (google does not recommend side effects
+            delay(1.seconds)
             postSideEffect(RootEffect.ShowSnackBar(L.deepLink.alreadyLoggedIn()))
             return
         }

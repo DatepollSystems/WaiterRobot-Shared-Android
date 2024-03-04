@@ -1,6 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.core
 
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme

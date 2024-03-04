@@ -3,13 +3,15 @@ package org.datepollsystems.waiterrobot.android.ui.core.view
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.datepollsystems.waiterrobot.android.ui.core.LocalScaffoldState
+import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 
@@ -63,28 +65,27 @@ fun View(
 @Composable
 fun ScaffoldView(
     state: ViewModelState,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     title: String,
     topBarActions: @Composable RowScope.() -> Unit = {},
     navigationIcon: @Composable (() -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
-    isFloatingActionButtonDocked: Boolean = false,
     onRefresh: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) = Scaffold(
-    scaffoldState = LocalScaffoldState.current,
+    snackbarHost = { SnackbarHost(snackbarHostState) },
     topBar = {
         TopAppBar(
             title = { Text(title) },
             actions = topBarActions,
-            navigationIcon = navigationIcon
+            navigationIcon = navigationIcon ?: {}
         )
     },
     bottomBar = bottomBar,
     floatingActionButton = floatingActionButton,
     floatingActionButtonPosition = floatingActionButtonPosition,
-    isFloatingActionButtonDocked = isFloatingActionButtonDocked
 ) {
     View(state = state, paddingValues = it, onRefresh = onRefresh, content = content)
 }

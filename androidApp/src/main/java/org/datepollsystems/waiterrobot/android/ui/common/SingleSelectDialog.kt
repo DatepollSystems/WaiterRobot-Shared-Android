@@ -2,23 +2,21 @@ package org.datepollsystems.waiterrobot.android.ui.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
 @Composable
 fun <T : Any> SingleSelectDialog(
@@ -30,26 +28,22 @@ fun <T : Any> SingleSelectDialog(
     onSelect: (T) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    Dialog(onDismissRequest = { onDismissRequest.invoke() }) {
-        Surface(shape = RoundedCornerShape(10.dp)) {
-            Column(modifier = Modifier.padding(10.dp)) {
-                Text(text = title)
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                LazyColumn {
-                    items(items = options, key = { optionId(it) }) { option ->
-                        RadioButtonRow(
-                            item = option,
-                            selected = selected == option,
-                            itemText = optionText,
-                            onClick = {
-                                onSelect(it)
-                                onDismissRequest()
-                            }
-                        )
+    CustomDialog(
+        onDismiss = onDismissRequest,
+        title = title,
+        actions = null
+    ) {
+        LazyColumn {
+            items(items = options, key = { optionId(it) }) { option ->
+                RadioButtonRow(
+                    item = option,
+                    selected = selected == option,
+                    itemText = optionText,
+                    onClick = {
+                        onSelect(it)
+                        onDismissRequest()
                     }
-                }
+                )
             }
         }
     }
@@ -68,8 +62,7 @@ private fun <T : Any> RadioButtonRow(
             .selectable(
                 selected = selected,
                 onClick = { onClick(item) }
-            )
-            .padding(horizontal = 16.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RadioButton(
@@ -78,8 +71,23 @@ private fun <T : Any> RadioButtonRow(
         )
         Text(
             text = itemText(item),
-            style = MaterialTheme.typography.body1.merge(),
-            modifier = Modifier.padding(start = 16.dp)
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
+}
+
+@Composable
+@PreviewLightDark
+private fun SingleSelectDialogPreview() = Preview {
+    Column {
+        SingleSelectDialog(
+            title = L.settings.darkMode.title(),
+            options = AppTheme.entries,
+            optionId = AppTheme::ordinal,
+            optionText = { it.settingsText() },
+            selected = AppTheme.SYSTEM,
+            onSelect = { },
+            onDismissRequest = { }
         )
     }
 }

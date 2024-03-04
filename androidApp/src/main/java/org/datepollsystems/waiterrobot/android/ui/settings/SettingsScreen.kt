@@ -7,13 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
@@ -21,6 +14,13 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,16 +45,16 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepLoggedIn
 import org.datepollsystems.waiterrobot.shared.generated.localization.privacyPolicy
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 @Destination
 fun SettingsScreen(
     navigator: NavController,
-    vm: SettingsViewModel = getViewModel()
+    vm: SettingsViewModel = koinViewModel()
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
 
     vm.handleSideEffects(navigator)
 
@@ -93,7 +93,7 @@ fun SettingsScreen(
     if (showThemeSelectDialog) {
         SingleSelectDialog(
             title = L.settings.darkMode.title(),
-            options = AppTheme.values().toList(),
+            options = AppTheme.entries,
             optionId = AppTheme::ordinal,
             optionText = { it.settingsText() },
             selected = state.currentAppTheme,
@@ -164,7 +164,7 @@ fun SettingsScreen(
                 )
             }
 
-            Divider(thickness = 2.dp)
+            HorizontalDivider(thickness = 2.dp)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

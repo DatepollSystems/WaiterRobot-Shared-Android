@@ -2,24 +2,21 @@ package org.datepollsystems.waiterrobot.android.ui.billing
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.RemoveDone
-import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,15 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
-import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingState
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -51,7 +46,6 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Destination
 fun BillingScreen(
@@ -59,38 +53,26 @@ fun BillingScreen(
     navigator: NavController,
     vm: BillingViewModel = koinViewModel { parametersOf(table) }
 ) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val focusRequest = remember { FocusRequester() }
     var showConfirmGoBack by remember { mutableStateOf(false) }
+    var showPaymentSheet by remember { mutableStateOf(false) }
     val paymentSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
+        skipPartiallyExpanded = true
     )
 
-    fun goBack(state: BillingState, paymentSheetState: ModalBottomSheetState) {
+    fun goBack() {
         when {
-            paymentSheetState.targetValue != ModalBottomSheetValue.Hidden -> {
-                coroutineScope.launch { paymentSheetState.hide() }
-            }
-
             state.hasSelectedItems -> showConfirmGoBack = true
             else -> vm.abortBill()
         }
     }
 
-    BackHandler(onBack = { goBack(state, paymentSheetState) })
-
-    LaunchedEffect(paymentSheetState.isVisible) {
-        if (paymentSheetState.isVisible) {
-            focusRequest.requestFocus()
-        } else {
-            focusManager.clearFocus()
-        }
-    }
+    BackHandler(onBack = ::goBack)
 
     if (showConfirmGoBack) {
         ConfirmDialog(
@@ -103,77 +85,85 @@ fun BillingScreen(
         )
     }
 
-    ModalBottomSheetLayout(
-        sheetContent = {
-            PaymentView(
-                sum = state.priceSum.toString(),
-                moneyGivenText = state.moneyGivenText,
-                moneyGiven = vm::moneyGiven,
-                moneyGivenInputFocusRequester = focusRequest,
-                change = state.change,
-                breakDownChange = vm::breakDownChange,
-                resetChangeBreakUp = vm::resetChange,
-                onPayClick = {
-                    vm.paySelection()
-                    coroutineScope.launch {
-                        focusManager.clearFocus()
-                        paymentSheetState.hide()
+    ScaffoldView(
+        state = state,
+        title = L.billing.title(table.number.toString(), table.groupName),
+        navigationIcon = {
+            IconButton(onClick = ::goBack) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = vm::selectAll) {
+                        Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
+                    }
+                    IconButton(onClick = vm::unselectAll) {
+                        Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = L.billing.total() + ":",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = state.priceSum.toString(),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                floatingActionButton = {
+                    if (state.hasSelectedItems) {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(start = 16.dp),
+                            onClick = {
+                                showPaymentSheet = true
+                            }
+                        ) {
+                            Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
+                        }
                     }
                 }
             )
         },
-        sheetState = paymentSheetState,
-        sheetShape = RoundedCornerShape(topStartPercent = 5, topEndPercent = 5),
-        sheetGesturesEnabled = false
     ) {
-        ScaffoldView(
-            state = state,
-            title = L.billing.title(table.number.toString(), table.groupName),
-            topBarActions = {
-                IconButton(onClick = vm::selectAll) {
-                    Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
-                }
-                IconButton(onClick = vm::unselectAll) {
-                    Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = { goBack(state, paymentSheetState) }) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-            bottomBar = {
-                BottomAppBar(
-                    cutoutShape = CircleShape
-                ) {
-                    Text(
-                        text = L.billing.total() + ":",
-                        style = MaterialTheme.typography.h6
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = state.priceSum.toString(),
-                        style = MaterialTheme.typography.h6
-                    )
-                }
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    shape = CircleShape,
-                    enabled = state.viewState == ViewState.Idle && state.hasSelectedItems,
-                    onClick = {
+        BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
+
+        if (showPaymentSheet) {
+            LaunchedEffect(paymentSheetState.isVisible) {
+                if (paymentSheetState.isVisible) focusRequest.requestFocus()
+            }
+
+            ModalBottomSheet(
+                onDismissRequest = {
+                    focusManager.clearFocus()
+                    showPaymentSheet = false
+                },
+                sheetState = paymentSheetState,
+                dragHandle = null
+            ) {
+                PaymentView(
+                    sum = state.priceSum.toString(),
+                    moneyGivenText = state.moneyGivenText,
+                    moneyGiven = vm::moneyGiven,
+                    moneyGivenInputFocusRequester = focusRequest,
+                    change = state.change,
+                    breakDownChange = vm::breakDownChange,
+                    resetChangeBreakUp = vm::resetChange,
+                    onPayClick = {
+                        vm.paySelection()
+                        focusManager.clearFocus()
                         coroutineScope.launch {
-                            paymentSheetState.show()
+                            paymentSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!paymentSheetState.isVisible) {
+                                showPaymentSheet = false
+                            }
                         }
                     }
-                ) {
-                    Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Center,
-            isFloatingActionButtonDocked = true
-        ) {
-            BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
+                )
+            }
         }
     }
 }

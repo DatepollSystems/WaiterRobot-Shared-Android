@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.android.ui.root
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -15,7 +16,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Destination
 @RootNavGraph(start = true)
 fun RootScreen(vm: RootViewModel, navigator: NavController) {
-    val state = vm.collectAsState().value
+    val state by vm.collectAsState()
 
     View(state = state) {
         when {
