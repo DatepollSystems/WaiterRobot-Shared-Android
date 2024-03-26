@@ -60,7 +60,7 @@ jobs:
           git push origin ${{ env.VERSION_TAG }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Android ${{ env.ANDROID_VERSION }}
           tag_name: ${{ env.VERSION_TAG }}
