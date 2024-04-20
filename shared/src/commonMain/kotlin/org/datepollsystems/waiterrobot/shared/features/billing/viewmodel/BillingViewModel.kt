@@ -4,7 +4,7 @@ import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestV1Dto
+import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
@@ -34,12 +34,19 @@ class BillingViewModel internal constructor(
 
     fun paySelection() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
-        billingRepository.payBill(table, state.billItems.filter { it.selectedForBill > 0 })
 
-        loadBill()
+        val newBillItems = billingRepository.payBill(
+            table = table,
+            items = state.billItems.filter { it.selectedForBill > 0 }
+        )
 
         reduce {
-            state.copy(change = null, moneyGivenText = "")
+            state.copy(
+                viewState = ViewState.Idle,
+                _billItems = newBillItems.associateBy { it.productId },
+                change = null,
+                moneyGivenText = ""
+            )
         }
     }
 
@@ -53,20 +60,22 @@ class BillingViewModel internal constructor(
         }
 
         reduce { state.withViewState(viewState = ViewState.Loading) }
+
         val paymentIntent = stripeApi.createPaymentIntent(
-            PayBillRequestV1Dto(
+            PayBillRequestDto(
                 tableId = table.id,
-                state.billItems.mapNotNull {
-                    if (it.selectedForBill <= 0) {
-                        null
-                    } else {
-                        PayBillRequestV1Dto.BillItemDto(it.productId, it.selectedForBill)
-                    }
+                state.billItems.flatMap {
+                    it.orderProductIds.take(it.selectedForBill)
                 }
             )
         )
 
-        stripeProvider.initiatePayment(paymentIntent)
+        runCatching {
+            stripeProvider.initiatePayment(paymentIntent)
+        }.onFailure {
+            logger.e("Failed to initiate payment", it)
+            stripeProvider.cancelPayment(paymentIntent)
+        }
 
         loadBill()
 

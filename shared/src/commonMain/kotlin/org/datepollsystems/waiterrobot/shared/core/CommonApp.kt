@@ -37,6 +37,7 @@ object CommonApp : KoinComponent {
         phoneModel: String,
         os: OS,
         allowedHostsCsv: String,
+        stripeProvider: StripeProvider? = null
     ) {
         this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, allowedHostsCsv)
         this.stripeProvider = stripeProvider

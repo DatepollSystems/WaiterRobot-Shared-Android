@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
 import com.russhwolf.settings.ObservableSettings
-import com.russhwolf.settings.nullableInt
 import com.russhwolf.settings.nullableString
 import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
@@ -17,25 +16,22 @@ class SharedSettings : KoinComponent {
     private val settings: ObservableSettings by inject()
 
     val eventName get() = selectedEvent?.name ?: "Unknown"
+    val selectedEventId: Long get() = selectedEvent?.id ?: -1L
+
     var organisationName: String by settings.string(defaultValue = "Unknown")
         internal set
     var waiterName: String by settings.string(defaultValue = "Unknown")
         internal set
-    var stripeLocationId: String? by settings.nullableString()
-        internal set
-    var stripeMinAmount: Int? by settings.nullableInt()
-        internal set
     var lastUpdateAvailableNote: Instant? by settings.nullableJsonSerialized()
+
+    internal var apiBase: String? by settings.nullableString()
 
     // Can not use the settings "native" serialization as this currently can not be combined with settings flow
     internal var tokens: Tokens? by settings.nullableJsonSerialized()
     internal val tokenFlow: Flow<Tokens?> =
         settings.jsonSerializedOrNullFlow(SharedSettings::tokens.name)
 
-    internal var apiBase: String? by settings.nullableString()
-
-    internal var selectedEvent: Event? by settings.nullableJsonSerialized()
-    val selectedEventId: Long get() = selectedEvent?.id ?: -1L
+    var selectedEvent: Event? by settings.nullableJsonSerialized()
     internal val selectedEventFlow: Flow<Event?> =
         settings.jsonSerializedOrNullFlow(SharedSettings::selectedEvent.name)
 

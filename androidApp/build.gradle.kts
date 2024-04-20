@@ -19,6 +19,17 @@ private val versionProperty by lazy {
     }
 }
 
+private val localProperties = Properties().apply {
+    project.rootProject.file("local.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { load(it) }
+}
+
+fun fromProjectOrLocalProperties(name: String): Any? = run {
+    project.findProperty(name) ?: localProperties.getOrDefault(name, null)
+}
+
 val SHARED_GROUP: String by project
 val SHARED_BASE_VERSION: String by project
 
@@ -57,8 +68,8 @@ android {
     }
 
     signingConfigs {
-        val keyPassword: String? = project.findProperty("keyPassword")?.toString()
-        val storePassword: String? = project.findProperty("storePassword")?.toString()
+        val keyPassword: String? = fromProjectOrLocalProperties("keyPassword")?.toString()
+        val storePassword: String? = fromProjectOrLocalProperties("storePassword")?.toString()
         val keyStoreFile = file(".keys/app_sign.jks")
 
         // Only create signingConfig, when all needed configs are available
@@ -76,7 +87,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
-            allowedHosts("localhost", "lava.kellner.team", "my.kellner.team")
+            allowedHosts("*")
         }
 
         release {
@@ -111,7 +122,7 @@ android {
         create("lava") {
             dimension = "environment"
             applicationIdSuffix = ".lava"
-            allowedHosts("localhost", "lava.kellner.team", "my.kellner.team")
+            allowedHosts("*")
             manifestPlaceholders["host"] = "lava.kellner.team"
 
             // Use time-based versionCode for lava to allow multiple build per "base version"
@@ -126,8 +137,10 @@ android {
 
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE", "\"https://my.kellner.team/api\"")
             manifestPlaceholders["host"] = "my.kellner.team"
+            // TODO should it be allowed to use the prod app on lava
+            //  (would allow for easier backwards compatibility testing)
+            allowedHosts("my.kellner.team")
         }
     }
 

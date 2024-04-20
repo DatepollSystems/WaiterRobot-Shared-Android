@@ -2,7 +2,6 @@ package org.datepollsystems.waiterrobot.shared.utils
 
 import kotlinx.serialization.Serializable
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.OS
 import org.datepollsystems.waiterrobot.shared.utils.extensions.toUrl
 
 sealed class DeepLink {
@@ -19,17 +18,15 @@ sealed class DeepLink {
         fun createFromUrl(urlString: String): DeepLink {
             val url = urlString.toUrl()
 
-            require(url.host in CommonApp.appInfo.allowedHosts) { "Invalid host: ${url.host}" }
+            require(
+                "*" in CommonApp.appInfo.allowedHosts ||
+                    url.host in CommonApp.appInfo.allowedHosts
+            ) { "Invalid host: ${url.host}" }
 
             val apiBase = buildString {
                 append(url.protocol.name)
                 append("://")
-
-                if (url.host == "localhost" && CommonApp.appInfo.os is OS.Android) {
-                    append("192.168.0.220")
-                } else {
-                    append(url.host)
-                }
+                append(url.host)
                 append("/api/")
             }
 

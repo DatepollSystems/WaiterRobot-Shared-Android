@@ -8,7 +8,8 @@ data class BillItem(
     val name: String,
     val ordered: Int,
     val selectedForBill: Int,
-    val pricePerPiece: Money
+    val pricePerPiece: Money,
+    val orderProductIds: List<Long> = emptyList(),
 ) {
     val priceSum: Money get() = selectedForBill * pricePerPiece
 }

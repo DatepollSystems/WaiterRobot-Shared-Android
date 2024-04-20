@@ -63,7 +63,7 @@ fun EventPreview() = Preview {
             endDate = Clock.System.now().plus(1.hours),
             city = "Vienna",
             organisationId = 1,
-            stripeEnabled = false
+            stripeSettings = Event.StripeSettings.Disabled,
         )
     )
 }

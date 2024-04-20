@@ -82,7 +82,6 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
                 //  Changing the stripe location id should also refresh the terminal connection
                 CommonApp.settings.organisationName = it.organisationName
                 CommonApp.settings.waiterName = it.name
-                CommonApp.settings.stripeLocationId = it.stripeLocationId
             }
         }
 

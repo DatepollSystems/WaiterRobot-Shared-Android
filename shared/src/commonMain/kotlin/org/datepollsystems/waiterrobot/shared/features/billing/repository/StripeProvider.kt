@@ -5,6 +5,8 @@ import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.Payment
 interface StripeProvider {
     suspend fun initiatePayment(intent: PaymentIntent)
 
+    suspend fun cancelPayment(intent: PaymentIntent)
+
     fun isGeoLocationEnabled(): Boolean
 
     fun isInitialized(): Boolean

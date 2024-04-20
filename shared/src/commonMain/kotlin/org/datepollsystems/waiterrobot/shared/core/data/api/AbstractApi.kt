@@ -30,7 +30,7 @@ internal abstract class AbstractApi(
                 "apiBase is not set"
             }
 
-            return "$apiBase/v1/$basePath/"
+            return "$apiBase/$basePath/"
         }
 
     /**

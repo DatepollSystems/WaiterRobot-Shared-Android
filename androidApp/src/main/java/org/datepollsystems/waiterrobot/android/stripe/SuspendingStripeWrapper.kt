@@ -10,8 +10,8 @@ import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
 import kotlin.coroutines.suspendCoroutine
 
-suspend fun Terminal.retrievePaymentIntent(clientSecret: String) = suspendCoroutine {
-    retrievePaymentIntent(clientSecret, SuspendingPaymentIntentCallback(it))
+suspend fun Terminal.Companion.retrievePaymentIntent(clientSecret: String) = suspendCoroutine {
+    getInstance().retrievePaymentIntent(clientSecret, SuspendingPaymentIntentCallback(it))
 }
 
 suspend fun PaymentIntent.collectPaymentMethod(
@@ -22,8 +22,12 @@ suspend fun PaymentIntent.collectPaymentMethod(
     it.invokeOnCancellation { cancelable.cancel(NoopCallback("Cancel collectPayment")) }
 }
 
-suspend fun PaymentIntent.confirmPaymentIntent() = suspendCoroutine {
+suspend fun PaymentIntent.confirm() = suspendCoroutine {
     Terminal.getInstance().confirmPaymentIntent(this, SuspendingPaymentIntentCallback(it))
+}
+
+suspend fun PaymentIntent.cancel() = suspendCoroutine {
+    Terminal.getInstance().cancelPaymentIntent(this, SuspendingPaymentIntentCallback(it))
 }
 
 class NoopCallback(private val identifier: String) : Callback, KoinComponent {

@@ -63,12 +63,18 @@ private class JsonSerializedDelegate<T : Any>(
 ) : ReadWriteProperty<Any?, T> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return settings.getStringOrNull(key ?: property.name)?.let {
-            Json.decodeFromString(serializer, it)
+            settingsJson.decodeFromString(serializer, it)
         } ?: defaultValue
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        settings[key ?: property.name] = Json.encodeToString(serializer, value)
+        settings[key ?: property.name] = settingsJson.encodeToString(serializer, value)
+    }
+
+    companion object {
+        val settingsJson = Json {
+            ignoreUnknownKeys = true
+        }
     }
 }
 
@@ -79,11 +85,13 @@ private class NullableJsonSerializedDelegate<T : Any>(
 ) : ReadWriteProperty<Any?, T?> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
         return settings.getStringOrNull(key ?: property.name)?.let {
-            Json.decodeFromString(serializer, it)
+            JsonSerializedDelegate.settingsJson.decodeFromString(serializer, it)
         }
     }
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-        settings[key ?: property.name] = value?.let { Json.encodeToString(serializer, it) }
+        settings[key ?: property.name] = value?.let {
+            JsonSerializedDelegate.settingsJson.encodeToString(serializer, it)
+        }
     }
 }

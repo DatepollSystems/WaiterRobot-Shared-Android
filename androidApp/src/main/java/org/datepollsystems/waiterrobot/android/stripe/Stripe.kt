@@ -21,6 +21,7 @@ import org.datepollsystems.waiterrobot.shared.features.billing.repository.Reader
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderDiscoveryFailedException
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -42,7 +43,8 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
             return
         }
 
-        val locationId = CommonApp.settings.stripeLocationId
+        val locationId =
+            (CommonApp.settings.selectedEvent?.stripeSettings as? Event.StripeSettings.Enabled)?.locationId
         if (locationId == null) {
             logger.w("Wanted to connect to local reader, but locationId was null")
             return
@@ -54,20 +56,27 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
             logger.e("Terminal initialization failed", e)
             return
         }
+
+        try {
+            connectLocalReader(locationId)
+        } catch (e: ReaderDiscoveryFailedException) {
+            logger.e("Reader discovery failed", e)
+        } catch (e: ReaderConnectionFailedException) {
+            logger.e("Reader connection failed", e)
+        }
     }
 
     // TODO error handling & retry
     suspend fun startPayment(clientSecret: String) {
-        val paymentIntent = Terminal.getInstance().retrievePaymentIntent(clientSecret)
+        val paymentIntent = Terminal.retrievePaymentIntent(clientSecret)
 
         val collectConfig = CollectConfiguration.Builder()
             .skipTipping(false) // TODO from settings (organization &&/|| wen initializing the reader)?
             .build()
 
         val collectedIntent = paymentIntent.collectPaymentMethod(collectConfig)
-        // TODO Terminal.getInstance().setReaderDisplay() (does this show the amount on the screen then?)
 
-        collectedIntent.confirmPaymentIntent()
+        collectedIntent.confirm()
     }
 
     override fun onUnexpectedReaderDisconnect(reader: Reader) {
@@ -85,6 +94,11 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
 
     override suspend fun initiatePayment(intent: PaymentIntent) {
         startPayment(intent.clientSecret)
+    }
+
+    override suspend fun cancelPayment(intent: PaymentIntent) {
+        val paymentIntent = Terminal.retrievePaymentIntent(intent.clientSecret)
+        paymentIntent.cancel()
     }
 
     override fun isGeoLocationEnabled(): Boolean {
@@ -128,5 +142,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         } catch (e: TerminalException) {
             throw ReaderConnectionFailedException(e)
         }
+
+        logger.i("Connected to reader ${reader.id}")
     }
 }

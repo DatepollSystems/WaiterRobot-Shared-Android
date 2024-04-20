@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.repository.CachedRepository
-import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
+import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApiV1
 import org.datepollsystems.waiterrobot.shared.features.table.api.TableApi
 import org.datepollsystems.waiterrobot.shared.features.table.api.models.TableGroupResponseDto
 import org.datepollsystems.waiterrobot.shared.features.table.api.models.TableResponseDto
@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.hours
 
 internal class TableRepository(
     private val tableApi: TableApi,
-    private val billingApi: BillingApi,
+    private val billingApi: BillingApiV1,
     private val tableDb: TableDatabase,
 ) : CachedRepository<List<TableGroupEntry>, List<TableGroup>>() {
 

@@ -15,7 +15,10 @@ data class Event(
 ) {
     @Serializable
     sealed interface StripeSettings {
+        @Serializable
         data object Disabled : StripeSettings
+
+        @Serializable
         data class Enabled(val locationId: String, val minAmount: Int) : StripeSettings
     }
 }
