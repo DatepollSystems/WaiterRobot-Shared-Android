@@ -12,6 +12,9 @@ import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.data.api.createAuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.data.api.createBasicClient
 import org.datepollsystems.waiterrobot.shared.core.data.db.createRealmDB
+import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
+import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeService
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
@@ -51,6 +54,9 @@ internal val coreModule = module {
     }
 
     single { createRealmDB() }
+
+    singleOf(::StripeApi)
+    singleOf(::StripeService)
 }
 
 private fun createJson() = Json {

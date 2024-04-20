@@ -2,7 +2,7 @@ package org.datepollsystems.waiterrobot.shared.features.billing.repository
 
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
+import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestV1Dto
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.utils.cent
@@ -28,7 +28,7 @@ internal class BillingRepository(private val billingApi: BillingApi) : AbstractR
                 if (it.selectedForBill <= 0) {
                     null
                 } else {
-                    PayBillRequestDto.BillItemDto(it.productId, it.selectedForBill)
+                    PayBillRequestV1Dto.BillItemDto(it.productId, it.selectedForBill)
                 }
             }
         )

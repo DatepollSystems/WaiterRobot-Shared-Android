@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.android
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,22 +8,28 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import co.touchlab.kermit.Logger
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.until
+import org.datepollsystems.waiterrobot.android.stripe.Stripe
 import org.datepollsystems.waiterrobot.android.ui.RootView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.CommonApp.MIN_UPDATE_INFO_HOURS
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
 import org.datepollsystems.waiterrobot.shared.utils.extensions.defaultOnNull
+import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -51,6 +58,23 @@ class MainActivity : AppCompatActivity() {
                 vm.onDeepLink(it.toString())
             }
         }
+
+        // TODO find a better place/context to ask for permission
+        //  e.g. when switching/selecting an event where stripe is enabled?
+        //    - What to do when is enabled for the event when already logged in to the event?
+        // Add a additional screen between event selection and starting which handles the terminal setup?
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val permissions = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_LOCATION)
+        } else if (CommonApp.settings.selectedEventId != -1L) {
+            getKoin().get<CoroutineScope>().launch {
+                Stripe.connectLocalReader()
+            }
+        }
     }
 
     override fun onResume() {
@@ -69,6 +93,21 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
             }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_CODE_LOCATION && grantResults.isNotEmpty() &&
+            grantResults[0] != PackageManager.PERMISSION_GRANTED
+        ) {
+            @Suppress("TooGenericExceptionThrown")
+            throw RuntimeException("Location services are required in order to connect to a reader.")
+        }
     }
 
     private fun checkForUpdate() {
@@ -98,5 +137,9 @@ class MainActivity : AppCompatActivity() {
             AppTheme.DARK -> setDefaultNightMode(MODE_NIGHT_YES)
         }
         delegate.applyDayNight()
+    }
+
+    companion object {
+        private const val REQUEST_CODE_LOCATION = 9857
     }
 }

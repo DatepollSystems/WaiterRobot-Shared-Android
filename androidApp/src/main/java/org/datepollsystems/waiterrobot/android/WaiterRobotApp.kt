@@ -2,11 +2,16 @@ package org.datepollsystems.waiterrobot.android
 
 import android.app.Application
 import android.os.Build
+import com.stripe.stripeterminal.TerminalApplicationDelegate
+import com.stripe.stripeterminal.external.callable.ConnectionTokenProvider
+import org.datepollsystems.waiterrobot.android.stripe.Stripe
+import org.datepollsystems.waiterrobot.android.stripe.TokenProvider
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.OS
 import org.datepollsystems.waiterrobot.shared.core.di.initKoin
 import org.datepollsystems.waiterrobot.shared.generated.localization.localizationContext
 import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
 class WaiterRobotApp : Application() {
     override fun onCreate() {
@@ -23,11 +28,19 @@ class WaiterRobotApp : Application() {
             appVersion = BuildConfig.VERSION_NAME.substringBeforeLast("-"), // Remove appBuild from version
             appBuild = BuildConfig.VERSION_CODE,
             phoneModel = phoneModel,
-            apiBaseUrl = BuildConfig.API_BASE
+            stripeProvider = Stripe,
+            allowedHostsCsv = BuildConfig.ALLOWED_HOSTS_CSV
         )
 
         initKoin {
             androidContext(this@WaiterRobotApp)
+            val stripeModule = module {
+                single<ConnectionTokenProvider> { TokenProvider(get()) }
+            }
+
+            modules(stripeModule)
         }
+
+        TerminalApplicationDelegate.onCreate(this)
     }
 }

@@ -151,6 +151,8 @@ fun BillingScreen(
                     change = state.change,
                     breakDownChange = vm::breakDownChange,
                     resetChangeBreakUp = vm::resetChange,
+                    contactLessState = state.contactLessState,
+                    onContactless = vm::initiateContactLessPayment,
                     onPayClick = {
                         vm.paySelection()
                         focusManager.clearFocus()

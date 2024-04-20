@@ -13,6 +13,7 @@ import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -28,8 +29,18 @@ object CommonApp : KoinComponent {
     lateinit var appInfo: AppInfo
         private set
 
-    fun init(appVersion: String, appBuild: Int, phoneModel: String, os: OS, apiBaseUrl: String) {
-        this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, apiBaseUrl)
+    internal var stripeProvider: StripeProvider? = null
+
+    fun init(
+        appVersion: String,
+        appBuild: Int,
+        phoneModel: String,
+        os: OS,
+        allowedHostsCsv: String,
+        stripeProvider: StripeProvider? = null
+    ) {
+        this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, allowedHostsCsv)
+        this.stripeProvider = stripeProvider
     }
 
     internal val isLoggedIn: StateFlow<Boolean> by lazy {
@@ -39,13 +50,11 @@ object CommonApp : KoinComponent {
     }
 
     internal val hasEventSelected: StateFlow<Boolean> by lazy {
-        settings.selectedEventIdFlow
-            .map { it != -1L }
-            .stateIn(
-                coroutineScope,
-                started = SharingStarted.Lazily,
-                settings.selectedEventId != -1L
-            )
+        settings.selectedEventFlow.map { it != null }.stateIn(
+            coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = settings.selectedEvent != null
+        )
     }
 
     internal val appTheme: StateFlow<AppTheme> by lazy {
@@ -67,8 +76,8 @@ object CommonApp : KoinComponent {
         }
 
         settings.tokens = null // This also triggers a change to the isLoggedInFlow
-        settings.selectedEventId = -1
-        settings.eventName = ""
+        settings.apiBase = null
+        settings.selectedEvent = null
         settings.organisationName = ""
         settings.waiterName = ""
 

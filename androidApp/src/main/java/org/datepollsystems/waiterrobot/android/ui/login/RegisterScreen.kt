@@ -34,6 +34,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.login
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -42,7 +43,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun RegisterScreen(
     vm: RegisterViewModel = koinViewModel(),
     navigator: NavController,
-    createToken: String
+    registerLink: DeepLink.Auth.RegisterLink
 ) {
     val state by vm.collectAsState()
     vm.handleSideEffects(navigator)
@@ -84,7 +85,7 @@ fun RegisterScreen(
                 }
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = { vm.onRegister(name, createToken) }
+                    onClick = { vm.onRegister(name, registerLink) }
                 ) {
                     Text(L.register.login())
                 }

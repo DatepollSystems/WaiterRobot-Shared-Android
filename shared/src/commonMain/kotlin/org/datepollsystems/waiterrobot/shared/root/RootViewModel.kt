@@ -44,7 +44,7 @@ class RootViewModel internal constructor(
         try {
             when (val deepLink = DeepLink.createFromUrl(url)) {
                 is DeepLink.Auth -> onAuthDeeplink(deepLink)
-            }
+            }.let { }
         } catch (e: IllegalArgumentException) {
             logger.e(e) { "Could not construct deeplink from url: $url" }
             postSideEffect(RootEffect.ShowSnackBar(L.deepLink.invalid()))
@@ -67,9 +67,9 @@ class RootViewModel internal constructor(
 
         try {
             when (deepLink) {
-                is DeepLink.Auth.LoginLink -> authRepo.loginWithToken(deepLink.token)
+                is DeepLink.Auth.LoginLink -> authRepo.loginWaiter(deepLink)
                 is DeepLink.Auth.RegisterLink -> {
-                    navigator.push(Screen.RegisterScreen(deepLink.token))
+                    navigator.push(Screen.RegisterScreen(deepLink))
                 }
             }
             reduce { state.withViewState(ViewState.Idle) }

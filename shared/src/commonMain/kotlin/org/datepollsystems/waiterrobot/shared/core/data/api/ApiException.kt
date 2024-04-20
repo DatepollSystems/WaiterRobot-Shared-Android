@@ -4,7 +4,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
-import kotlinx.serialization.json.JsonNames
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -13,8 +12,7 @@ internal sealed class ApiException : Exception() {
     final override lateinit var message: String
         private set
 
-    @JsonNames("code", "httpCode")
-    var httpCode = 0 // TODO Will be "httpCode" in next version
+    var httpCode = 0
         private set
     lateinit var codeName: String
         private set
@@ -48,6 +46,10 @@ internal sealed class ApiException : Exception() {
     class BadRequest : ApiException()
 
     @Serializable
+    @SerialName("SERVICE_UNAVAILABLE")
+    class ServiceUnavailable : ApiException()
+
+    @Serializable
     @SerialName("SOLD_OUT")
     class ProductSoldOut(val productId: Long) : ApiException()
 
@@ -66,4 +68,16 @@ internal sealed class ApiException : Exception() {
     @Serializable
     @SerialName("APP_VERSION_TOO_OLD")
     class AppVersionTooOld : ApiException()
+
+    @Serializable
+    @SerialName("BILL_AMOUNT_TOO_LOW")
+    class BillAmountTooLow(val minAmount: Int) : ApiException()
+
+    @Serializable
+    @SerialName("STRIPE_NOT_ACTIVATED")
+    class StripeNotActivated(val eventId: Long) : ApiException()
+
+    @Serializable
+    @SerialName("STRIPE_DISABLED")
+    class StripeDisabled : ApiException()
 }

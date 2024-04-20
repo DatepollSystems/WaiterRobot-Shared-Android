@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
@@ -28,6 +29,17 @@ data class BillingState(
 
     val hasSelectedItems: Boolean by lazy { _billItems.any { it.value.selectedForBill > 0 } }
 
+    val contactLessState: ContactLessState by lazy {
+        if (CommonApp.stripeProvider == null) return@lazy ContactLessState.DISABLED
+
+        val event = CommonApp.settings.selectedEvent
+        when {
+            event?.stripeMinAmount == null || !event.stripeEnabled -> ContactLessState.DISABLED
+            event.stripeMinAmount > priceSum.cents -> ContactLessState.AMOUNT_TOO_LOW
+            else -> ContactLessState.ENABLED
+        }
+    }
+
     override fun withViewState(viewState: ViewState): BillingState = copy(viewState = viewState)
 
     data class Change(
@@ -37,6 +49,10 @@ data class BillingState(
     ) {
         @Suppress("unused") // iOS only
         val breakUpArray: Array<ChangeBreakUp> by lazy { breakUp.toTypedArray() }
+    }
+
+    enum class ContactLessState {
+        DISABLED, ENABLED, AMOUNT_TOO_LOW
     }
 }
 

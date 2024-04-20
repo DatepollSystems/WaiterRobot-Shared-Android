@@ -1,10 +1,13 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
+import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestV1Dto
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
+import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -15,6 +18,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 
 class BillingViewModel internal constructor(
     private val billingRepository: BillingRepository,
+    private val stripeApi: StripeApi,
     private val table: Table
 ) : AbstractViewModel<BillingState, BillingEffect>(BillingState()) {
 
@@ -31,6 +35,38 @@ class BillingViewModel internal constructor(
     fun paySelection() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
         billingRepository.payBill(table, state.billItems.filter { it.selectedForBill > 0 })
+
+        loadBill()
+
+        reduce {
+            state.copy(change = null, moneyGivenText = "")
+        }
+    }
+
+    fun initiateContactLessPayment() = intent {
+        // TODO we also ned to verify that the phone was able to connect to the reader
+
+        val stripeProvider = CommonApp.stripeProvider
+        if (stripeProvider == null) {
+            logger.e("Tried to initiate contactless payment but no stripe provider was set.")
+            return@intent
+        }
+
+        reduce { state.withViewState(viewState = ViewState.Loading) }
+        val paymentIntent = stripeApi.createPaymentIntent(
+            PayBillRequestV1Dto(
+                tableId = table.id,
+                state.billItems.mapNotNull {
+                    if (it.selectedForBill <= 0) {
+                        null
+                    } else {
+                        PayBillRequestV1Dto.BillItemDto(it.productId, it.selectedForBill)
+                    }
+                }
+            )
+        )
+
+        stripeProvider.initiatePayment(paymentIntent)
 
         loadBill()
 

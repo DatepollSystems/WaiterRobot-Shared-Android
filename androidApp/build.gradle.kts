@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.VariantDimension
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -75,6 +76,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+            allowedHosts("localhost", "lava.kellner.team", "my.kellner.team")
         }
 
         release {
@@ -109,7 +111,7 @@ android {
         create("lava") {
             dimension = "environment"
             applicationIdSuffix = ".lava"
-            buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
+            allowedHosts("localhost", "lava.kellner.team", "my.kellner.team")
             manifestPlaceholders["host"] = "lava.kellner.team"
 
             // Use time-based versionCode for lava to allow multiple build per "base version"
@@ -229,4 +231,16 @@ dependencies {
     // In-App-Update support
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+
+    // Stripe Tap-To-Pay
+    implementation(libs.stripe.terminal)
+    implementation(libs.stripe.ttp)
+}
+
+private fun VariantDimension.allowedHosts(vararg hosts: String) {
+    buildConfigField(
+        type = String::class.simpleName!!,
+        name = "ALLOWED_HOSTS_CSV",
+        value = hosts.joinToString(",", "\"", "\"")
+    )
 }

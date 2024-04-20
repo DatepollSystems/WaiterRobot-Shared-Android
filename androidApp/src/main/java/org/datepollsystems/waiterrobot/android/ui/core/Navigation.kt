@@ -9,7 +9,15 @@ import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.spec.Route
-import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.*
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.BillingScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.LoginScannerScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.OrderScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RegisterScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SettingsScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SwitchEventScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.TableDetailScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.UpdateAppScreenDestination
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -60,7 +68,7 @@ private val Screen.direction
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
         Screen.SettingsScreen -> SettingsScreenDestination
         Screen.UpdateApp -> UpdateAppScreenDestination
-        is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
+        is Screen.RegisterScreen -> RegisterScreenDestination(this.registerLink)
         is Screen.TableDetailScreen -> TableDetailScreenDestination(this.table)
         is Screen.OrderScreen -> OrderScreenDestination(this.table, this.initialItemId)
         is Screen.BillingScreen -> BillingScreenDestination(this.table)

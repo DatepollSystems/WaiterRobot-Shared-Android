@@ -20,7 +20,8 @@ internal class BillResponseDto(
 }
 
 @Serializable
-internal class PayBillRequestDto(
+internal class PayBillRequestV1Dto(
+    val tableId: Long,
     val products: List<BillItemDto>
 ) : RequestBodyDto {
     @Serializable
@@ -29,6 +30,13 @@ internal class PayBillRequestDto(
         val amount: Int
     )
 }
+
+@Serializable
+internal class PayBillRequestDto(
+    val tableId: Long,
+    val orderProducts: List<Long>,
+    val unpaidReasonId: Long? = null,
+) : RequestBodyDto
 
 @Serializable
 internal class PayBillResponseDto(

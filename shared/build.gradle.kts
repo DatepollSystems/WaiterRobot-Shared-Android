@@ -71,6 +71,9 @@ kotlin {
                 api(libs.moko.mvvm) // ViewModelScope
                 implementation(libs.touchlab.skie.annotations)
 
+                // Permissions
+                api(libs.moko.permissions)
+
                 // Ktor (HTTP client)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.encoding)

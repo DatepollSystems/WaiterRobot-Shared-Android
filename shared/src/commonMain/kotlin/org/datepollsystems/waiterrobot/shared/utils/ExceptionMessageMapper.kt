@@ -31,6 +31,10 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.ProductSoldOut -> L.order.productSoldOut.title()
     is ApiException.WaiterCreateTokenIncorrect -> L.login.invalidCode.desc()
     is ApiException.WaiterTokenIncorrect -> L.login.invalidCode.desc()
+    is ApiException.BillAmountTooLow -> TODO()
+    is ApiException.ServiceUnavailable -> TODO()
+    is ApiException.StripeDisabled -> TODO()
+    is ApiException.StripeNotActivated -> TODO()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,
