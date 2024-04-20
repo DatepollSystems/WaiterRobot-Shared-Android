@@ -12,14 +12,17 @@ import com.stripe.stripeterminal.external.models.PaymentStatus
 import com.stripe.stripeterminal.external.models.Reader
 import com.stripe.stripeterminal.external.models.TerminalException
 import com.stripe.stripeterminal.log.LogLevel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.datepollsystems.waiterrobot.android.BuildConfig
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.NoReaderFoundException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderConnectionFailedException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderDiscoveryFailedException
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.component.inject
 
 object Stripe : KoinComponent, TerminalListener, StripeProvider {
@@ -46,59 +49,23 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         }
 
         try {
-            Terminal.initTerminal(
-                context = context,
-                logLevel = LogLevel.VERBOSE,
-                tokenProvider = getKoin().get(),
-                listener = this
-            )
+            initialize()
         } catch (e: TerminalException) {
             logger.e("Terminal initialization failed", e)
             return
         }
-
-        val discoverConfig = DiscoveryConfiguration.LocalMobileDiscoveryConfiguration(
-            isSimulated = BuildConfig.DEBUG // In debug mode only simulated readers are supported
-        )
-
-        var reader = try {
-            Terminal.getInstance().discoverReaders(discoverConfig).first().firstOrNull()
-        } catch (e: TerminalException) {
-            logger.e("Reader discovery failed", e)
-            return
-        }
-        if (reader == null) {
-            logger.w("No reader found")
-            return
-        }
-
-        val connectConfig = ConnectionConfiguration.LocalMobileConnectionConfiguration(
-            locationId,
-            autoReconnectOnUnexpectedDisconnect = true
-        )
-
-        reader = reader.connect(connectConfig)
-        logger.i("Connected to reader: ${reader.id}")
     }
 
     // TODO error handling & retry
     suspend fun startPayment(clientSecret: String) {
-        var paymentIntentResult: Result<com.stripe.stripeterminal.external.models.PaymentIntent>
-        var tryCount = 0
-        do {
-            delay(tryCount * 500L)
-            paymentIntentResult = runCatching {
-                Terminal.getInstance().retrievePaymentIntent(clientSecret)
-            }
-        } while (paymentIntentResult.isFailure && ++tryCount < 3)
-
-        val paymentIntent = paymentIntentResult.getOrThrow()
+        val paymentIntent = Terminal.getInstance().retrievePaymentIntent(clientSecret)
 
         val collectConfig = CollectConfiguration.Builder()
-            .skipTipping(false) // TODO from settings
+            .skipTipping(false) // TODO from settings (organization &&/|| wen initializing the reader)?
             .build()
 
         val collectedIntent = paymentIntent.collectPaymentMethod(collectConfig)
+        // TODO Terminal.getInstance().setReaderDisplay() (does this show the amount on the screen then?)
 
         collectedIntent.confirmPaymentIntent()
     }
@@ -129,4 +96,37 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
     }
 
     override fun isInitialized(): Boolean = Terminal.isInitialized()
+
+    override fun initialize(): Unit = Terminal.initTerminal(
+        context = context,
+        logLevel = LogLevel.VERBOSE,
+        tokenProvider = get(),
+        listener = this
+    )
+
+    override suspend fun disconnectReader(): Unit = Terminal.disconnectReader()
+
+    override suspend fun connectLocalReader(locationId: String) {
+        val discoverConfig = DiscoveryConfiguration.LocalMobileDiscoveryConfiguration(
+            isSimulated = BuildConfig.DEBUG // In debug mode only simulated readers are supported
+        )
+
+        val reader = try {
+            Terminal.discoverReaders(discoverConfig).first().firstOrNull()
+                ?: throw NoReaderFoundException()
+        } catch (e: TerminalException) {
+            throw ReaderDiscoveryFailedException(e)
+        }
+
+        val connectConfig = ConnectionConfiguration.LocalMobileConnectionConfiguration(
+            locationId,
+            autoReconnectOnUnexpectedDisconnect = true
+        )
+
+        try {
+            reader.connect(connectConfig)
+        } catch (e: TerminalException) {
+            throw ReaderConnectionFailedException(e)
+        }
+    }
 }

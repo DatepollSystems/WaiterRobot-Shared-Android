@@ -24,6 +24,7 @@ internal class StripeApi(client: AuthorizedClient) : AuthorizedApi("waiter/strip
 
 class StripeService internal constructor(private val stripeApi: StripeApi) : KoinComponent {
     private val scope: CoroutineScope by inject()
+
     fun getConnectionToken(callback: (Result<String>) -> Unit) {
         scope.launch {
             val token = runCatching {

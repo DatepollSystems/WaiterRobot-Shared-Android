@@ -16,4 +16,5 @@ internal data class EventResponseDto(
     val organisationId: Long,
     val stripeEnabled: Boolean,
     val stripeMinAmount: Int? = null, // null when stripe is disabled
+    val stripeLocationId: String? = null, // null when stripe is disabled
 )

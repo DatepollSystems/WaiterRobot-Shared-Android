@@ -5,6 +5,7 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakUp
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.euro
@@ -32,11 +33,15 @@ data class BillingState(
     val contactLessState: ContactLessState by lazy {
         if (CommonApp.stripeProvider == null) return@lazy ContactLessState.DISABLED
 
-        val event = CommonApp.settings.selectedEvent
-        when {
-            event?.stripeMinAmount == null || !event.stripeEnabled -> ContactLessState.DISABLED
-            event.stripeMinAmount > priceSum.cents -> ContactLessState.AMOUNT_TOO_LOW
-            else -> ContactLessState.ENABLED
+        when (val stripeSettings = CommonApp.settings.selectedEvent?.stripeSettings) {
+            null, Event.StripeSettings.Disabled -> ContactLessState.DISABLED
+            is Event.StripeSettings.Enabled -> {
+                if (stripeSettings.minAmount > priceSum.cents) {
+                    ContactLessState.AMOUNT_TOO_LOW
+                } else {
+                    ContactLessState.ENABLED
+                }
+            }
         }
     }
 

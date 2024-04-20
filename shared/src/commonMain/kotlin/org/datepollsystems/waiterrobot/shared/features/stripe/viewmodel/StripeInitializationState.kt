@@ -11,7 +11,8 @@ data class StripeInitializationState(
 ) : ViewModelState() {
     enum class Error {
         GEOLOCATION_PERMISSION_DENIED,
-        GEOLOCATION_NOT_ENABLED
+        GEOLOCATION_NOT_ENABLED,
+        READER_CONNECTION_FAILED
     }
 
     @Deprecated("Legacy - Not used anymore")

@@ -5,8 +5,9 @@ import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.switchevent.api.EventLocationApi
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 
-internal class SwitchEventRepository(private val eventLocationApi: EventLocationApi) :
-    AbstractRepository() {
+internal class SwitchEventRepository(
+    private val eventLocationApi: EventLocationApi,
+) : AbstractRepository() {
 
     suspend fun getEvents(): List<Event> = eventLocationApi.getEvents().map {
         Event(
@@ -16,20 +17,22 @@ internal class SwitchEventRepository(private val eventLocationApi: EventLocation
             endDate = it.endDate,
             city = it.city,
             organisationId = it.organisationId,
-            stripeEnabled = it.stripeEnabled,
-            stripeMinAmount = it.stripeMinAmount
+            stripeSettings = if (it.stripeEnabled && it.stripeLocationId != null) {
+                Event.StripeSettings.Enabled(it.stripeLocationId, it.stripeMinAmount ?: 0)
+            } else {
+                Event.StripeSettings.Disabled
+            }
         )
     }
 
-    fun switchToEvent(event: Event) {
+    suspend fun switchToEvent(event: Event) {
+        val currentEvent = CommonApp.settings.selectedEvent?.id
         CommonApp.settings.selectedEvent = event
 
-        // TODO extract, this must be also callable from other places without switching the event
-        // TODO probably we will also need to regularly fetch the event to check for updated config
-        if (event.stripeEnabled) {
-            // TODO connect to local reader
-        } else {
-            // TODO close local reader connection
+        if (currentEvent != event.id) {
+            val stripeProvider = CommonApp.stripeProvider
+            if (stripeProvider?.isInitialized() == true) stripeProvider.disconnectReader()
+            // TODO need to initialize stripe provider again
         }
     }
 }

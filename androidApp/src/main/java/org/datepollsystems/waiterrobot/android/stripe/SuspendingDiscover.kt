@@ -14,9 +14,9 @@ import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
 
 @SuppressLint("MissingPermission")
-fun Terminal.discoverReaders(config: DiscoveryConfiguration): Flow<List<Reader>> {
+fun Terminal.Companion.discoverReaders(config: DiscoveryConfiguration): Flow<List<Reader>> {
     val discoverCallback = DiscoverCallback()
-    this.discoverReaders(config, discoverCallback, discoverCallback)
+    getInstance().discoverReaders(config, discoverCallback, discoverCallback)
     return discoverCallback.flow
 }
 

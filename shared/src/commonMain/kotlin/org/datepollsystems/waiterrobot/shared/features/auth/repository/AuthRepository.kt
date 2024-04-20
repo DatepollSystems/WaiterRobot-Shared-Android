@@ -31,7 +31,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
 
     suspend fun createWaiter(deepLink: DeepLink.Auth.RegisterLink, waiterName: String) {
         CommonApp.settings.apiBase = deepLink.apiBase
-        
+
         val tokens = Tokens.fromLoginResponse(
             authApi.createWithToken(deepLink.token, waiterName)
         )

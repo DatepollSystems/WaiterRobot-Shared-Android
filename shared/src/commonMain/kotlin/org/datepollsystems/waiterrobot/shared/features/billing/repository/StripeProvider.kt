@@ -8,4 +8,15 @@ interface StripeProvider {
     fun isGeoLocationEnabled(): Boolean
 
     fun isInitialized(): Boolean
+
+    fun initialize()
+
+    suspend fun disconnectReader()
+
+    suspend fun connectLocalReader(locationId: String)
 }
+
+abstract class StripeException(message: String, cause: Throwable?) : Exception(message, cause)
+class NoReaderFoundException : StripeException("No reader found", cause = null)
+class ReaderConnectionFailedException(cause: Throwable?) : StripeException("No reader found", cause)
+class ReaderDiscoveryFailedException(cause: Throwable?) : StripeException("No reader found", cause)

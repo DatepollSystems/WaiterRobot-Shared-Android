@@ -11,6 +11,11 @@ data class Event(
     val endDate: Instant?,
     val city: String,
     val organisationId: Long,
-    val stripeEnabled: Boolean,
-    val stripeMinAmount: Int? = null, // null when stripe is disabled
-)
+    val stripeSettings: StripeSettings,
+) {
+    @Serializable
+    sealed interface StripeSettings {
+        data object Disabled : StripeSettings
+        data class Enabled(val locationId: String, val minAmount: Int) : StripeSettings
+    }
+}
