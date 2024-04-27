@@ -28,7 +28,7 @@ class BillingViewModel internal constructor(
 
     private fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
-        val items = billingRepository.getBillForTable(table).associateBy { it.productId }
+        val items = billingRepository.getBillForTable(table).associateBy { it.virtualId }
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
     }
 
@@ -43,7 +43,7 @@ class BillingViewModel internal constructor(
         reduce {
             state.copy(
                 viewState = ViewState.Idle,
-                _billItems = newBillItems.associateBy { it.productId },
+                _billItems = newBillItems.associateBy { it.virtualId },
                 change = null,
                 moneyGivenText = ""
             )
@@ -124,19 +124,19 @@ class BillingViewModel internal constructor(
         }
     }
 
-    fun addItem(id: Long, amount: Int) = intent {
+    fun addItem(virtualId: Long, amount: Int) = intent {
         reduce {
-            val item = state._billItems[id]
+            val item = state._billItems[virtualId]
 
             if (item == null) {
-                logger.e("Tried to add product with id '$id' but could not find the product on the bill.")
+                logger.e("Tried to add product with id '$virtualId' but could not find the product on the bill.")
                 return@reduce state
             }
 
             val newAmount = (item.selectedForBill + amount).coerceIn(0..item.ordered)
 
             val newItem = item.copy(selectedForBill = newAmount)
-            val newBill = state._billItems.plus(newItem.productId to newItem)
+            val newBill = state._billItems.plus(newItem.virtualId to newItem)
             state.copy(
                 _billItems = newBill,
                 moneyGivenText = "",

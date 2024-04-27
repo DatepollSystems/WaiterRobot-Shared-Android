@@ -120,9 +120,9 @@ fun TableDetailScreen(
                                 .fillMaxWidth()
                                 .weight(1f)
                         ) {
-                            items(orderedItems, key = OrderedItem::id) { item ->
+                            items(orderedItems, key = OrderedItem::virtualId) { item ->
                                 OrderedItem(item = item) {
-                                    vm.openOrderScreen(item.id)
+                                    vm.openOrderScreen(item.baseProductId)
                                 }
                             }
                         }

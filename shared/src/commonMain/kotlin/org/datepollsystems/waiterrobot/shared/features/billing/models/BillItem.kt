@@ -4,7 +4,7 @@ import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.times
 
 data class BillItem(
-    val productId: Long,
+    val baseProductId: Long,
     val name: String,
     val ordered: Int,
     val selectedForBill: Int,
@@ -12,4 +12,7 @@ data class BillItem(
     val orderProductIds: List<Long> = emptyList(),
 ) {
     val priceSum: Money get() = selectedForBill * pricePerPiece
+
+    // Take the first orderProduct id as a identifier for this billItem
+    val virtualId: Long get() = orderProductIds.first()
 }

@@ -38,7 +38,7 @@ fun BillList(
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(billItems, key = BillItem::productId) { billItem ->
+                    items(billItems, key = BillItem::virtualId) { billItem ->
                         BillListItem(
                             item = billItem,
                             addAction = addAction
@@ -57,9 +57,9 @@ private fun BillListItem(
     addAction: (id: Long, amount: Int) -> Unit
 ) = SwipeableListItem(
     modifier = modifier,
-    swipeAdd = { addAction(item.productId, 1) },
-    swipeRemove = { addAction(item.productId, -1) },
-    onClick = { addAction(item.productId, 1) }
+    swipeAdd = { addAction(item.virtualId, 1) },
+    swipeRemove = { addAction(item.virtualId, -1) },
+    onClick = { addAction(item.virtualId, 1) }
 ) {
     Text(
         modifier = Modifier.weight(0.2f),
