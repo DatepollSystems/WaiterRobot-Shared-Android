@@ -10,6 +10,7 @@ sealed class Screen {
     object SwitchEventScreen : Screen()
     object SettingsScreen : Screen()
     object UpdateApp : Screen()
+    object StripeInitializationScreen : Screen()
 
     data class RegisterScreen(val registerLink: DeepLink.Auth.RegisterLink) : Screen()
     data class TableDetailScreen(val table: Table) : Screen()

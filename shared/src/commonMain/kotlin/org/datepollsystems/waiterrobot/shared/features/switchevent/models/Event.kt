@@ -14,11 +14,11 @@ data class Event(
     val stripeSettings: StripeSettings,
 ) {
     @Serializable
-    sealed interface StripeSettings {
+    sealed class StripeSettings {
         @Serializable
-        data object Disabled : StripeSettings
+        data object Disabled : StripeSettings()
 
         @Serializable
-        data class Enabled(val locationId: String, val minAmount: Int) : StripeSettings
+        data class Enabled(val locationId: String, val minAmount: Int) : StripeSettings()
     }
 }

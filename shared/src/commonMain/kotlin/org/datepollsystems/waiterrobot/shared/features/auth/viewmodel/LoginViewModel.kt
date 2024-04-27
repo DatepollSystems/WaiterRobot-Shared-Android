@@ -1,10 +1,12 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel
 
 import kotlinx.coroutines.CancellationException
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -24,7 +26,11 @@ class LoginViewModel internal constructor(
                 is DeepLink.Auth.LoginLink -> {
                     reduce { state.withViewState(ViewState.Loading) }
                     authRepository.loginWaiter(deepLink)
-                    navigator.popUpToRoot()
+                    if (CommonApp.settings.selectedEvent?.stripeSettings is Event.StripeSettings.Enabled) {
+                        navigator.push(Screen.StripeInitializationScreen)
+                    } else {
+                        navigator.popUpToRoot()
+                    }
                     reduce { state.withViewState(ViewState.Idle) }
                 }
 

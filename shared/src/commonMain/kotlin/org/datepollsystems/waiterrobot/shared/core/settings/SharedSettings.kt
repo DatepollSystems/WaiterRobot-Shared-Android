@@ -31,7 +31,7 @@ class SharedSettings : KoinComponent {
     internal val tokenFlow: Flow<Tokens?> =
         settings.jsonSerializedOrNullFlow(SharedSettings::tokens.name)
 
-    var selectedEvent: Event? by settings.nullableJsonSerialized()
+    internal var selectedEvent: Event? by settings.nullableJsonSerialized()
     internal val selectedEventFlow: Flow<Event?> =
         settings.jsonSerializedOrNullFlow(SharedSettings::selectedEvent.name)
 

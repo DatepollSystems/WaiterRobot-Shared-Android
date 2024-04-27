@@ -31,7 +31,7 @@ data class BillingState(
     val hasSelectedItems: Boolean by lazy { _billItems.any { it.value.selectedForBill > 0 } }
 
     val contactLessState: ContactLessState by lazy {
-        if (CommonApp.stripeProvider == null) return@lazy ContactLessState.DISABLED
+        if (CommonApp.stripeProvider?.connectedToReader?.value != true) return@lazy ContactLessState.DISABLED
 
         when (val stripeSettings = CommonApp.settings.selectedEvent?.stripeSettings) {
             null, Event.StripeSettings.Disabled -> ContactLessState.DISABLED

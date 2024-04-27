@@ -15,6 +15,7 @@ import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -49,11 +50,11 @@ object CommonApp : KoinComponent {
             .stateIn(coroutineScope, SharingStarted.Lazily, settings.tokens != null)
     }
 
-    internal val hasEventSelected: StateFlow<Boolean> by lazy {
-        settings.selectedEventFlow.map { it != null }.stateIn(
+    internal val selectedEvent: StateFlow<Event?> by lazy {
+        settings.selectedEventFlow.stateIn(
             coroutineScope,
             started = SharingStarted.Lazily,
-            initialValue = settings.selectedEvent != null
+            initialValue = settings.selectedEvent
         )
     }
 

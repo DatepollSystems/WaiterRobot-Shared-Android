@@ -25,14 +25,15 @@ internal class SwitchEventRepository(
         )
     }
 
-    suspend fun switchToEvent(event: Event) {
-        val currentEvent = CommonApp.settings.selectedEvent?.id
+    suspend fun switchToEvent(event: Event): Boolean {
+        val oldEventId = CommonApp.settings.selectedEvent?.id
         CommonApp.settings.selectedEvent = event
 
-        if (currentEvent != event.id) {
+        if (oldEventId != event.id) {
             val stripeProvider = CommonApp.stripeProvider
             if (stripeProvider?.isInitialized() == true) stripeProvider.disconnectReader()
-            // TODO need to initialize stripe provider again
         }
+
+        return oldEventId != event.id
     }
 }

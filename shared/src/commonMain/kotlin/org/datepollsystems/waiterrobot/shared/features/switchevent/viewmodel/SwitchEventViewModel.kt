@@ -1,6 +1,8 @@
 package org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel
 
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
+import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
@@ -27,10 +29,14 @@ class SwitchEventViewModel internal constructor(
     }
 
     fun onEventSelected(event: Event) = intent {
-        repository.switchToEvent(event)
+        val switchedEvent = repository.switchToEvent(event)
 
         updateParent<TableListViewModel>()
 
-        navigator.popUpToRoot()
+        if (switchedEvent && CommonApp.settings.selectedEvent?.stripeSettings is Event.StripeSettings.Enabled) {
+            navigator.push(Screen.StripeInitializationScreen)
+        } else {
+            navigator.popUpToRoot()
+        }
     }
 }

@@ -59,6 +59,11 @@ class BillingViewModel internal constructor(
             return@intent
         }
 
+        if (!stripeProvider.connectedToReader.value) {
+            logger.e("Tried to initiate contactless payment but no reader was connected.")
+            return@intent
+        }
+
         reduce { state.withViewState(viewState = ViewState.Loading) }
 
         val paymentIntent = stripeApi.createPaymentIntent(
@@ -73,6 +78,7 @@ class BillingViewModel internal constructor(
         runCatching {
             stripeProvider.initiatePayment(paymentIntent)
         }.onFailure {
+            // TODO show this to the user
             logger.e("Failed to initiate payment", it)
             stripeProvider.cancelPayment(paymentIntent)
         }

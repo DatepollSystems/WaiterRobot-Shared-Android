@@ -2,6 +2,10 @@ package org.datepollsystems.waiterrobot.shared.root
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
@@ -10,6 +14,7 @@ import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyLoggedIn
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
@@ -24,7 +29,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class RootViewModel internal constructor(
     private val authRepo: AuthRepository,
-    private val rootApi: RootApi
+    private val rootApi: RootApi,
 ) : AbstractViewModel<RootState, RootEffect>(RootState()) {
 
     override suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.onCreate() {
@@ -81,25 +86,37 @@ class RootViewModel internal constructor(
     }
 
     private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchLoginState() {
-        CommonApp.isLoggedIn.collect { loggedIn ->
+        CommonApp.isLoggedIn.collectLatest { loggedIn ->
             reduce { state.copy(isLoggedIn = loggedIn) }
-            if (!loggedIn) {
-                navigator.popUpToRoot()
-            }
+            if (!loggedIn) navigator.popUpToRoot()
         }
     }
 
     private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchSelectedEventState() {
-        CommonApp.hasEventSelected.collect { hasEventSelected ->
-            reduce { state.copy(hasEventSelected = hasEventSelected) }
-            if (!hasEventSelected) {
+        CommonApp.selectedEvent.combine(
+            CommonApp.stripeProvider?.connectedToReader ?: flowOf(null)
+        ) { selectedEvent, stripeConnectedToReader ->
+            logger.d("Selected event: $selectedEvent, stripeConnectedToReader: $stripeConnectedToReader")
+            val hasEventSelected = selectedEvent != null
+            val needsStripeInitialization =
+                selectedEvent?.stripeSettings is Event.StripeSettings.Enabled &&
+                    stripeConnectedToReader == false
+
+            reduce {
+                state.copy(
+                    hasEventSelected = hasEventSelected,
+                    needsStripeInitialization = needsStripeInitialization
+                )
+            }
+
+            if (!hasEventSelected || needsStripeInitialization) {
                 navigator.popUpToRoot()
             }
-        }
+        }.collect()
     }
 
     private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchAppTheme() {
-        CommonApp.appTheme.collect {
+        CommonApp.appTheme.collectLatest {
             reduce { state.copy(selectedTheme = it) }
         }
     }

@@ -15,6 +15,7 @@ import org.datepollsystems.waiterrobot.android.generated.navigation.destinations
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RegisterScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SettingsScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.StripeInitializationScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SwitchEventScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.TableDetailScreenDestination
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.UpdateAppScreenDestination
@@ -68,6 +69,7 @@ private val Screen.direction
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
         Screen.SettingsScreen -> SettingsScreenDestination
         Screen.UpdateApp -> UpdateAppScreenDestination
+        Screen.StripeInitializationScreen -> StripeInitializationScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination(this.registerLink)
         is Screen.TableDetailScreen -> TableDetailScreenDestination(this.table)
         is Screen.OrderScreen -> OrderScreenDestination(this.table, this.initialItemId)
@@ -81,6 +83,7 @@ private val Screen.route
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
         Screen.SettingsScreen -> SettingsScreenDestination
         Screen.UpdateApp -> UpdateAppScreenDestination
+        Screen.StripeInitializationScreen -> StripeInitializationScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination
         is Screen.TableDetailScreen -> TableDetailScreenDestination
         is Screen.OrderScreen -> OrderScreenDestination

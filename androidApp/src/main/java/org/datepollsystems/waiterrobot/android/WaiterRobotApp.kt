@@ -34,11 +34,11 @@ class WaiterRobotApp : Application() {
 
         initKoin {
             androidContext(this@WaiterRobotApp)
-            val stripeModule = module {
+            val androidModule = module {
                 single<ConnectionTokenProvider> { TokenProvider(get()) }
             }
 
-            modules(stripeModule)
+            modules(androidModule)
         }
 
         TerminalApplicationDelegate.onCreate(this)
