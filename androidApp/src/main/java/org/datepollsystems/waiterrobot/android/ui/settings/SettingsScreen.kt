@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Refresh
@@ -152,9 +153,19 @@ fun SettingsScreen(
                     },
                     title = { Text(L.settings.refresh.title()) },
                     subtitle = { Text(L.settings.refresh.desc()) },
-                    onClick = {
-                        vm.refreshAll()
-                    }
+                    onClick = vm::refreshAll
+                )
+                settingsItem(
+                    icon = {
+                        Icon(
+                            Icons.Outlined.Contactless,
+                            contentDescription = "Contactless payment"
+                        )
+                    },
+                    // TODO title depending on stripe state?
+                    title = { Text("Contactless payment") },
+                    subtitle = { Text("Enable and initialize contacless payment") },
+                    onClick = vm::initializeContactlessPayment
                 )
 
                 settingsItem(

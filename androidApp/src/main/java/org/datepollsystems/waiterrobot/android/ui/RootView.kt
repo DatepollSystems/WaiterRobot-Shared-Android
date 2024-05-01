@@ -8,13 +8,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import org.datepollsystems.waiterrobot.android.generated.navigation.NavGraphs
-import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RootScreenDestination
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.route
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.root.RootEffect
 import org.datepollsystems.waiterrobot.shared.root.RootViewModel
@@ -36,18 +36,19 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
 
     LaunchedEffect(state.selectedTheme) { onAppThemeChange(state.selectedTheme) }
 
+    LaunchedEffect(Unit) {
+        navController.visibleEntries.collect {
+            println("Current backstack: $it")
+        }
+    }
+
     WaiterRobotTheme(useDarkTheme) {
         CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
             DestinationsNavHost(
                 navGraph = NavGraphs.root,
                 engine = navEngine,
                 navController = navController,
-                dependenciesContainerBuilder = {
-                    // Provide the viewModel also to the RootScreen
-                    dependency(RootScreenDestination) {
-                        dependency(vm)
-                    }
-                }
+                startRoute = remember { CommonApp.getNextRootScreen().route }
             )
         }
     }

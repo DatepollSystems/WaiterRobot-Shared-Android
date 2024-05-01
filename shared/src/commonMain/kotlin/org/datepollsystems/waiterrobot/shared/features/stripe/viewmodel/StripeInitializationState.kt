@@ -4,28 +4,32 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 
 data class StripeInitializationState(
-    val initializationState: State? = null,
+    val step: Step = Step.Start,
+    val isLoading: Boolean = false,
     @Deprecated("Legacy - Not used anymore")
     override val viewState: ViewState = ViewState.Idle,
 ) : ViewModelState() {
 
-    sealed class State(val description: String, val progress: Int) {
-        data object Started : State("Initializing", 0)
-        data object CheckingPermissions : State("Checking permissions", 10)
-        data object InitializingTerminal : State("Initializing contactless payment terminal", 30)
-        data object ConnectingReader : State("Initializing card reader module of the phone", 60)
-        data object Finished : State("Initialization finished", 100)
-        sealed class Error(description: String) : State(description, 0) {
-            data object NoEventSelected : Error("No event selected")
-            data object StripeDisabledForEvent : Error("Stripe is disabled for this event")
+    sealed class Step(val stepIndex: Int) {
+        data object Start : Step(1)
+        data object GrantLocationPermission : Step(2)
+        data object EnableGeoLocation : Step(3)
+        data object EnableNfc : Step(4)
+        data object Finished : Step(5)
+        sealed class Error(val description: String, val retryAble: Boolean = true) : Step(0) {
+            data object StripeDisabledForEvent :
+                Error("Stripe is disabled for this event", retryAble = false)
+
             data object GeolocationPermissionDenied : Error("Location permission not granted")
-            data object GeolocationNotEnabled : Error("Location services not enabled")
-            data object NfcNotEnabled : Error("NFC is not enabled")
             data object TerminalInitializationFailed :
                 Error("Could not initialize contactless payment terminal")
 
             data object ReaderConnectionFailed :
                 Error("Could not initialize card reader module of the phone")
+        }
+
+        companion object {
+            val count: Float = 5f
         }
     }
 

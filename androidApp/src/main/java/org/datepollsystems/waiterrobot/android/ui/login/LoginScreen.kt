@@ -28,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import org.datepollsystems.waiterrobot.android.R
 import org.datepollsystems.waiterrobot.android.ui.common.CustomDialog
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
@@ -43,6 +45,8 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.withQrCode
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
+@Destination
+@RootNavGraph(start = true)
 fun LoginScreen(
     vm: LoginViewModel = koinViewModel(),
     navigator: NavController,

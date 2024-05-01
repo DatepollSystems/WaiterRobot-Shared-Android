@@ -5,12 +5,13 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 
 sealed class Screen {
-    object RootScreen : Screen()
-    object LoginScannerScreen : Screen()
-    object SwitchEventScreen : Screen()
-    object SettingsScreen : Screen()
-    object UpdateApp : Screen()
-    object StripeInitializationScreen : Screen()
+    data object UpdateApp : Screen()
+    data object LoginScreen : Screen()
+    data object LoginScannerScreen : Screen()
+    data object SwitchEventScreen : Screen()
+    data object StripeInitializationScreen : Screen()
+    data object SettingsScreen : Screen()
+    data object TableListScreen : Screen()
 
     data class RegisterScreen(val registerLink: DeepLink.Auth.RegisterLink) : Screen()
     data class TableDetailScreen(val table: Table) : Screen()
@@ -19,9 +20,10 @@ sealed class Screen {
 }
 
 sealed class NavAction {
-    object Pop : NavAction()
+    data object Pop : NavAction()
     data class Push(val screen: Screen) : NavAction()
     data class PopUpTo(val screen: Screen, val inclusive: Boolean) : NavAction()
+    data class ReplaceRoot(val screen: Screen) : NavAction()
     data class PopUpAndPush(val screen: Screen, val popUpTo: Screen, val inclusive: Boolean) :
         NavAction()
 }

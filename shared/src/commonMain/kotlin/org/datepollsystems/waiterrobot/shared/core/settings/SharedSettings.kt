@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
 import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.boolean
 import com.russhwolf.settings.nullableString
 import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,7 @@ class SharedSettings : KoinComponent {
         internal set
     var lastUpdateAvailableNote: Instant? by settings.nullableJsonSerialized()
 
+    internal var enableContactlessPayment: Boolean by settings.boolean(defaultValue = true)
     internal var apiBase: String? by settings.nullableString()
 
     // Can not use the settings "native" serialization as this currently can not be combined with settings flow

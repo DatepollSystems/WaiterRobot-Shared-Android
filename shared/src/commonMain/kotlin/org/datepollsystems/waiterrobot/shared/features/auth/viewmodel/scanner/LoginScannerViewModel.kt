@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner
 
 import kotlinx.coroutines.CancellationException
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -23,7 +24,7 @@ class LoginScannerViewModel internal constructor(
                 is DeepLink.Auth.LoginLink -> {
                     reduce { state.withViewState(ViewState.Loading) }
                     authRepository.loginWaiter(deepLink)
-                    navigator.popUpToRoot()
+                    navigator.replaceRoot(CommonApp.getNextRootScreen())
                     reduce { state.withViewState(ViewState.Idle) }
                 }
 

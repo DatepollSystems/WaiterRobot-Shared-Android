@@ -45,11 +45,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 when (exception) {
                     is ApiException.AppVersionTooOld -> intent {
-                        navigator.popUpAndPush(
-                            screen = Screen.UpdateApp,
-                            popUpTo = Screen.RootScreen,
-                            inclusive = true
-                        )
+                        navigator.replaceRoot(Screen.UpdateApp)
                     }
 
                     else -> {
@@ -153,7 +149,7 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
             navigate(NavAction.PopUpAndPush(screen, popUpTo, inclusive))
 
         @OrbitDsl
-        suspend inline fun popUpToRoot() = popUpTo(Screen.RootScreen, inclusive = false)
+        suspend fun replaceRoot(screen: Screen) = navigate(NavAction.ReplaceRoot(screen))
 
         private suspend inline fun navigate(action: NavAction) =
             simpleSyntax.postSideEffect(NavOrViewModelEffect.NavEffect(action))

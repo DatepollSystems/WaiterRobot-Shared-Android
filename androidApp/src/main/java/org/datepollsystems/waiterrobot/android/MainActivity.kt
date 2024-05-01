@@ -99,8 +99,4 @@ class MainActivity : AppCompatActivity() {
         }
         delegate.applyDayNight()
     }
-
-    companion object {
-        private const val REQUEST_CODE_LOCATION = 9857
-    }
 }

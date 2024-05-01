@@ -204,6 +204,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.location)
 
     coreLibraryDesugaring(libs.android.desugar)
 

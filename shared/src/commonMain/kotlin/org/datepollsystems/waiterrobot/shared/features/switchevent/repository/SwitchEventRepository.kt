@@ -32,8 +32,12 @@ internal class SwitchEventRepository(
         if (oldEventId != event.id) {
             val stripeProvider = CommonApp.stripeProvider
             if (stripeProvider?.isInitialized() == true) stripeProvider.disconnectReader()
+
+            CommonApp.settings.enableContactlessPayment = true
+
+            return true
         }
 
-        return oldEventId != event.id
+        return false
     }
 }

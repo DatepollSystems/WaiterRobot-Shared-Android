@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
+import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
@@ -50,7 +51,7 @@ object CommonApp : KoinComponent {
             .stateIn(coroutineScope, SharingStarted.Lazily, settings.tokens != null)
     }
 
-    internal val selectedEvent: StateFlow<Event?> by lazy {
+    val selectedEvent: StateFlow<Event?> by lazy {
         settings.selectedEventFlow.stateIn(
             coroutineScope,
             started = SharingStarted.Lazily,
@@ -81,6 +82,8 @@ object CommonApp : KoinComponent {
         settings.selectedEvent = null
         settings.organisationName = ""
         settings.waiterName = ""
+        // Reset to default, so that after next login the user will be asked again
+        settings.enableContactlessPayment = true
 
         // Clear the tokens from the client, so that they get reloaded.
         val apiClients = getKoin().getAll<AuthorizedClient>()
@@ -89,6 +92,15 @@ object CommonApp : KoinComponent {
                 ?.providers
                 ?.filterIsInstance<BearerAuthProvider>()
                 ?.forEach(BearerAuthProvider::clearToken)
+        }
+    }
+
+    fun getNextRootScreen(): Screen {
+        return when {
+            !isLoggedIn.value -> Screen.LoginScreen
+            selectedEvent.value == null -> Screen.SwitchEventScreen
+            stripeProvider?.shouldInitializeTerminal() == true -> Screen.StripeInitializationScreen
+            else -> Screen.TableListScreen
         }
     }
 
