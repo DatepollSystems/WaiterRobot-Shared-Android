@@ -39,7 +39,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.inputLabel
-import org.datepollsystems.waiterrobot.shared.generated.localization.inputPlaceholder
+import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.generated.localization.withQrCode
 import org.koin.androidx.compose.koinViewModel
@@ -76,7 +76,7 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.logo_round),
-                contentDescription = "WaiterRobot icon",
+                contentDescription = "keller.team icon",
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .aspectRatio(1f)
@@ -111,7 +111,7 @@ private fun DebugLoginDialog(
 
     CustomDialog(
         onDismiss = onDismiss,
-        title = "Login",
+        title = L.login.title(),
         actions = {
             TextButton(onClick = onDismiss) {
                 Text(text = L.dialog.cancel())
@@ -123,8 +123,8 @@ private fun DebugLoginDialog(
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = L.order.addNoteDialog.inputLabel()) },
-            placeholder = { Text(text = L.order.addNoteDialog.inputPlaceholder()) },
+            label = { Text(text = L.login.debugDialog.inputLabel()) },
+            placeholder = { Text(text = L.login.debugDialog.placeholder()) },
             value = link,
             onValueChange = { link = it },
         )

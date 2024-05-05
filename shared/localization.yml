@@ -83,6 +83,13 @@ login:
     desc:
       en: The code is not valid. Ask your oganisation admin for a new one.
       de: Der Login link ist ungültig. Bitte deinen Organisationsadministrator um einen neuen.
+  debugDialog:
+    inputLabel:
+      en: Login link
+      de: Anmeldelink
+    placeholder:
+      en: https://my.kellner.team/ml/signIn?
+      de: https://my.kellner.team/ml/signIn?
 qrScanner:
   cameraPermissionRequired:
     en: For QR-Code scanning the Camera permission is required!
@@ -259,6 +266,69 @@ settings:
   privacyPolicy:
     en: Privacy Policy
     de: Datenschutz
+stripeInit:
+  title:
+    en: Initialize contactless payment
+    de: Kontaktlose Zahlung initialisieren
+  step:
+    start:
+      desc:
+        en: The event '%1$s' supports cashless payment. To accept card payments the contactless payment module must be initialized.
+        de: Das Event '%1$s' unterstützt bargeldlose Zahlungen. Um Kartenzahlungen zu akzeptieren, muss das kontaktlose Zahlungsmodul initialisiert werden.
+      action:
+        en: Initialize contactless payment
+        de: Kontaktlose Zahlung initialisieren
+    grantLocationPermission:
+      desc:
+        en: To ensure secure payments, the location permission is required.
+        de: Um sichere Zahlungen zu gewährleisten, ist die Standortberechtigung erforderlich.
+      action:
+        en: Grant location permission
+        de: Standortberechtigung erteilen
+    enableGeoLocation:
+      desc:
+        en: To ensure secure payments, the location service must be enabled.
+        de: Um sichere Zahlungen zu gewährleisten, muss der Standortdienst aktiviert sein.
+      action:
+        en: Enable location service
+        de: Standortdienst aktivieren
+    enableNfc:
+      desc:
+        en: To accept contactless payments, the NFC service must be enabled.
+        de: Um kontaktlose Zahlungen zu akzeptieren, muss der NFC-Dienst aktiviert sein.
+      action:
+        en: Enable NFC service
+        de: NFC-Dienst aktivieren
+    finished:
+      desc:
+        en: The contactless payment module is initialized. You can now accept card payments.
+        de: Das kontaktlose Zahlungsmodul ist initialisiert. Sie können jetzt Kartenzahlungen akzeptieren.
+      action:
+        en: Let's go
+        de: Los geht's
+    error:
+      desc:
+        en: An error occurred while initializing the contactless payment module. Please try again.
+        de: Beim Initialisieren des kontaktlosen Zahlungsmoduls ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
+      action:
+        en: Retry
+        de: Erneut versuchen
+  error:
+    disabledForEvent:
+      en: Contactless payment is not enabled for this event.
+      de: Kontaktlose Zahlung ist für dieses Event nicht aktiviert.
+    locationPermissionDenied:
+      en: Location permission denied
+      de: Standortberechtigung verweigert
+    terminalInitiationFailed:
+      en: Initialization of the contactless payment terminal failed.
+      de: Initialisierung des kontaktlosen Zahlungsterminals fehlgeschlagen.
+    readerConnectionFailed:
+      en: Connection to the contactless payment terminal failed.
+      de: Verbindung zum internen kontaktlosen Zahlungsterminal des Smartphones konnte nicht hergestellt werden.
+  continueWithoutStripe:
+    en: Continue without contactless payment
+    de: Ohne kontaktlose Zahlung fortfahren
 exceptions:
   retry:
     en: Retry

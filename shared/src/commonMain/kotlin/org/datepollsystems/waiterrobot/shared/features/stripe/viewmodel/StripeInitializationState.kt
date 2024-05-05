@@ -2,6 +2,11 @@ package org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel
 
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.disabledForEvent
+import org.datepollsystems.waiterrobot.shared.generated.localization.locationPermissionDenied
+import org.datepollsystems.waiterrobot.shared.generated.localization.readerConnectionFailed
+import org.datepollsystems.waiterrobot.shared.generated.localization.terminalInitiationFailed
 
 data class StripeInitializationState(
     val step: Step = Step.Start,
@@ -18,18 +23,19 @@ data class StripeInitializationState(
         data object Finished : Step(5)
         sealed class Error(val description: String, val retryAble: Boolean = true) : Step(0) {
             data object StripeDisabledForEvent :
-                Error("Stripe is disabled for this event", retryAble = false)
+                Error(L.stripeInit.error.disabledForEvent(), retryAble = false)
 
-            data object GeolocationPermissionDenied : Error("Location permission not granted")
+            data object GeolocationPermissionDenied :
+                Error(L.stripeInit.error.locationPermissionDenied())
+
             data object TerminalInitializationFailed :
-                Error("Could not initialize contactless payment terminal")
+                Error(L.stripeInit.error.terminalInitiationFailed())
 
-            data object ReaderConnectionFailed :
-                Error("Could not initialize card reader module of the phone")
+            data object ReaderConnectionFailed : Error(L.stripeInit.error.readerConnectionFailed())
         }
 
         companion object {
-            val count: Float = 5f
+            const val COUNT: Float = 5f
         }
     }
 

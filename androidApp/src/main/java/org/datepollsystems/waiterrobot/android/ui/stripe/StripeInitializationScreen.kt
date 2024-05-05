@@ -47,6 +47,11 @@ import org.datepollsystems.waiterrobot.android.util.PermissionsControllerBindEff
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel.StripeInitializationState
 import org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel.StripeInitializationViewModel
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.action
+import org.datepollsystems.waiterrobot.shared.generated.localization.continueWithoutStripe
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -67,7 +72,7 @@ fun StripeInitializationScreen(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text("Initialize Contactless Payment") },
+                title = { Text(L.stripeInit.title()) },
                 navigationIcon = {
                     if (navigator.previousBackStackEntry != null) {
                         IconButton(onClick = { navigator.popBackStack() }) {
@@ -84,7 +89,7 @@ fun StripeInitializationScreen(
         ) {
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                progress = { state.step.stepIndex / StripeInitializationState.Step.count },
+                progress = { state.step.stepIndex / StripeInitializationState.Step.COUNT },
             )
 
             Column(
@@ -100,20 +105,16 @@ fun StripeInitializationScreen(
 
                 when (val step = state.step) {
                     StripeInitializationState.Step.Start -> {
-                        Text(
-                            text = "The event ${event?.name?.let { "\"$it\" " }.orEmpty()}" +
-                                "is set up for contactless payment. To accept contactless payments with your device " +
-                                "the contactless payment module must be initialized."
-                        )
+                        Text(L.stripeInit.step.start.desc(event?.name ?: "UNKNOWN"))
                         Button(onClick = vm::startInitialization) {
-                            Text("Initialize Contactless Payment")
+                            Text(L.stripeInit.step.start.action())
                         }
                     }
 
                     StripeInitializationState.Step.GrantLocationPermission -> {
-                        Text(text = "To ensure secure payments Location permission is required.")
+                        Text(L.stripeInit.step.grantLocationPermission.desc())
                         Button(onClick = vm::grantLocationPermission) {
-                            Text("Grant Location Permission")
+                            Text(L.stripeInit.step.grantLocationPermission.action())
                         }
                     }
 
@@ -129,7 +130,7 @@ fun StripeInitializationScreen(
                             vm.enableGeoLocation()
                         }
                         val context: Context = LocalContext.current
-                        Text(text = "To ensure secure payments Location services must be enabled.")
+                        Text(L.stripeInit.step.enableGeoLocation.desc())
                         Button(onClick = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                 checkLocationSetting(
@@ -141,7 +142,7 @@ fun StripeInitializationScreen(
                                 intentLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                             }
                         }) {
-                            Text("Enable Location Services")
+                            Text(L.stripeInit.step.enableGeoLocation.action())
                         }
                     }
 
@@ -151,35 +152,35 @@ fun StripeInitializationScreen(
                         ) {
                             vm.enableNfc()
                         }
-                        Text(text = "To accept contactless payments NFC needs to be enabled.")
+                        Text(L.stripeInit.step.enableNfc.desc())
                         Button(onClick = {
                             launcher.launch(Intent(Settings.ACTION_NFC_SETTINGS))
                         }) {
-                            Text("Enable NFC")
+                            Text(L.stripeInit.step.enableNfc.action())
                         }
                     }
 
                     is StripeInitializationState.Step.Error -> {
-                        Text(text = "An error occurred while initializing contactless payment.")
-                        Text(text = step.description)
+                        Text(L.stripeInit.step.error.desc())
+                        Text(step.description)
                         if (step.retryAble) {
                             Button(onClick = vm::startInitialization) {
-                                Text(text = "Retry")
+                                Text(L.stripeInit.step.error.action())
                             }
                         }
                     }
 
                     StripeInitializationState.Step.Finished -> {
-                        Text(text = "Contactless payment is initialized.")
+                        Text(L.stripeInit.step.finished.desc())
                         Button(onClick = vm::onContinueClick) {
-                            Text(text = "Let's go!")
+                            Text(L.stripeInit.step.finished.action())
                         }
                     }
                 }
 
                 if (state.step != StripeInitializationState.Step.Finished) {
                     TextButton(onClick = vm::onContinueClick) {
-                        Text("Continue without Contactless Payment")
+                        Text(L.stripeInit.continueWithoutStripe())
                     }
                 }
             }
