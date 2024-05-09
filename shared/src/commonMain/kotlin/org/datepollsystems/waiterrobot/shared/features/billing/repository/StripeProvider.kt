@@ -8,8 +8,6 @@ import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 interface StripeProvider {
     val connectedToReader: StateFlow<Boolean>
 
-    // TODO also check if the device has support for nfc (& location) (and other requirements?)
-    //   Or just show an error on Terminal initialization for the beginning?
     fun shouldInitializeTerminal(): Boolean =
         CommonApp.settings.enableContactlessPayment &&
             CommonApp.settings.selectedEvent?.stripeSettings is Event.StripeSettings.Enabled &&
@@ -19,10 +17,10 @@ interface StripeProvider {
 
     suspend fun cancelPayment(intent: PaymentIntent)
 
-    // TODO move to location provider?
+    // TODO move to location provider
     fun isGeoLocationEnabled(): Boolean
 
-    // TODO move to NFC provider?
+    // TODO move to NFC provider
     fun isNfcEnabled(): Boolean
 
     fun isInitialized(): Boolean

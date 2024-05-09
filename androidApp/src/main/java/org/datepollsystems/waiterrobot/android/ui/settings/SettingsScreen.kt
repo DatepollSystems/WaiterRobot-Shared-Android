@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.action
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
@@ -56,6 +58,7 @@ fun SettingsScreen(
     vm: SettingsViewModel = koinViewModel()
 ) {
     val state by vm.collectAsState()
+    val selectedEvent by CommonApp.selectedEvent.collectAsState()
 
     vm.handleSideEffects(navigator)
 
@@ -155,18 +158,19 @@ fun SettingsScreen(
                     subtitle = { Text(L.settings.refresh.desc()) },
                     onClick = vm::refreshAll
                 )
-                settingsItem(
-                    icon = {
-                        Icon(
-                            Icons.Outlined.Contactless,
-                            contentDescription = "Contactless payment"
-                        )
-                    },
-                    // TODO title depending on stripe state?
-                    title = { Text("Contactless payment") },
-                    subtitle = { Text("Enable and initialize contacless payment") },
-                    onClick = vm::initializeContactlessPayment
-                )
+                if (selectedEvent?.stripeSettings is Event.StripeSettings.Enabled) {
+                    settingsItem(
+                        icon = {
+                            Icon(
+                                Icons.Outlined.Contactless,
+                                contentDescription = L.settings.cardPayment.title()
+                            )
+                        },
+                        title = { Text(L.settings.cardPayment.title()) },
+                        subtitle = { Text(L.settings.cardPayment.desc()) },
+                        onClick = vm::initializeContactlessPayment
+                    )
+                }
 
                 settingsItem(
                     icon = { Icon(Icons.Filled.Info, contentDescription = "App info") },

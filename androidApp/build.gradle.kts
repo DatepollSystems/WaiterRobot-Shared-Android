@@ -138,8 +138,6 @@ android {
         create("prod") {
             dimension = "environment"
             manifestPlaceholders["host"] = "my.kellner.team"
-            // TODO should it be allowed to use the prod app on lava
-            //  (would allow for easier backwards compatibility testing)
             allowedHosts("my.kellner.team")
         }
     }

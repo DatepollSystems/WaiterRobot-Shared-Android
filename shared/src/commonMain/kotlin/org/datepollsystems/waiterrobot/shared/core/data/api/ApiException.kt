@@ -4,6 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
+import org.datepollsystems.waiterrobot.shared.utils.Cents
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -71,7 +72,7 @@ internal sealed class ApiException : Exception() {
 
     @Serializable
     @SerialName("BILL_AMOUNT_TOO_LOW")
-    class BillAmountTooLow(val minAmount: Int) : ApiException()
+    class BillAmountTooLow(val minAmount: Cents) : ApiException()
 
     @Serializable
     @SerialName("STRIPE_NOT_ACTIVATED")

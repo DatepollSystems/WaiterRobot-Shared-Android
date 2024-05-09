@@ -5,7 +5,7 @@ import android.os.Build
 import com.stripe.stripeterminal.TerminalApplicationDelegate
 import com.stripe.stripeterminal.external.callable.ConnectionTokenProvider
 import org.datepollsystems.waiterrobot.android.stripe.Stripe
-import org.datepollsystems.waiterrobot.android.stripe.TokenProvider
+import org.datepollsystems.waiterrobot.android.stripe.StripeTokenProvider
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.OS
 import org.datepollsystems.waiterrobot.shared.core.di.initKoin
@@ -35,7 +35,7 @@ class WaiterRobotApp : Application() {
         initKoin {
             androidContext(this@WaiterRobotApp)
             val androidModule = module {
-                single<ConnectionTokenProvider> { TokenProvider(get()) }
+                single<ConnectionTokenProvider> { StripeTokenProvider(get()) }
             }
 
             modules(androidModule)

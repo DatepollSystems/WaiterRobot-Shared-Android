@@ -21,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -51,6 +52,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.action
 import org.datepollsystems.waiterrobot.shared.generated.localization.continueWithoutStripe
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.locationDataSharingNotice
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -113,6 +115,10 @@ fun StripeInitializationScreen(
 
                     StripeInitializationState.Step.GrantLocationPermission -> {
                         Text(L.stripeInit.step.grantLocationPermission.desc())
+                        Text(
+                            L.stripeInit.locationDataSharingNotice(),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                         Button(onClick = vm::grantLocationPermission) {
                             Text(L.stripeInit.step.grantLocationPermission.action())
                         }
@@ -131,6 +137,10 @@ fun StripeInitializationScreen(
                         }
                         val context: Context = LocalContext.current
                         Text(L.stripeInit.step.enableGeoLocation.desc())
+                        Text(
+                            L.stripeInit.locationDataSharingNotice(),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                         Button(onClick = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                 checkLocationSetting(

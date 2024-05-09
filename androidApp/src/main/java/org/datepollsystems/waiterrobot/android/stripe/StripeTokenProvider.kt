@@ -5,7 +5,7 @@ import com.stripe.stripeterminal.external.callable.ConnectionTokenProvider
 import com.stripe.stripeterminal.external.models.ConnectionTokenException
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeService
 
-class TokenProvider(private val stripeService: StripeService) : ConnectionTokenProvider {
+class StripeTokenProvider(private val stripeService: StripeService) : ConnectionTokenProvider {
     override fun fetchConnectionToken(callback: ConnectionTokenCallback) {
         stripeService.getConnectionToken { result ->
             result.fold(

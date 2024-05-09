@@ -36,12 +36,6 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
 
     LaunchedEffect(state.selectedTheme) { onAppThemeChange(state.selectedTheme) }
 
-    LaunchedEffect(Unit) {
-        navController.visibleEntries.collect {
-            println("Current backstack: $it")
-        }
-    }
-
     WaiterRobotTheme(useDarkTheme) {
         CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
             DestinationsNavHost(

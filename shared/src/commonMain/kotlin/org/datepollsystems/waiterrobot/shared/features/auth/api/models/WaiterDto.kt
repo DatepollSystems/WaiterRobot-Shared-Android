@@ -9,5 +9,4 @@ internal data class WaiterDto(
     val organisationId: Long,
     val organisationName: String,
     val eventIds: List<Long>,
-    val stripeLocationId: String?,
 )

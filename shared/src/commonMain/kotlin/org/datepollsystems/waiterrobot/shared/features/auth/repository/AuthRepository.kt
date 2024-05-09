@@ -78,8 +78,6 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         suspend fun refreshUserDetails() {
             logger.d { "Refreshing user details" }
             waiterApi.getMySelf().let {
-                // TODO move this logic to an "service"?
-                //  Changing the stripe location id should also refresh the terminal connection
                 CommonApp.settings.organisationName = it.organisationName
                 CommonApp.settings.waiterName = it.name
             }

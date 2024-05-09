@@ -216,6 +216,9 @@ billing:
   pay:
     en: Pay Cash
     de: Bar Bezahlen
+  payByCard:
+    en: Pay by Card
+    de: Mit Karte Bezahlen
   given:
     en: Given
     de: Gegeben
@@ -225,7 +228,13 @@ billing:
   noOpenBill:
     en: There is currently no open bill for table %1$s (%2$s)
     de: Es gibt derzeit keine offene Rechnung für den Tisch %1$s (%2$s)
+  amountToLow:
+    en: The selected payment method requires a minimum amount of %1$s.
+    de: Die ausgewählte Zahlungsmethode erfordert einen Mindestbetrag von %1$s.
 settings:
+  title:
+    en: Settings
+    de: Einstellungen
   logout:
     action:
       en: Logout
@@ -239,23 +248,27 @@ settings:
   keepLoggedIn:
     en: Keep logged-in
     de: Angemeldet bleiben
+  cardPayment:
+    title:
+      en: Card payment
+      de: Kartenzahlung
+    desc:
+      en: Enable and initialize the card payment module.
+      de: Kartenzahlungsmodul aktivieren und initialisieren.
   darkMode:
     title:
       en: Dark Mode
       de: Dunkelmodus
     useSystem:
       en: Use system setting
-      de: System einstellung verwenden
-  title:
-    en: Settings
-    de: Einstellungen
+      de: Systemeinstellung verwenden
   refresh:
     title:
       en: Refresh data
       de: Daten aktualisieren
     desc:
       en: Refresh stored data (tables, products, …)
-      de: Gespeicherte daten aktualisieren (Tische, Produkte, …)
+      de: Gespeicherte Daten aktualisieren (Tische, Produkte, …)
   version:
     title:
       en: App version
@@ -268,67 +281,73 @@ settings:
     de: Datenschutz
 stripeInit:
   title:
-    en: Initialize contactless payment
-    de: Kontaktlose Zahlung initialisieren
+    en: Initialize card payment
+    de: Kartenzahlungen initialisieren
+  locationDataSharingNotice:
+    en: The location data may be forwarded to our payment provider Stripe Inc. for payment processing. By continuing, you accept that data for payment processing will be processed by Stripe.
+    de: Die Standortdaten werden zur Zahlungsabwicklung gegebenenfalls an unserem Zahlungsanbieter Stripe Inc. weitergeleitet. Durch das Fortfahren akzeptierst du, dass Daten zur Zahlungsabwicklung von Stripe verarbeitet werden.
   step:
     start:
       desc:
-        en: The event '%1$s' supports cashless payment. To accept card payments the contactless payment module must be initialized.
-        de: Das Event '%1$s' unterstützt bargeldlose Zahlungen. Um Kartenzahlungen zu akzeptieren, muss das kontaktlose Zahlungsmodul initialisiert werden.
+        en: The event '%1$s' supports card payments. To accept card payments the payment module must be initialized.
+        de: Das Event '%1$s' unterstützt Kartenzahlungen. Um Kartenzahlungen zu akzeptieren, muss das Zahlungsmodul initialisiert werden.
       action:
-        en: Initialize contactless payment
-        de: Kontaktlose Zahlung initialisieren
+        en: Initialize card payment
+        de: Kartenzahlungen initialisieren
     grantLocationPermission:
       desc:
-        en: To ensure secure payments, the location permission is required.
-        de: Um sichere Zahlungen zu gewährleisten, ist die Standortberechtigung erforderlich.
+        en: To ensure secure card payments, the location permission is required.
+        de: Um sichere Kartenzahlungen zu gewährleisten, ist die Standortberechtigung erforderlich.
       action:
         en: Grant location permission
         de: Standortberechtigung erteilen
     enableGeoLocation:
       desc:
-        en: To ensure secure payments, the location service must be enabled.
-        de: Um sichere Zahlungen zu gewährleisten, muss der Standortdienst aktiviert sein.
+        en: To ensure secure card payments, the location service must be enabled.
+        de: Um sichere Kartenzahlungen zu gewährleisten, muss der Standortdienst aktiviert sein.
       action:
         en: Enable location service
         de: Standortdienst aktivieren
     enableNfc:
       desc:
-        en: To accept contactless payments, the NFC service must be enabled.
-        de: Um kontaktlose Zahlungen zu akzeptieren, muss der NFC-Dienst aktiviert sein.
+        en: To accept card payments, the NFC service must be enabled.
+        de: Um Kartenzahlungen zu akzeptieren, muss der NFC-Dienst aktiviert sein.
       action:
         en: Enable NFC service
         de: NFC-Dienst aktivieren
     finished:
       desc:
-        en: The contactless payment module is initialized. You can now accept card payments.
-        de: Das kontaktlose Zahlungsmodul ist initialisiert. Sie können jetzt Kartenzahlungen akzeptieren.
+        en: The card payment module is initialized. You can now accept card payments.
+        de: Das Kartenzahlungsmodul ist initialisiert. Du kannst jetzt Kartenzahlungen akzeptieren.
       action:
         en: Let's go
         de: Los geht's
     error:
       desc:
-        en: An error occurred while initializing the contactless payment module. Please try again.
-        de: Beim Initialisieren des kontaktlosen Zahlungsmoduls ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
+        en: An error occurred while initializing the card payment module. Please try again.
+        de: Beim Initialisieren des Kartenzahlungsmoduls ist ein Fehler aufgetreten. Bitte versuche es erneut.
       action:
         en: Retry
         de: Erneut versuchen
   error:
+    disabled:
+      en: Card payments are currently not possible.
+      de: Kartenzahlungen sind derzeit nicht möglich.
     disabledForEvent:
-      en: Contactless payment is not enabled for this event.
-      de: Kontaktlose Zahlung ist für dieses Event nicht aktiviert.
+      en: Card payments are not enabled for this event.
+      de: Kartenzahlungen sind für dieses Event nicht aktiviert.
     locationPermissionDenied:
       en: Location permission denied
       de: Standortberechtigung verweigert
     terminalInitiationFailed:
-      en: Initialization of the contactless payment terminal failed.
-      de: Initialisierung des kontaktlosen Zahlungsterminals fehlgeschlagen.
+      en: Initialization of the card payment module failed.
+      de: Initialisierung des Kartenzahlungsmoduls fehlgeschlagen.
     readerConnectionFailed:
-      en: Connection to the contactless payment terminal failed.
-      de: Verbindung zum internen kontaktlosen Zahlungsterminal des Smartphones konnte nicht hergestellt werden.
+      en: Connection to the card payment module of the app failed.
+      de: Verbindung zum Kartenzahlungsmodul der App konnte nicht hergestellt werden.
   continueWithoutStripe:
-    en: Continue without contactless payment
-    de: Ohne kontaktlose Zahlung fortfahren
+    en: Continue without activating card payment
+    de: Ohne aktivierung der Kartenzahlung fortfahren
 exceptions:
   retry:
     en: Retry

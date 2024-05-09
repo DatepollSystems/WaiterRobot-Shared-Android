@@ -38,6 +38,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.change
 import org.datepollsystems.waiterrobot.shared.generated.localization.given
 import org.datepollsystems.waiterrobot.shared.generated.localization.pay
+import org.datepollsystems.waiterrobot.shared.generated.localization.payByCard
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
@@ -70,9 +71,9 @@ fun PaymentView(
                     onClick = onContactless,
                     enabled = moneyGivenText.isEmpty() && contactLessState == BillingState.ContactLessState.ENABLED
                 ) {
-                    Icon(Icons.Filled.Contactless, contentDescription = "Contactless")
+                    Icon(Icons.Filled.Contactless, contentDescription = L.billing.payByCard())
                     Spacer(Modifier.width(12.dp))
-                    Text("Contactless")
+                    Text(L.billing.payByCard())
                 }
             }
         }

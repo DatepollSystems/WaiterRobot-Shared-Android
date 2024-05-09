@@ -33,6 +33,7 @@ internal class SwitchEventRepository(
             val stripeProvider = CommonApp.stripeProvider
             if (stripeProvider?.isInitialized() == true) stripeProvider.disconnectReader()
 
+            // Reset ignoring card payment setup
             CommonApp.settings.enableContactlessPayment = true
 
             return true

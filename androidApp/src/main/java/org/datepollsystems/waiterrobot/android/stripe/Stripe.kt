@@ -28,6 +28,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
 
+@Suppress("TooManyFunctions")
 object Stripe : KoinComponent, TerminalListener, StripeProvider {
     private val logger by injectLoggerForClass()
     private val context by inject<Context>()
@@ -40,7 +41,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         val paymentIntent = Terminal.retrievePaymentIntent(intent.clientSecret)
 
         val collectConfig = CollectConfiguration.Builder()
-            .skipTipping(false) // TODO from settings (organization &&/|| wen initializing the reader)?
+            .skipTipping(false) // TODO add setting for this?
             .build()
 
         val collectedIntent = paymentIntent.collectPaymentMethod(collectConfig)
@@ -106,7 +107,6 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
     }
 
     override fun onUnexpectedReaderDisconnect(reader: Reader) {
-        // TODO handle (or is this already covered by autoReconnectOnUnexpectedDisconnect?)
         logger.w("Reader disconnected")
     }
 

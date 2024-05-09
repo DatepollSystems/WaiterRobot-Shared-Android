@@ -51,8 +51,6 @@ class BillingViewModel internal constructor(
     }
 
     fun initiateContactLessPayment() = intent {
-        // TODO we also ned to verify that the phone was able to connect to the reader
-
         val stripeProvider = CommonApp.stripeProvider
         if (stripeProvider == null) {
             logger.e("Tried to initiate contactless payment but no stripe provider was set.")
@@ -78,7 +76,6 @@ class BillingViewModel internal constructor(
         runCatching {
             stripeProvider.initiatePayment(paymentIntent)
         }.onFailure {
-            // TODO show this to the user
             logger.e("Failed to initiate payment", it)
             stripeProvider.cancelPayment(paymentIntent)
         }
