@@ -204,6 +204,7 @@ fun checkLocationSetting(
     onDisabled: (IntentSenderRequest) -> Unit,
     onEnabled: () -> Unit
 ) {
+    @Suppress("MagicNumber")
     val gpsSettingTask: Task<LocationSettingsResponse> = LocationServices.getSettingsClient(context)
         .checkLocationSettings(
             LocationSettingsRequest.Builder()
@@ -214,6 +215,7 @@ fun checkLocationSetting(
     gpsSettingTask.addOnSuccessListener { onEnabled() }
     gpsSettingTask.addOnFailureListener { exception ->
         if (exception is ResolvableApiException) {
+            @Suppress("SwallowedException")
             try {
                 val intentSenderRequest = IntentSenderRequest
                     .Builder(exception.resolution)
