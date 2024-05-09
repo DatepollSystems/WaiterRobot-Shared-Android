@@ -174,8 +174,8 @@ ksp {
 play {
     defaultToAppBundles.set(true)
     serviceAccountCredentials.set(file(".keys/service-account.json"))
-    track.set("internal")
     releaseStatus.set(ReleaseStatus.COMPLETED)
+    track.set("internal")
 }
 
 val remoteBuild = project.findProperty("remoteBuild") == "true" // Default false
