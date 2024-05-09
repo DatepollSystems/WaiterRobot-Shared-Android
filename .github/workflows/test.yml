@@ -37,7 +37,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Cache kotlin native build tooling
         uses: actions/cache@v4
