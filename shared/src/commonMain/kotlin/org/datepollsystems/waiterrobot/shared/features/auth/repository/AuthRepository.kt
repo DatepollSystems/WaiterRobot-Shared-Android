@@ -12,7 +12,10 @@ import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.koin.core.component.inject
 import kotlin.coroutines.cancellation.CancellationException
 
-internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository() {
+internal class AuthRepository(
+    private val authApi: AuthApi,
+    private val backgroundScope: CoroutineScope
+) : AbstractRepository() {
 
     // Use inject for lazy loading to prevent circular init dependency (apiClient -> AuthRepo -> apiClient -> ...)
     private val waiterApi: WaiterApi by inject()
@@ -40,7 +43,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         autoSelectEvent()
     }
 
-    suspend fun refreshTokens(userDetailsRefreshScope: CoroutineScope): Tokens? {
+    suspend fun refreshTokens(): Tokens? {
         var tokens = getTokens()
 
         if (tokens == null) {
@@ -51,7 +54,7 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         val newTokens = authApi.refreshToken(tokens.refreshToken)
         tokens = Tokens(newTokens.accessToken, newTokens.refreshToken ?: tokens.refreshToken)
 
-        store(tokens, userDetailsRefreshScope)
+        store(tokens)
 
         return tokens
     }
@@ -74,26 +77,17 @@ internal class AuthRepository(private val authApi: AuthApi) : AbstractRepository
         }
     }
 
-    private suspend fun store(tokens: Tokens, userDetailsRefreshScope: CoroutineScope? = null) {
-        suspend fun refreshUserDetails() {
-            logger.d { "Refreshing user details" }
-            waiterApi.getMySelf().let {
-                CommonApp.settings.organisationName = it.organisationName
-                CommonApp.settings.waiterName = it.name
-            }
-        }
-
+    private suspend fun store(tokens: Tokens) {
         CommonApp.settings.tokens = tokens
-
-        if (userDetailsRefreshScope != null) {
-            // Update in the background, as this call will suspend till refreshTokens finish (-> deadlock)
-            userDetailsRefreshScope.launch {
-                refreshUserDetails()
-            }
-        } else {
-            refreshUserDetails()
-        }
-
         logger.d { "Saved tokens" }
+
+        // Update in the background
+        backgroundScope.launch {
+            logger.d { "Refreshing user details" }
+            val waiter = waiterApi.getMySelf()
+            CommonApp.settings.organisationName = waiter.organisationName
+            CommonApp.settings.waiterName = waiter.name
+            logger.d { "Stored user details" }
+        }
     }
 }

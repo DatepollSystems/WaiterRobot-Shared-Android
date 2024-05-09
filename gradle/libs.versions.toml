@@ -38,7 +38,7 @@ accompanistPermissions = "0.32.0"
 koinCompose = "3.5.3"
 appUpdate = "2.1.0"
 barcodeScanning = "17.2.0"
-stripe = "3.4.0"
+stripe = "3.5.0"
 playServicesLocation = "21.2.0"
 
 [libraries]

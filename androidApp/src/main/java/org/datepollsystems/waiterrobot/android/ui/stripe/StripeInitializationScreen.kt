@@ -108,7 +108,10 @@ fun StripeInitializationScreen(
                 when (val step = state.step) {
                     StripeInitializationState.Step.Start -> {
                         Text(L.stripeInit.step.start.desc(event?.name ?: "UNKNOWN"))
-                        Button(onClick = vm::startInitialization) {
+                        Button(
+                            onClick = vm::startInitialization,
+                            enabled = !state.isLoading
+                        ) {
                             Text(L.stripeInit.step.start.action())
                         }
                     }
@@ -119,7 +122,10 @@ fun StripeInitializationScreen(
                             L.stripeInit.locationDataSharingNotice(),
                             style = MaterialTheme.typography.bodySmall
                         )
-                        Button(onClick = vm::grantLocationPermission) {
+                        Button(
+                            onClick = vm::grantLocationPermission,
+                            enabled = !state.isLoading
+                        ) {
                             Text(L.stripeInit.step.grantLocationPermission.action())
                         }
                     }
@@ -141,17 +147,20 @@ fun StripeInitializationScreen(
                             L.stripeInit.locationDataSharingNotice(),
                             style = MaterialTheme.typography.bodySmall
                         )
-                        Button(onClick = {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                checkLocationSetting(
-                                    context = context,
-                                    onDisabled = intentSenderRequestLauncher::launch,
-                                    onEnabled = vm::enableGeoLocation
-                                )
-                            } else {
-                                intentLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        Button(
+                            enabled = !state.isLoading,
+                            onClick = {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    checkLocationSetting(
+                                        context = context,
+                                        onDisabled = intentSenderRequestLauncher::launch,
+                                        onEnabled = vm::enableGeoLocation
+                                    )
+                                } else {
+                                    intentLauncher.launch(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                                }
                             }
-                        }) {
+                        ) {
                             Text(L.stripeInit.step.enableGeoLocation.action())
                         }
                     }
@@ -163,9 +172,12 @@ fun StripeInitializationScreen(
                             vm.enableNfc()
                         }
                         Text(L.stripeInit.step.enableNfc.desc())
-                        Button(onClick = {
-                            launcher.launch(Intent(Settings.ACTION_NFC_SETTINGS))
-                        }) {
+                        Button(
+                            enabled = !state.isLoading,
+                            onClick = {
+                                launcher.launch(Intent(Settings.ACTION_NFC_SETTINGS))
+                            }
+                        ) {
                             Text(L.stripeInit.step.enableNfc.action())
                         }
                     }
@@ -174,7 +186,10 @@ fun StripeInitializationScreen(
                         Text(L.stripeInit.step.error.desc())
                         Text(step.description)
                         if (step.retryAble) {
-                            Button(onClick = vm::startInitialization) {
+                            Button(
+                                enabled = !state.isLoading,
+                                onClick = vm::startInitialization
+                            ) {
                                 Text(L.stripeInit.step.error.action())
                             }
                         }
@@ -182,14 +197,14 @@ fun StripeInitializationScreen(
 
                     StripeInitializationState.Step.Finished -> {
                         Text(L.stripeInit.step.finished.desc())
-                        Button(onClick = vm::onContinueClick) {
+                        Button(onClick = { vm.onContinueClick(skipInit = false) }) {
                             Text(L.stripeInit.step.finished.action())
                         }
                     }
                 }
 
                 if (state.step != StripeInitializationState.Step.Finished) {
-                    TextButton(onClick = vm::onContinueClick) {
+                    TextButton(onClick = { vm.onContinueClick(skipInit = true) }) {
                         Text(L.stripeInit.continueWithoutStripe())
                     }
                 }

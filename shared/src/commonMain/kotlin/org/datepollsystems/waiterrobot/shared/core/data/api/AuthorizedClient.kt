@@ -36,7 +36,7 @@ internal fun createAuthorizedClient(
                 refreshTokens {
                     @Suppress("TooGenericExceptionCaught")
                     try {
-                        authRepository.refreshTokens(scope).toBearerTokens()
+                        authRepository.refreshTokens().toBearerTokens()
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {

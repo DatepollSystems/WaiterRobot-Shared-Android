@@ -97,8 +97,16 @@ class RootViewModel internal constructor(
         combine(
             CommonApp.settings.tokenFlow,
             CommonApp.settings.selectedEventFlow,
-        ) { _, _ ->
-            navigator.replaceRoot(CommonApp.getNextRootScreen())
+        ) { tokens, event ->
+            val loginStateChanged = state.isLoggedIn xor (tokens != null)
+            val eventSelectedChanged = state.eventSelected xor (event != null)
+            if (loginStateChanged || eventSelectedChanged) {
+                // Only navigate if something has changed
+                navigator.replaceRoot(CommonApp.getNextRootScreen())
+            }
+            reduce {
+                state.copy(isLoggedIn = tokens != null, eventSelected = event != null)
+            }
         }.collect()
     }
 }

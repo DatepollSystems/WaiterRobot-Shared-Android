@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
@@ -48,37 +49,46 @@ object CommonApp : KoinComponent {
     internal val isLoggedIn: StateFlow<Boolean> by lazy {
         settings.tokenFlow
             .map { it != null }
-            .stateIn(coroutineScope, SharingStarted.Lazily, settings.tokens != null)
+            .onEach { logger.d { "Is logged in changed: $it" } }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, settings.tokens != null)
     }
 
     val selectedEvent: StateFlow<Event?> by lazy {
-        settings.selectedEventFlow.stateIn(
-            coroutineScope,
-            started = SharingStarted.Lazily,
-            initialValue = settings.selectedEvent
-        )
+        settings.selectedEventFlow
+            .onEach { logger.d { "Selected event changed: $it" } }
+            .stateIn(
+                coroutineScope,
+                started = SharingStarted.Eagerly,
+                initialValue = settings.selectedEvent
+            )
     }
 
     internal val appTheme: StateFlow<AppTheme> by lazy {
-        settings.themeFlow
-            .stateIn(coroutineScope, started = SharingStarted.Lazily, settings.theme)
+        settings.themeFlow.stateIn(
+            coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = settings.theme
+        )
     }
 
     internal fun logout() {
-        coroutineScope.launch {
-            @Suppress("TooGenericExceptionCaught")
-            try {
-                val tokens = settings.tokens ?: return@launch
-                getKoin().getOrNull<AuthApi>()?.logout(tokens)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                logger.e(e) { "Could not delete session." }
+        val tokens = settings.tokens
+        if (tokens != null) {
+            coroutineScope.launch {
+                @Suppress("TooGenericExceptionCaught")
+                try {
+                    getKoin().getOrNull<AuthApi>()?.logout(tokens)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    logger.e(e) { "Could not delete session." }
+                } finally {
+                    settings.apiBase = null
+                }
             }
         }
 
         settings.tokens = null // This also triggers a change to the isLoggedInFlow
-        settings.apiBase = null
         settings.selectedEvent = null
         settings.organisationName = ""
         settings.waiterName = ""
@@ -97,8 +107,8 @@ object CommonApp : KoinComponent {
 
     fun getNextRootScreen(): Screen {
         return when {
-            !isLoggedIn.value -> Screen.LoginScreen
-            selectedEvent.value == null -> Screen.SwitchEventScreen
+            settings.tokens == null -> Screen.LoginScreen
+            settings.selectedEvent == null -> Screen.SwitchEventScreen
             stripeProvider?.shouldInitializeTerminal() == true -> Screen.StripeInitializationScreen
             else -> Screen.TableListScreen
         }

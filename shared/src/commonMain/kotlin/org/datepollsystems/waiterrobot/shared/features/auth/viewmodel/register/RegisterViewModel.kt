@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register
 
-import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -21,7 +20,6 @@ class RegisterViewModel internal constructor(
         try {
             // TODO check name
             authRepository.createWaiter(registerLink, name)
-            navigator.replaceRoot(CommonApp.getNextRootScreen())
             reduce { state.withViewState(ViewState.Idle) }
         } catch (_: ApiException.CredentialsIncorrect) {
             reduceError(L.login.invalidCode.title(), L.login.invalidCode.desc())
@@ -30,6 +28,6 @@ class RegisterViewModel internal constructor(
 
     fun cancel() = intent {
         // TODO confirm?
-        navigator.replaceRoot(CommonApp.getNextRootScreen())
+        navigator.pop()
     }
 }

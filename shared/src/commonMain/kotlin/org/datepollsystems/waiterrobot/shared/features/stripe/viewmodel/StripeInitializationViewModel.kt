@@ -87,6 +87,8 @@ class StripeInitializationViewModel internal constructor(
                 return@intent
             }
         }
+
+        reduce { state.copy(step = Step.Finished, isLoading = false) }
     }
 
     fun grantLocationPermission() = intent {
@@ -102,8 +104,11 @@ class StripeInitializationViewModel internal constructor(
         }
     }
 
-    fun onContinueClick() = intent {
-        CommonApp.settings.enableContactlessPayment = false
+    fun onContinueClick(skipInit: Boolean) = intent {
+        if (skipInit) {
+            CommonApp.settings.enableContactlessPayment = false
+        }
+
         navigator.replaceRoot(CommonApp.getNextRootScreen())
     }
 

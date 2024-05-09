@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
+import kotlinx.coroutines.delay
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
@@ -16,6 +17,7 @@ import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
+@Suppress("TooManyFunctions")
 class BillingViewModel internal constructor(
     private val billingRepository: BillingRepository,
     private val stripeApi: StripeApi,
@@ -78,6 +80,9 @@ class BillingViewModel internal constructor(
         }.onFailure {
             logger.e("Failed to initiate payment", it)
             stripeProvider.cancelPayment(paymentIntent)
+            // TODO improve this hack
+            @Suppress("MagicNumber")
+            delay(1000) // Wait until the cancellation is propagated to the backend
         }
 
         loadBill()
