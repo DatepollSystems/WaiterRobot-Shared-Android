@@ -3,9 +3,9 @@
 kotlin = "1.9.21" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
 ksp = "1.9.21-1.0.16" # First part must match the kotlin version
 detektFormatting = "1.23.4"
-kermit = "1.2.2"
+kermit = "2.0.3"
 koin = "3.5.3"
-orbitMvi = "6.1.0"
+orbitMvi = "7.1.0"
 mokoMvvm = "0.16.1"
 ktor = "2.3.7"
 mokoPermissions = "0.18.0"
