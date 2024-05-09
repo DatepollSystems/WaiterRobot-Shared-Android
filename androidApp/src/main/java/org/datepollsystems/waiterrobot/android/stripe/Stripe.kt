@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import org.datepollsystems.waiterrobot.android.BuildConfig
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.NoReaderFoundException
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderConnectionFailedException
@@ -74,21 +75,24 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
             listener = this
         )
     } catch (e: TerminalException) {
-        throw TerminalInitializationFailedException(e)
+        throw TerminalInitializationFailedException(e, e.errorCode.name)
     }
 
     override suspend fun disconnectReader(): Unit = Terminal.disconnectReader()
 
     override suspend fun connectLocalReader(locationId: String) {
+        // In debug mode only simulated readers can be used
+        // And it seems like test locations can also only be used with simulated readers
         val discoverConfig = DiscoveryConfiguration.LocalMobileDiscoveryConfiguration(
-            isSimulated = BuildConfig.DEBUG // In debug mode only simulated readers are supported
+            isSimulated = BuildConfig.DEBUG ||
+                CommonApp.appInfo.appVersion.contains("lava", ignoreCase = true)
         )
 
         val reader = try {
             Terminal.discoverReaders(discoverConfig).first().firstOrNull()
                 ?: throw NoReaderFoundException()
         } catch (e: TerminalException) {
-            throw ReaderDiscoveryFailedException(e)
+            throw ReaderDiscoveryFailedException(e, e.errorCode.name)
         }
 
         val connectConfig = ConnectionConfiguration.LocalMobileConnectionConfiguration(
@@ -99,7 +103,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         try {
             reader.connect(connectConfig)
         } catch (e: TerminalException) {
-            throw ReaderConnectionFailedException(e)
+            throw ReaderConnectionFailedException(e, e.errorCode.name)
         }
 
         _connectedToReader.emit(true)

@@ -39,7 +39,7 @@ fun Event(event: Event) {
             )
             event.startDate?.let {
                 Text(
-                    // TODO: This needs to be fixed
+                    // TODO This needs to be fixed
                     text = it.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime()
                         .format(dateFormatter),
                     style = MaterialTheme.typography.bodySmall,

@@ -32,9 +32,20 @@ interface StripeProvider {
     suspend fun connectLocalReader(locationId: String)
 }
 
-abstract class StripeException(message: String, cause: Throwable?) : Exception(message, cause)
+abstract class StripeException(message: String, cause: Throwable?) : Exception(message, cause) {
+    open val stripeErrorCode: String? = null
+}
+
 class NoReaderFoundException : StripeException("No reader found", cause = null)
-class ReaderConnectionFailedException(cause: Throwable?) : StripeException("No reader found", cause)
-class ReaderDiscoveryFailedException(cause: Throwable?) : StripeException("No reader found", cause)
-class TerminalInitializationFailedException(cause: Throwable?) :
+
+class ReaderConnectionFailedException(cause: Throwable?, override val stripeErrorCode: String?) :
+    StripeException("Reader connection failed", cause)
+
+class ReaderDiscoveryFailedException(cause: Throwable?, override val stripeErrorCode: String?) :
+    StripeException("Reader discovery failed", cause)
+
+class TerminalInitializationFailedException(
+    cause: Throwable?,
+    override val stripeErrorCode: String?
+) :
     StripeException("Failed to initialize terminal", cause)

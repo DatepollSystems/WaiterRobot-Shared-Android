@@ -67,7 +67,7 @@ class StripeInitializationViewModel internal constructor(
             try {
                 stripe.initialize()
             } catch (e: StripeException) {
-                logger.e("Failed to initialize terminal", e)
+                logger.e("Failed to initialize terminal (${e.stripeErrorCode})", e)
                 reduce {
                     state.copy(
                         step = Step.Error.TerminalInitializationFailed,
@@ -82,7 +82,7 @@ class StripeInitializationViewModel internal constructor(
             try {
                 stripe.connectLocalReader(locationId)
             } catch (e: StripeException) {
-                logger.e("Failed to connect to local reader", e)
+                logger.e("Failed to connect to local reader (${e.stripeErrorCode})", e)
                 reduce { state.copy(step = Step.Error.ReaderConnectionFailed, isLoading = false) }
                 return@intent
             }
