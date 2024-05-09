@@ -151,6 +151,18 @@ fun BillingScreen(
                     change = state.change,
                     breakDownChange = vm::breakDownChange,
                     resetChangeBreakUp = vm::resetChange,
+                    contactLessState = state.contactLessState,
+                    onContactless = {
+                        vm.initiateContactLessPayment()
+                        focusManager.clearFocus()
+                        coroutineScope.launch {
+                            paymentSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!paymentSheetState.isVisible) {
+                                showPaymentSheet = false
+                            }
+                        }
+                    },
                     onPayClick = {
                         vm.paySelection()
                         focusManager.clearFocus()

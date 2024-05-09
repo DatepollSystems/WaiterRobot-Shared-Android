@@ -2,6 +2,9 @@ package org.datepollsystems.waiterrobot.shared.root
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
@@ -24,13 +27,12 @@ import kotlin.time.Duration.Companion.seconds
 
 class RootViewModel internal constructor(
     private val authRepo: AuthRepository,
-    private val rootApi: RootApi
+    private val rootApi: RootApi,
 ) : AbstractViewModel<RootState, RootEffect>(RootState()) {
 
     override suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.onCreate() {
         repeatOnSubscription {
             launch { watchLoginState() }
-            launch { watchSelectedEventState() }
             launch { watchAppTheme() }
         }
 
@@ -44,7 +46,7 @@ class RootViewModel internal constructor(
         try {
             when (val deepLink = DeepLink.createFromUrl(url)) {
                 is DeepLink.Auth -> onAuthDeeplink(deepLink)
-            }
+            }.let { }
         } catch (e: IllegalArgumentException) {
             logger.e(e) { "Could not construct deeplink from url: $url" }
             postSideEffect(RootEffect.ShowSnackBar(L.deepLink.invalid()))
@@ -67,9 +69,9 @@ class RootViewModel internal constructor(
 
         try {
             when (deepLink) {
-                is DeepLink.Auth.LoginLink -> authRepo.loginWithToken(deepLink.token)
+                is DeepLink.Auth.LoginLink -> authRepo.loginWaiter(deepLink)
                 is DeepLink.Auth.RegisterLink -> {
-                    navigator.push(Screen.RegisterScreen(deepLink.token))
+                    navigator.push(Screen.RegisterScreen(deepLink))
                 }
             }
             reduce { state.withViewState(ViewState.Idle) }
@@ -80,26 +82,8 @@ class RootViewModel internal constructor(
         }
     }
 
-    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchLoginState() {
-        CommonApp.isLoggedIn.collect { loggedIn ->
-            reduce { state.copy(isLoggedIn = loggedIn) }
-            if (!loggedIn) {
-                navigator.popUpToRoot()
-            }
-        }
-    }
-
-    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchSelectedEventState() {
-        CommonApp.hasEventSelected.collect { hasEventSelected ->
-            reduce { state.copy(hasEventSelected = hasEventSelected) }
-            if (!hasEventSelected) {
-                navigator.popUpToRoot()
-            }
-        }
-    }
-
     private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchAppTheme() {
-        CommonApp.appTheme.collect {
+        CommonApp.appTheme.collectLatest {
             reduce { state.copy(selectedTheme = it) }
         }
     }
@@ -107,5 +91,22 @@ class RootViewModel internal constructor(
     private suspend fun checkAppVersion() {
         // Just call the index route to verify that the current app version is still supported
         rootApi.ping()
+    }
+
+    private suspend fun SimpleSyntax<RootState, NavOrViewModelEffect<RootEffect>>.watchLoginState() {
+        combine(
+            CommonApp.settings.tokenFlow,
+            CommonApp.settings.selectedEventFlow,
+        ) { tokens, event ->
+            val loginStateChanged = state.isLoggedIn xor (tokens != null)
+            val eventSelectedChanged = state.eventSelected xor (event != null)
+            if (loginStateChanged || eventSelectedChanged) {
+                // Only navigate if something has changed
+                navigator.replaceRoot(CommonApp.getNextRootScreen())
+            }
+            reduce {
+                state.copy(isLoggedIn = tokens != null, eventSelected = event != null)
+            }
+        }.collect()
     }
 }

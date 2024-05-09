@@ -22,13 +22,12 @@ class LoginScannerViewModel internal constructor(
             when (val deepLink = DeepLink.createFromUrl(code)) {
                 is DeepLink.Auth.LoginLink -> {
                     reduce { state.withViewState(ViewState.Loading) }
-                    authRepository.loginWithToken(deepLink.token)
-                    navigator.popUpToRoot()
+                    authRepository.loginWaiter(deepLink)
                     reduce { state.withViewState(ViewState.Idle) }
                 }
 
                 is DeepLink.Auth.RegisterLink -> {
-                    navigator.push(Screen.RegisterScreen(deepLink.token))
+                    navigator.push(Screen.RegisterScreen(deepLink))
                 }
             }
         } catch (e: CancellationException) {

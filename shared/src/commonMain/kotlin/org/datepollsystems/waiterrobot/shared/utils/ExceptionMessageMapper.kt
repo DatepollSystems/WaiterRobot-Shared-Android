@@ -6,7 +6,10 @@ import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.getLogger
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.accountNotActivated
+import org.datepollsystems.waiterrobot.shared.generated.localization.amountToLow
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.disabled
+import org.datepollsystems.waiterrobot.shared.generated.localization.disabledForEvent
 import org.datepollsystems.waiterrobot.shared.generated.localization.generic
 import org.datepollsystems.waiterrobot.shared.generated.localization.message
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
@@ -31,6 +34,9 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.ProductSoldOut -> L.order.productSoldOut.title()
     is ApiException.WaiterCreateTokenIncorrect -> L.login.invalidCode.desc()
     is ApiException.WaiterTokenIncorrect -> L.login.invalidCode.desc()
+    is ApiException.BillAmountTooLow -> L.billing.amountToLow(minAmount.cent.toString())
+    is ApiException.StripeDisabled -> L.stripeInit.error.disabled()
+    is ApiException.StripeNotActivated -> L.stripeInit.error.disabledForEvent()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,
@@ -38,5 +44,6 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.Forbidden,
     is ApiException.NotFound,
     is ApiException.EntityAlreadyExists,
+    is ApiException.ServiceUnavailable,
     is ApiException.Unauthorized -> L.exceptions.generic()
 }

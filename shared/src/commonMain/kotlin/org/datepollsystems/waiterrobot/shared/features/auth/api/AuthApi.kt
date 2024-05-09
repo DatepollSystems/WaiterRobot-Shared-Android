@@ -12,7 +12,7 @@ import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LogoutReq
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.RefreshRequestDto
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.RefreshResponseDto
 
-internal class AuthApi(client: HttpClient) : AbstractApi("waiter/auth", client) {
+internal class AuthApi(client: HttpClient) : AbstractApi("v1/waiter/auth", client) {
 
     suspend fun refreshToken(sessionToken: String) = post(
         endpoint = "refresh",

@@ -30,7 +30,5 @@ class SwitchEventViewModel internal constructor(
         repository.switchToEvent(event)
 
         updateParent<TableListViewModel>()
-
-        navigator.popUpToRoot()
     }
 }

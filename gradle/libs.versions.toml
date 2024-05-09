@@ -8,6 +8,7 @@ koin = "3.5.3"
 orbitMvi = "6.1.0"
 mokoMvvm = "0.16.1"
 ktor = "2.3.7"
+mokoPermissions = "0.18.0"
 settings = "1.1.1"
 realm = "1.13.0"
 detekt = "1.23.4"
@@ -19,7 +20,7 @@ kmmbridge = "0.5.1"
 kmmresources = "1.0.0-alpha11"
 
 # Android
-android-minSdk = "24"
+android-minSdk = "26"
 android-targetSdk = "33"
 android-compileSdk = "34"
 android-buildTools = "34.0.0"
@@ -37,6 +38,8 @@ accompanistPermissions = "0.32.0"
 koinCompose = "3.5.3"
 appUpdate = "2.1.0"
 barcodeScanning = "17.2.0"
+stripe = "3.5.0"
+playServicesLocation = "21.2.0"
 
 [libraries]
 
@@ -67,6 +70,9 @@ barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref =
 compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
 compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
 
+stripe-terminal = { module = "com.stripe:stripeterminal-core", version.ref = "stripe" }
+stripe-ttp = { module = "com.stripe:stripeterminal-localmobile", version.ref = "stripe" }
+
 koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -94,6 +100,8 @@ settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutine
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbitMvi" }
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbitMvi" }
 moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
+moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissions" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle" }

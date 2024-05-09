@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Contactless
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +38,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.change
 import org.datepollsystems.waiterrobot.shared.generated.localization.given
 import org.datepollsystems.waiterrobot.shared.generated.localization.pay
+import org.datepollsystems.waiterrobot.shared.generated.localization.payByCard
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
@@ -46,7 +51,9 @@ fun PaymentView(
     change: BillingState.Change?,
     breakDownChange: (ChangeBreakUp) -> Unit,
     resetChangeBreakUp: () -> Unit,
+    contactLessState: BillingState.ContactLessState,
     onPayClick: () -> Unit,
+    onContactless: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
@@ -58,18 +65,18 @@ fun PaymentView(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        /* TODO only show when there are other payment options available
-        Row {
-            // TODO one button for each available payment option (except cash)
-            Button(
-                onClick = { /*TODO*/ },
-                enabled = moneyGivenText.isEmpty()
-            ) {
-                Icon(Icons.Filled.Contactless, contentDescription = "Contactless")
-                Spacer(Modifier.width(12.dp))
-                Text("Contactless")
+        if (contactLessState != BillingState.ContactLessState.DISABLED) {
+            Row {
+                Button(
+                    onClick = onContactless,
+                    enabled = moneyGivenText.isEmpty() && contactLessState == BillingState.ContactLessState.ENABLED
+                ) {
+                    Icon(Icons.Filled.Contactless, contentDescription = L.billing.payByCard())
+                    Spacer(Modifier.width(12.dp))
+                    Text(L.billing.payByCard())
+                }
             }
-        }*/
+        }
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
@@ -173,6 +180,8 @@ private fun PaymentPreview() = Preview {
         change = BillingState.Change("19.70".euro, brokenDown = true),
         breakDownChange = {},
         resetChangeBreakUp = {},
-        onPayClick = {}
+        contactLessState = BillingState.ContactLessState.ENABLED,
+        onPayClick = {},
+        onContactless = {},
     )
 }

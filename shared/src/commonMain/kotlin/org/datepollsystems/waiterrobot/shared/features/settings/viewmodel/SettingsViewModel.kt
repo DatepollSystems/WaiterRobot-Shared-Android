@@ -42,6 +42,11 @@ class SettingsViewModel internal constructor(
         CommonApp.settings.theme = theme
     }
 
+    fun initializeContactlessPayment() = intent {
+        CommonApp.settings.enableContactlessPayment = true
+        navigator.push(Screen.StripeInitializationScreen)
+    }
+
     fun logout() = intent {
         CommonApp.logout()
     }

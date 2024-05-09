@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
@@ -49,6 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
+@Destination
 fun TableListScreen(
     vm: TableListViewModel = koinViewModel(),
     navigator: NavController,

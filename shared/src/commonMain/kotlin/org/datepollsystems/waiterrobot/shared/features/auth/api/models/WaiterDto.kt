@@ -8,5 +8,5 @@ internal data class WaiterDto(
     val name: String,
     val organisationId: Long,
     val organisationName: String,
-    val eventIds: List<Long>
+    val eventIds: List<Long>,
 )

@@ -9,7 +9,17 @@ import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.spec.Route
-import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.*
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.BillingScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.LoginScannerScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.LoginScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.OrderScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.RegisterScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SettingsScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.StripeInitializationScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.SwitchEventScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.TableDetailScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.TableListScreenDestination
+import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.UpdateAppScreenDestination
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -29,7 +39,11 @@ fun <S : ViewModelState, E : ViewModelEffect> AbstractViewModel<S, E>.handleSide
     val logger: Logger = koinInject { parametersOf("handleSideEffects") }
     collectSideEffect { navOrSideEffect ->
         when (navOrSideEffect) {
-            is NavOrViewModelEffect.NavEffect -> navigator.handleNavAction(navOrSideEffect.action)
+            is NavOrViewModelEffect.NavEffect -> navigator.handleNavAction(
+                navOrSideEffect.action,
+                logger
+            )
+
             is NavOrViewModelEffect.VMEffect -> {
                 handler?.invoke(navOrSideEffect.effect)
                     ?: logger.w("Side effect ${navOrSideEffect.effect} was not handled.")
@@ -38,7 +52,8 @@ fun <S : ViewModelState, E : ViewModelEffect> AbstractViewModel<S, E>.handleSide
     }
 }
 
-private fun NavController.handleNavAction(navAction: NavAction) {
+private fun NavController.handleNavAction(navAction: NavAction, logger: Logger) {
+    logger.d { "Handling nav action: $navAction" }
     when (navAction) {
         NavAction.Pop -> popBackStack()
         is NavAction.PopUpTo -> popBackStack(navAction.screen.route, navAction.inclusive)
@@ -50,29 +65,42 @@ private fun NavController.handleNavAction(navAction: NavAction) {
                 }
             }
         }
+
+        is NavAction.ReplaceRoot -> {
+            navigate(navAction.screen.direction) {
+                launchSingleTop = true
+                popUpTo(this@handleNavAction.graph.id) {
+                    inclusive = true
+                }
+            }
+        }
     }
 }
 
-private val Screen.direction
+val Screen.direction
     get(): Direction = when (this) {
-        Screen.RootScreen -> RootScreenDestination
+        Screen.UpdateApp -> UpdateAppScreenDestination
+        Screen.LoginScreen -> LoginScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
+        Screen.StripeInitializationScreen -> StripeInitializationScreenDestination
         Screen.SettingsScreen -> SettingsScreenDestination
-        Screen.UpdateApp -> UpdateAppScreenDestination
-        is Screen.RegisterScreen -> RegisterScreenDestination(this.createToken)
+        Screen.TableListScreen -> TableListScreenDestination
+        is Screen.RegisterScreen -> RegisterScreenDestination(this.registerLink)
         is Screen.TableDetailScreen -> TableDetailScreenDestination(this.table)
         is Screen.OrderScreen -> OrderScreenDestination(this.table, this.initialItemId)
         is Screen.BillingScreen -> BillingScreenDestination(this.table)
     }
 
-private val Screen.route
+val Screen.route
     get(): Route = when (this) {
-        Screen.RootScreen -> RootScreenDestination
+        Screen.UpdateApp -> UpdateAppScreenDestination
+        Screen.LoginScreen -> LoginScreenDestination
         Screen.LoginScannerScreen -> LoginScannerScreenDestination
         Screen.SwitchEventScreen -> SwitchEventScreenDestination
+        Screen.StripeInitializationScreen -> StripeInitializationScreenDestination
         Screen.SettingsScreen -> SettingsScreenDestination
-        Screen.UpdateApp -> UpdateAppScreenDestination
+        Screen.TableListScreen -> TableListScreenDestination
         is Screen.RegisterScreen -> RegisterScreenDestination
         is Screen.TableDetailScreen -> TableDetailScreenDestination
         is Screen.OrderScreen -> OrderScreenDestination

@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.VariantDimension
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -16,6 +17,17 @@ private val versionProperty by lazy {
     Properties().apply {
         File(project.projectDir, "version.properties").inputStream().use { load(it) }
     }
+}
+
+private val localProperties = Properties().apply {
+    project.rootProject.file("local.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { load(it) }
+}
+
+fun fromProjectOrLocalProperties(name: String): Any? = run {
+    project.findProperty(name) ?: localProperties.getOrDefault(name, null)
 }
 
 val SHARED_GROUP: String by project
@@ -56,8 +68,8 @@ android {
     }
 
     signingConfigs {
-        val keyPassword: String? = project.findProperty("keyPassword")?.toString()
-        val storePassword: String? = project.findProperty("storePassword")?.toString()
+        val keyPassword: String? = fromProjectOrLocalProperties("keyPassword")?.toString()
+        val storePassword: String? = fromProjectOrLocalProperties("storePassword")?.toString()
         val keyStoreFile = file(".keys/app_sign.jks")
 
         // Only create signingConfig, when all needed configs are available
@@ -75,6 +87,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+            allowedHosts("*")
         }
 
         release {
@@ -109,7 +122,7 @@ android {
         create("lava") {
             dimension = "environment"
             applicationIdSuffix = ".lava"
-            buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
+            allowedHosts("*")
             manifestPlaceholders["host"] = "lava.kellner.team"
 
             // Use time-based versionCode for lava to allow multiple build per "base version"
@@ -124,8 +137,8 @@ android {
 
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE", "\"https://my.kellner.team/api\"")
             manifestPlaceholders["host"] = "my.kellner.team"
+            allowedHosts("my.kellner.team")
         }
     }
 
@@ -189,6 +202,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.location)
 
     coreLibraryDesugaring(libs.android.desugar)
 
@@ -229,4 +243,16 @@ dependencies {
     // In-App-Update support
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+
+    // Stripe Tap-To-Pay
+    implementation(libs.stripe.terminal)
+    implementation(libs.stripe.ttp)
+}
+
+private fun VariantDimension.allowedHosts(vararg hosts: String) {
+    buildConfigField(
+        type = String::class.simpleName!!,
+        name = "ALLOWED_HOSTS_CSV",
+        value = hosts.joinToString(",", "\"", "\"")
+    )
 }

@@ -7,10 +7,9 @@ class AppInfo(
     val appBuild: Int,
     phoneModel: String,
     val os: OS,
-    apiBaseUrl: String
+    allowedHostsCsv: String
 ) {
-    val apiBaseUrl = apiBaseUrl.removeSuffix("/") + "/"
-
+    val allowedHosts = allowedHostsCsv.split(",").map { it.trim() }.toSet()
     val sessionName = "$os; $appVersion ($appBuild); $phoneModel".truncate(MAX_SESSION_LENGTH)
 }
 

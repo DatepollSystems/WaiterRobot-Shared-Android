@@ -1,10 +1,14 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
+import kotlinx.coroutines.delay
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
+import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
+import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -13,8 +17,10 @@ import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
+@Suppress("TooManyFunctions")
 class BillingViewModel internal constructor(
     private val billingRepository: BillingRepository,
+    private val stripeApi: StripeApi,
     private val table: Table
 ) : AbstractViewModel<BillingState, BillingEffect>(BillingState()) {
 
@@ -24,13 +30,60 @@ class BillingViewModel internal constructor(
 
     private fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
-        val items = billingRepository.getBillForTable(table).associateBy { it.productId }
+        val items = billingRepository.getBillForTable(table).associateBy { it.virtualId }
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
     }
 
     fun paySelection() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
-        billingRepository.payBill(table, state.billItems.filter { it.selectedForBill > 0 })
+
+        val newBillItems = billingRepository.payBill(
+            table = table,
+            items = state.billItems.filter { it.selectedForBill > 0 }
+        )
+
+        reduce {
+            state.copy(
+                viewState = ViewState.Idle,
+                _billItems = newBillItems.associateBy { it.virtualId },
+                change = null,
+                moneyGivenText = ""
+            )
+        }
+    }
+
+    fun initiateContactLessPayment() = intent {
+        val stripeProvider = CommonApp.stripeProvider
+        if (stripeProvider == null) {
+            logger.e("Tried to initiate contactless payment but no stripe provider was set.")
+            return@intent
+        }
+
+        if (!stripeProvider.connectedToReader.value) {
+            logger.e("Tried to initiate contactless payment but no reader was connected.")
+            return@intent
+        }
+
+        reduce { state.withViewState(viewState = ViewState.Loading) }
+
+        val paymentIntent = stripeApi.createPaymentIntent(
+            PayBillRequestDto(
+                tableId = table.id,
+                state.billItems.flatMap {
+                    it.orderProductIds.take(it.selectedForBill)
+                }
+            )
+        )
+
+        runCatching {
+            stripeProvider.initiatePayment(paymentIntent)
+        }.onFailure {
+            logger.e("Failed to initiate payment", it)
+            stripeProvider.cancelPayment(paymentIntent)
+            // TODO improve this hack
+            @Suppress("MagicNumber")
+            delay(1000) // Wait until the cancellation is propagated to the backend
+        }
 
         loadBill()
 
@@ -79,19 +132,19 @@ class BillingViewModel internal constructor(
         }
     }
 
-    fun addItem(id: Long, amount: Int) = intent {
+    fun addItem(virtualId: Long, amount: Int) = intent {
         reduce {
-            val item = state._billItems[id]
+            val item = state._billItems[virtualId]
 
             if (item == null) {
-                logger.e("Tried to add product with id '$id' but could not find the product on the bill.")
+                logger.e("Tried to add product with id '$virtualId' but could not find the product on the bill.")
                 return@reduce state
             }
 
             val newAmount = (item.selectedForBill + amount).coerceIn(0..item.ordered)
 
             val newItem = item.copy(selectedForBill = newAmount)
-            val newBill = state._billItems.plus(newItem.productId to newItem)
+            val newBill = state._billItems.plus(newItem.virtualId to newItem)
             state.copy(
                 _billItems = newBill,
                 moneyGivenText = "",

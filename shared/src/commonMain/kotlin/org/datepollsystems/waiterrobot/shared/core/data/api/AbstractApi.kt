@@ -13,13 +13,25 @@ import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.koin.core.component.KoinComponent
 
-internal abstract class AbstractApi(basePath: String, private val client: HttpClient) :
-    KoinComponent {
+internal abstract class AbstractApi(
+    basePath: String,
+    private val client: HttpClient
+) : KoinComponent {
     protected val logger: Logger by injectLoggerForClass()
 
-    // Make sure that the baseUrl ends with a "/"
-    private val baseUrl =
-        "${CommonApp.appInfo.apiBaseUrl}v1/${basePath.removePrefix("/").removeSuffix("/")}/"
+    // Make sure that the basePath has the expected format
+    private val basePath = basePath.removePrefix("/").removeSuffix("/")
+
+    private val baseUrl: String
+        get() {
+            val apiBase = CommonApp.settings.apiBase?.removeSuffix("/")
+            checkNotNull(apiBase) {
+                CommonApp.logout()
+                "apiBase is not set"
+            }
+
+            return "$apiBase/$basePath/"
+        }
 
     /**
      * Prepend string (endpoint) with base and make sure that endpoint does not start with "/".
