@@ -28,7 +28,7 @@ class BillingViewModel internal constructor(
         loadBill()
     }
 
-    private fun loadBill() = intent {
+    fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
         val items = billingRepository.getBillForTable(table).associateBy { it.virtualId }
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
