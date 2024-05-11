@@ -5,7 +5,6 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
@@ -21,7 +20,6 @@ internal fun createAuthorizedClient(
     ktorLogger: KtorLogger,
     authRepository: AuthRepository,
     enableNetworkLogs: Boolean = false,
-    scope: CoroutineScope
 ): AuthorizedClient = AuthorizedClient(
     HttpClient {
         commonConfig(json, ktorLogger, enableNetworkLogs)

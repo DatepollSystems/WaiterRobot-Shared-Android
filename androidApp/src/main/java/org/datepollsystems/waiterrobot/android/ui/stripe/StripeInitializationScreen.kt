@@ -92,7 +92,7 @@ fun StripeInitializationScreen(
         ) {
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                progress = { state.step.stepIndex / StripeInitializationState.Step.COUNT },
+                progress = { state.stepIndex / StripeInitializationState.Step.COUNT },
             )
 
             Column(

@@ -46,7 +46,6 @@ internal val coreModule = module {
             ktorLogger = CustomKtorLogger("authorized"),
             authRepository = get(),
             enableNetworkLogs = true,
-            scope = get()
         )
     }
 
