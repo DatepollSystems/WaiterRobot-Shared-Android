@@ -3,7 +3,9 @@ package org.datepollsystems.waiterrobot.shared.features.billing.api.models
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
+import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
 import org.datepollsystems.waiterrobot.shared.utils.Cents
+import org.datepollsystems.waiterrobot.shared.utils.cent
 
 @Serializable
 internal class BillResponseDto(
@@ -19,6 +21,22 @@ internal class BillResponseDto(
         val baseProductId: Long,
         val orderProductIds: List<Long>
     )
+
+    fun getBillItems(): List<BillItem> {
+        return implodedOrderProducts.mapNotNull {
+            // Safeguard
+            if (it.orderProductIds.isEmpty()) return@mapNotNull null
+
+            BillItem(
+                baseProductId = it.baseProductId,
+                name = it.name,
+                ordered = it.amount,
+                selectedForBill = 0,
+                pricePerPiece = it.pricePerPiece.cent,
+                orderProductIds = it.orderProductIds
+            )
+        }
+    }
 }
 
 @Serializable

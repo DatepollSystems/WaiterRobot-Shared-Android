@@ -1,15 +1,26 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
-import kotlinx.coroutines.delay
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepository
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.GeoLocationDisabledException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.NfcDisabledException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.PaymentCanceledException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
+import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
+import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.generated.localization.locationDisabled
+import org.datepollsystems.waiterrobot.shared.generated.localization.nfcDisabled
+import org.datepollsystems.waiterrobot.shared.generated.localization.success
+import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
@@ -75,21 +86,7 @@ class BillingViewModel internal constructor(
             )
         )
 
-        runCatching {
-            stripeProvider.initiatePayment(paymentIntent)
-        }.onFailure {
-            logger.e("Failed to initiate payment", it)
-            stripeProvider.cancelPayment(paymentIntent)
-            // TODO improve this hack
-            @Suppress("MagicNumber")
-            delay(1000) // Wait until the cancellation is propagated to the backend
-        }
-
-        loadBill()
-
-        reduce {
-            state.copy(change = null, moneyGivenText = "")
-        }
+        collectPayment(stripeProvider, paymentIntent)
     }
 
     @OptIn(OrbitExperimental::class)
@@ -179,5 +176,72 @@ class BillingViewModel internal constructor(
 
     fun abortBill() = intent {
         navigator.pop()
+    }
+
+    private fun collectPayment(stripeProvider: StripeProvider, paymentIntent: PaymentIntent) {
+        fun Throwable.getDialogTitle(): String = when (this) {
+            is PaymentCanceledException -> L.billing.stripe.canceled.title()
+            else -> L.billing.stripe.failed.title()
+        }
+
+        fun Throwable.getDialogText(): String = when (this) {
+            is PaymentCanceledException -> L.billing.stripe.canceled.desc()
+            is GeoLocationDisabledException -> L.billing.stripe.locationDisabled()
+            is NfcDisabledException -> L.billing.stripe.nfcDisabled()
+            else -> L.billing.stripe.failed.desc()
+        }
+
+        intent {
+            reduce { state.copy(paymentErrorDialog = null) }
+
+            runCatching {
+                stripeProvider.collectPayment(paymentIntent)
+            }.onFailure { error ->
+                when (error) {
+                    is PaymentCanceledException,
+                    is GeoLocationDisabledException,
+                    is NfcDisabledException -> {
+                        logger.i("Card payment (${paymentIntent.id}) failed", error)
+                    }
+
+                    else -> logger.e("Failed to initiate payment (${paymentIntent.id})", error)
+                }
+
+                reduce {
+                    state.copy(
+                        paymentErrorDialog = DialogState(
+                            title = error.getDialogTitle(),
+                            text = error.getDialogText(),
+                            onDismiss = {
+                                cancelPayment(paymentIntent)
+                            },
+                            primaryButton = DialogState.Button("OK") {
+                                cancelPayment(paymentIntent)
+                            },
+                            secondaryButton = DialogState.Button("Retry") {
+                                logger.i("Retrying card payment (${paymentIntent.id})")
+                                collectPayment(stripeProvider, paymentIntent)
+                            }
+                        )
+                    )
+                }
+            }.onSuccess {
+                postSideEffect(BillingEffect.Toast(L.billing.stripe.success()))
+                loadBill()
+            }
+        }
+    }
+
+    private fun cancelPayment(paymentIntent: PaymentIntent) = intent {
+        reduce { state.copy(paymentErrorDialog = null, viewState = ViewState.Loading) }
+        val newBillItems = stripeApi.cancelPaymentIntent(paymentIntent).getBillItems()
+        reduce {
+            state.copy(
+                viewState = ViewState.Idle,
+                _billItems = newBillItems.associateBy { it.virtualId },
+                change = null,
+                moneyGivenText = ""
+            )
+        }
     }
 }

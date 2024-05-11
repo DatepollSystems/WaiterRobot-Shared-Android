@@ -9,6 +9,7 @@ import com.stripe.stripeterminal.external.models.CollectConfiguration
 import com.stripe.stripeterminal.external.models.ConnectionConfiguration
 import com.stripe.stripeterminal.external.models.ConnectionStatus
 import com.stripe.stripeterminal.external.models.DiscoveryConfiguration
+import com.stripe.stripeterminal.external.models.PaymentIntentStatus
 import com.stripe.stripeterminal.external.models.PaymentStatus
 import com.stripe.stripeterminal.external.models.Reader
 import com.stripe.stripeterminal.external.models.TerminalException
@@ -19,11 +20,12 @@ import kotlinx.coroutines.flow.first
 import org.datepollsystems.waiterrobot.android.BuildConfig
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.GeoLocationDisabledException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.NfcDisabledException
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.NoReaderFoundException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderConnectionFailedException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.ReaderDiscoveryFailedException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.PaymentCanceledException
+import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeException
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.TerminalInitializationFailedException
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -37,8 +39,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
     private val _connectedToReader: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val connectedToReader: StateFlow<Boolean> get() = _connectedToReader
 
-    // TODO error handling & retry?
-    override suspend fun initiatePayment(intent: PaymentIntent) {
+    override suspend fun collectPayment(intent: PaymentIntent): Boolean = try {
         val paymentIntent = Terminal.retrievePaymentIntent(intent.clientSecret)
 
         val collectConfig = CollectConfiguration.Builder()
@@ -47,7 +48,20 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
 
         val collectedIntent = paymentIntent.collectPaymentMethod(collectConfig)
 
-        collectedIntent.confirm()
+        collectedIntent.confirm().status == PaymentIntentStatus.SUCCEEDED
+    } catch (e: TerminalException) {
+        throw when (e.errorCode) {
+            TerminalException.TerminalErrorCode.CANCELED ->
+                PaymentCanceledException(e, e.errorCode.toLogString())
+
+            TerminalException.TerminalErrorCode.LOCATION_SERVICES_DISABLED ->
+                GeoLocationDisabledException(e, e.errorCode.toLogString())
+
+            TerminalException.TerminalErrorCode.LOCAL_MOBILE_NFC_DISABLED ->
+                NfcDisabledException(e, e.errorCode.toLogString())
+
+            else -> e.toStripeException("Failed to initiate payment")
+        }
     }
 
     override suspend fun cancelPayment(intent: PaymentIntent) {
@@ -75,7 +89,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
             listener = this
         )
     } catch (e: TerminalException) {
-        throw TerminalInitializationFailedException(e, e.errorCode.name)
+        e.toStripeException("Failed to initialize terminal")
     }
 
     override suspend fun disconnectReader(): Unit = Terminal.disconnectReader()
@@ -92,7 +106,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
             Terminal.discoverReaders(discoverConfig).first().firstOrNull()
                 ?: throw NoReaderFoundException()
         } catch (e: TerminalException) {
-            throw ReaderDiscoveryFailedException(e, e.errorCode.name)
+            e.toStripeException("Reader discovery failed")
         }
 
         val connectConfig = ConnectionConfiguration.LocalMobileConnectionConfiguration(
@@ -103,7 +117,7 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         try {
             reader.connect(connectConfig)
         } catch (e: TerminalException) {
-            throw ReaderConnectionFailedException(e, e.errorCode.name)
+            e.toStripeException("Reader connection failed")
         }
 
         _connectedToReader.emit(true)
@@ -123,3 +137,9 @@ object Stripe : KoinComponent, TerminalListener, StripeProvider {
         logger.d("Payment status changed to $status")
     }
 }
+
+fun TerminalException.toStripeException(message: String): Nothing = throw StripeException(
+    message = message,
+    stripeErrorCode = this.errorCode.toLogString(),
+    cause = this,
+)

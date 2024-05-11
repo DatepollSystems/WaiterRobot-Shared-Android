@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
@@ -17,6 +18,7 @@ data class BillingState(
     override val viewState: ViewState = ViewState.Idle,
     val moneyGivenText: String = "",
     val change: Change? = null,
+    val paymentErrorDialog: DialogState? = null,
     @Suppress("ConstructorParameterNaming")
     internal val _billItems: Map<Long, BillItem> = emptyMap()
 ) : ViewModelState() {

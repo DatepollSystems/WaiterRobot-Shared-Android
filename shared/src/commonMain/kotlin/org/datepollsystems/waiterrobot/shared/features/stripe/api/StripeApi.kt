@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedApi
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.features.billing.api.models.BillResponseDto
 import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.koin.core.component.KoinComponent
@@ -19,6 +20,10 @@ internal class StripeApi(client: AuthorizedClient) : AuthorizedApi("v1/waiter/st
 
     suspend fun createPaymentIntent(bill: PayBillRequestDto): PaymentIntent {
         return post("paymentIntent", bill).body<PaymentIntent>()
+    }
+
+    suspend fun cancelPaymentIntent(paymentIntent: PaymentIntent): BillResponseDto {
+        return post("paymentIntent/${paymentIntent.id}/cancel", body = null).body<BillResponseDto>()
     }
 }
 

@@ -231,6 +231,30 @@ billing:
   amountToLow:
     en: The selected payment method requires a minimum amount of %1$s.
     de: Die ausgewählte Zahlungsmethode erfordert einen Mindestbetrag von %1$s.
+  stripe:
+    canceled:
+      title:
+        en: Card payment canceled
+        de: Kartenzahlung abgebrochen
+      desc:
+        en: The card payment was canceled. You can try again.
+        de: Die Kartenzahlung wurde abgebrochen. Du kannst es erneut versuchen.
+    failed:
+      title:
+        en: Card payment failed
+        de: Kartenzahlung fehlgeschlagen
+      desc:
+        en: The card payment failed. You can try again.
+        de: Die Kartenzahlung ist fehlgeschlagen. Du kannst es erneut versuchen.
+    success:
+      en: Card payment successful
+      de: Kartenzahlung erfolgreich
+    locationDisabled:
+      en: The location service is disabled. Please enable it to accept card payments.
+      de: Der Standortdienst ist deaktiviert. Bitte aktiviere ihn, um Kartenzahlungen zu akzeptieren.
+    nfcDisabled:
+      en: The NFC service is disabled. Please enable it to accept card payments.
+      de: Der NFC-Dienst ist deaktiviert. Bitte aktiviere ihn, um Kartenzahlungen zu akzeptieren.
 settings:
   title:
     en: Settings
