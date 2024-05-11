@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -14,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.CustomDialog
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
@@ -55,7 +57,9 @@ fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?
             maxLines = 3
         )
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
             textAlign = TextAlign.Right,
             text = "${note.count()}/120",
             style = MaterialTheme.typography.bodySmall
