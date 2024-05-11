@@ -135,7 +135,7 @@ switchEvent:
 order:
   keepOrder:
     en: Keep order
-    de: Bestellung behalte
+    de: Bestellung behalten
   notSent:
     title:
       en: Order not sent
