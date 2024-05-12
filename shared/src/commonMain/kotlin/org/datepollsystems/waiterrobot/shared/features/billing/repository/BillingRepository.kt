@@ -2,10 +2,8 @@ package org.datepollsystems.waiterrobot.shared.features.billing.repository
 
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.BillResponseDto
 import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.utils.cent
 
 internal class BillingRepository(
     private val billingApi: BillingApi,
@@ -22,21 +20,5 @@ internal class BillingRepository(
                 it.orderProductIds.take(it.selectedForBill)
             }
         ).openBill.getBillItems()
-    }
-
-    private fun BillResponseDto.getBillItems(): List<BillItem> {
-        return implodedOrderProducts.mapNotNull {
-            // Safeguard
-            if (it.orderProductIds.isEmpty()) return@mapNotNull null
-
-            BillItem(
-                baseProductId = it.baseProductId,
-                name = it.name,
-                ordered = it.amount,
-                selectedForBill = 0,
-                pricePerPiece = it.pricePerPiece.cent,
-                orderProductIds = it.orderProductIds
-            )
-        }
     }
 }

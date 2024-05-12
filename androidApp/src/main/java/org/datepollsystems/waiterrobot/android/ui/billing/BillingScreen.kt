@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.android.ui.billing
 
+import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -26,14 +28,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.core.AlertDialogFromState
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
+import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingEffect
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -54,7 +59,8 @@ fun BillingScreen(
     vm: BillingViewModel = koinViewModel { parametersOf(table) }
 ) {
     val state by vm.collectAsState()
-    vm.handleSideEffects(navigator)
+    val context = LocalContext.current
+    vm.handleSideEffects(navigator) { handleSideEffects(it, context) }
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -84,6 +90,8 @@ fun BillingScreen(
             onCancel = { showConfirmGoBack = false },
         )
     }
+
+    AlertDialogFromState(state.paymentErrorDialog)
 
     ScaffoldView(
         state = state,
@@ -177,5 +185,14 @@ fun BillingScreen(
                 )
             }
         }
+    }
+}
+
+private suspend fun handleSideEffects(
+    effect: BillingEffect,
+    context: Context
+) {
+    when (effect) {
+        is BillingEffect.Toast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
     }
 }

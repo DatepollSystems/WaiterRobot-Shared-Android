@@ -32,9 +32,9 @@ class StripeInitializationViewModel internal constructor(
 
     fun startInitialization() = intent {
         if (!setLocationId()) return@intent
-        reduce { state.copy(isLoading = true) }
 
-        // TODO maybe this can be changed to COARSE_LOCATION?
+        // Check location permission
+        reduce { state.copy(isLoading = true, stepIndex = 2) }
         if (permissionsController.isPermissionGranted(Permission.LOCATION)) {
             enableGeoLocation()
         } else {
@@ -43,7 +43,7 @@ class StripeInitializationViewModel internal constructor(
     }
 
     fun enableGeoLocation() = intent {
-        reduce { state.copy(isLoading = true) }
+        reduce { state.copy(isLoading = true, stepIndex = 3) }
         if (stripe.isGeoLocationEnabled()) {
             enableNfc()
         } else {
@@ -51,9 +51,8 @@ class StripeInitializationViewModel internal constructor(
         }
     }
 
-    // TODO this needs savedStateHandle (otherwise after returning from the settings it we will start from beginning
     fun enableNfc() = intent {
-        reduce { state.copy(isLoading = true) }
+        reduce { state.copy(isLoading = true, stepIndex = 4) }
         if (stripe.isNfcEnabled()) {
             initializeAndConnectTerminal()
         } else {
@@ -62,16 +61,17 @@ class StripeInitializationViewModel internal constructor(
     }
 
     fun initializeAndConnectTerminal() = intent {
-        reduce { state.copy(isLoading = true) }
+        reduce { state.copy(isLoading = true, stepIndex = 5) }
         if (!stripe.isInitialized()) {
             try {
                 stripe.initialize()
             } catch (e: StripeException) {
-                logger.e("Failed to initialize terminal (${e.stripeErrorCode})", e)
+                logger.e("Failed to initialize terminal", e)
                 reduce {
                     state.copy(
                         step = Step.Error.TerminalInitializationFailed,
-                        isLoading = false
+                        isLoading = false,
+                        stepIndex = 1
                     )
                 }
                 return@intent
@@ -82,13 +82,19 @@ class StripeInitializationViewModel internal constructor(
             try {
                 stripe.connectLocalReader(locationId)
             } catch (e: StripeException) {
-                logger.e("Failed to connect to local reader (${e.stripeErrorCode})", e)
-                reduce { state.copy(step = Step.Error.ReaderConnectionFailed, isLoading = false) }
+                logger.e("Failed to connect to local reader", e)
+                reduce {
+                    state.copy(
+                        step = Step.Error.ReaderConnectionFailed,
+                        isLoading = false,
+                        stepIndex = 1
+                    )
+                }
                 return@intent
             }
         }
 
-        reduce { state.copy(step = Step.Finished, isLoading = false) }
+        reduce { state.copy(step = Step.Finished, isLoading = false, stepIndex = 6) }
     }
 
     fun grantLocationPermission() = intent {
@@ -98,9 +104,21 @@ class StripeInitializationViewModel internal constructor(
             permissionsController.providePermission(Permission.LOCATION)
             enableGeoLocation()
         } catch (denied: DeniedException) {
-            reduce { state.copy(step = Step.Error.GeolocationPermissionDenied, isLoading = false) }
+            reduce {
+                state.copy(
+                    step = Step.Error.GeolocationPermissionDenied,
+                    isLoading = false,
+                    stepIndex = 1
+                )
+            }
         } catch (cancelled: RequestCanceledException) {
-            reduce { state.copy(step = Step.Error.GeolocationPermissionDenied, isLoading = false) }
+            reduce {
+                state.copy(
+                    step = Step.Error.GeolocationPermissionDenied,
+                    isLoading = false,
+                    stepIndex = 1
+                )
+            }
         }
     }
 

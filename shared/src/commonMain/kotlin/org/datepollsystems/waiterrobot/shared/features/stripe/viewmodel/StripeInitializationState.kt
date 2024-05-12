@@ -10,18 +10,19 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.terminalIni
 
 data class StripeInitializationState(
     val step: Step = Step.Start,
+    val stepIndex: Int = 1,
     val isLoading: Boolean = false,
     @Deprecated("Legacy - Not used anymore")
     override val viewState: ViewState = ViewState.Idle,
 ) : ViewModelState() {
 
-    sealed class Step(val stepIndex: Int) {
-        data object Start : Step(1)
-        data object GrantLocationPermission : Step(2)
-        data object EnableGeoLocation : Step(3)
-        data object EnableNfc : Step(4)
-        data object Finished : Step(5)
-        sealed class Error(val description: String, val retryAble: Boolean = true) : Step(0) {
+    sealed class Step {
+        data object Start : Step()
+        data object GrantLocationPermission : Step()
+        data object EnableGeoLocation : Step()
+        data object EnableNfc : Step()
+        data object Finished : Step()
+        sealed class Error(val description: String, val retryAble: Boolean = true) : Step() {
             data object StripeDisabledForEvent :
                 Error(L.stripeInit.error.disabledForEvent(), retryAble = false)
 
@@ -35,7 +36,7 @@ data class StripeInitializationState(
         }
 
         companion object {
-            const val COUNT: Float = 5f
+            const val COUNT: Float = 6f
         }
     }
 

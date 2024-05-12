@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.android.gms.common.api.ResolvableApiException
@@ -91,7 +92,7 @@ fun StripeInitializationScreen(
         ) {
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
-                progress = { state.step.stepIndex / StripeInitializationState.Step.COUNT },
+                progress = { state.stepIndex / StripeInitializationState.Step.COUNT },
             )
 
             Column(
@@ -107,7 +108,17 @@ fun StripeInitializationScreen(
 
                 when (val step = state.step) {
                     StripeInitializationState.Step.Start -> {
-                        Text(L.stripeInit.step.start.desc(event?.name ?: "UNKNOWN"))
+                        Text(
+                            text = L.stripeInit.step.start.desc(event?.name ?: "UNKNOWN"),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text = L.stripeInit.locationDataSharingNotice(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                         Button(
                             onClick = vm::startInitialization,
                             enabled = !state.isLoading
@@ -117,10 +128,10 @@ fun StripeInitializationScreen(
                     }
 
                     StripeInitializationState.Step.GrantLocationPermission -> {
-                        Text(L.stripeInit.step.grantLocationPermission.desc())
                         Text(
-                            L.stripeInit.locationDataSharingNotice(),
-                            style = MaterialTheme.typography.bodySmall
+                            text = L.stripeInit.step.grantLocationPermission.desc(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
                         )
                         Button(
                             onClick = vm::grantLocationPermission,
@@ -142,10 +153,10 @@ fun StripeInitializationScreen(
                             vm.enableGeoLocation()
                         }
                         val context: Context = LocalContext.current
-                        Text(L.stripeInit.step.enableGeoLocation.desc())
                         Text(
-                            L.stripeInit.locationDataSharingNotice(),
-                            style = MaterialTheme.typography.bodySmall
+                            text = L.stripeInit.step.enableGeoLocation.desc(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
                         )
                         Button(
                             enabled = !state.isLoading,
@@ -171,7 +182,11 @@ fun StripeInitializationScreen(
                         ) {
                             vm.enableNfc()
                         }
-                        Text(L.stripeInit.step.enableNfc.desc())
+                        Text(
+                            text = L.stripeInit.step.enableNfc.desc(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
                         Button(
                             enabled = !state.isLoading,
                             onClick = {
@@ -183,8 +198,16 @@ fun StripeInitializationScreen(
                     }
 
                     is StripeInitializationState.Step.Error -> {
-                        Text(L.stripeInit.step.error.desc())
-                        Text(step.description)
+                        Text(
+                            text = L.stripeInit.step.error.desc(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text = step.description,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
                         if (step.retryAble) {
                             Button(
                                 enabled = !state.isLoading,
@@ -196,7 +219,11 @@ fun StripeInitializationScreen(
                     }
 
                     StripeInitializationState.Step.Finished -> {
-                        Text(L.stripeInit.step.finished.desc())
+                        Text(
+                            text = L.stripeInit.step.finished.desc(),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
                         Button(onClick = { vm.onContinueClick(skipInit = false) }) {
                             Text(L.stripeInit.step.finished.action())
                         }

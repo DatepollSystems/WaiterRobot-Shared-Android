@@ -13,7 +13,7 @@ interface StripeProvider {
             CommonApp.settings.selectedEvent?.stripeSettings is Event.StripeSettings.Enabled &&
             !connectedToReader.value
 
-    suspend fun initiatePayment(intent: PaymentIntent)
+    suspend fun collectPayment(intent: PaymentIntent): Boolean
 
     suspend fun cancelPayment(intent: PaymentIntent)
 
@@ -32,20 +32,21 @@ interface StripeProvider {
     suspend fun connectLocalReader(locationId: String)
 }
 
-abstract class StripeException(message: String, cause: Throwable?) : Exception(message, cause) {
-    open val stripeErrorCode: String? = null
+open class StripeException(message: String, cause: Throwable?) : Exception(message, cause) {
+    constructor(
+        message: String,
+        stripeErrorCode: String,
+        cause: Throwable?,
+    ) : this("$message (code=$stripeErrorCode)", cause)
 }
 
 class NoReaderFoundException : StripeException("No reader found", cause = null)
 
-class ReaderConnectionFailedException(cause: Throwable?, override val stripeErrorCode: String?) :
-    StripeException("Reader connection failed", cause)
+class PaymentCanceledException(cause: Throwable?, stripeErrorCode: String) :
+    StripeException("Payment was canceled", stripeErrorCode, cause)
 
-class ReaderDiscoveryFailedException(cause: Throwable?, override val stripeErrorCode: String?) :
-    StripeException("Reader discovery failed", cause)
+class GeoLocationDisabledException(cause: Throwable?, stripeErrorCode: String) :
+    StripeException("Geo location is disabled", stripeErrorCode, cause)
 
-class TerminalInitializationFailedException(
-    cause: Throwable?,
-    override val stripeErrorCode: String?
-) :
-    StripeException("Failed to initialize terminal", cause)
+class NfcDisabledException(cause: Throwable?, stripeErrorCode: String) :
+    StripeException("NFC is disabled", stripeErrorCode, cause)
