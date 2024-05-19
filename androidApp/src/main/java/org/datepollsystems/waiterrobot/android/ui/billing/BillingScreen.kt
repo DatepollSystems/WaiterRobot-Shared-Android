@@ -1,49 +1,53 @@
 package org.datepollsystems.waiterrobot.android.ui.billing
 
+import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.Button
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.EuroSymbol
 import androidx.compose.material.icons.filled.RemoveDone
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
-import org.datepollsystems.waiterrobot.android.ui.common.FloatingActionButton
+import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.core.AlertDialogFromState
+import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
-import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
-import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingEffect
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.keepBill
-import org.datepollsystems.waiterrobot.shared.generated.localization.noOpenBill
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.generated.localization.total
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -52,111 +56,143 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun BillingScreen(
     table: Table,
     navigator: NavController,
-    vm: BillingViewModel = getViewModel(parameters = { parametersOf(table) })
+    vm: BillingViewModel = koinViewModel { parametersOf(table) }
 ) {
-    val state = vm.collectAsState().value
-    vm.handleSideEffects(navigator)
+    val state by vm.collectAsState()
+    val context = LocalContext.current
+    vm.handleSideEffects(navigator) { handleSideEffects(it, context) }
 
-    var showPayDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val focusRequest = remember { FocusRequester() }
+    var showConfirmGoBack by remember { mutableStateOf(false) }
+    var showPaymentSheet by remember { mutableStateOf(false) }
+    val paymentSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
 
-    BackHandler(onBack = vm::goBack)
+    fun goBack() {
+        when {
+            state.hasSelectedItems -> showConfirmGoBack = true
+            else -> vm.abortBill()
+        }
+    }
 
-    if (state.showConfirmationDialog) {
-        AlertDialog(
-            onDismissRequest = vm::keepBill,
-            confirmButton = {
-                TextButton(onClick = vm::abortBill) {
-                    Text(text = L.dialog.closeAnyway())
-                }
-            },
-            dismissButton = {
-                Button(onClick = vm::keepBill) {
-                    Text(L.billing.keepBill())
-                }
-            },
-            title = {
-                Text(text = L.billing.notSent.title())
-            },
-            text = {
-                Text(text = L.billing.notSent.desc())
-            }
+    BackHandler(onBack = ::goBack)
+
+    if (showConfirmGoBack) {
+        ConfirmDialog(
+            title = L.billing.notSent.title(),
+            text = L.billing.notSent.desc(),
+            confirmText = L.dialog.closeAnyway(),
+            onConfirm = vm::abortBill,
+            cancelText = L.billing.keepBill(),
+            onCancel = { showConfirmGoBack = false },
         )
     }
 
-    if (showPayDialog) {
-        PayBillDialog(
-            priceSum = state.priceSum.toString(),
-            changeText = state.changeText,
-            moneyGivenText = state.moneyGivenText,
-            dismiss = { showPayDialog = false },
-            onMoneyGivenChange = vm::moneyGiven,
-            pay = vm::paySelection
-        )
-    }
+    AlertDialogFromState(state.paymentErrorDialog)
 
     ScaffoldView(
         state = state,
         title = L.billing.title(table.number.toString(), table.groupName),
-        topBarActions = {
-            IconButton(onClick = vm::selectAll) {
-                Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
-            }
-            IconButton(onClick = vm::unselectAll) {
-                Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
-            }
-        },
         navigationIcon = {
-            IconButton(onClick = vm::goBack) {
+            IconButton(onClick = ::goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
             }
         },
         bottomBar = {
             BottomAppBar(
-                cutoutShape = CircleShape
-            ) {
-                Text(
-                    text = L.billing.total() + ":",
-                    style = MaterialTheme.typography.h6
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = state.priceSum.toString(),
-                    style = MaterialTheme.typography.h6
-                )
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                shape = CircleShape,
-                enabled = state.viewState == ViewState.Idle && state.hasSelectedItems,
-                onClick = {
-                    showPayDialog = true
-                }
-            ) {
-                Icon(Icons.Filled.AttachMoney, contentDescription = "Cash")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        isFloatingActionButtonDocked = true
-    ) {
-        Column {
-            if (state.billItems.isEmpty()) {
-                CenteredText(
-                    text = L.billing.noOpenBill(table.number.toString(), table.groupName),
-                    scrollAble = true
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(state.billItems, key = BillItem::productId) { billItem ->
-                        BillListItem(
-                            item = billItem,
-                            addAction = vm::addItem
-                        )
+                actions = {
+                    IconButton(onClick = vm::selectAll) {
+                        Icon(Icons.Filled.DoneAll, contentDescription = "Select all items")
+                    }
+                    IconButton(onClick = vm::unselectAll) {
+                        Icon(Icons.Filled.RemoveDone, contentDescription = "Unselect all items")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = L.billing.total() + ":",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = state.priceSum.toString(),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                floatingActionButton = {
+                    if (state.hasSelectedItems) {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(start = 16.dp),
+                            onClick = {
+                                showPaymentSheet = true
+                            }
+                        ) {
+                            Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
+                        }
                     }
                 }
+            )
+        },
+    ) {
+        BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
+
+        if (showPaymentSheet) {
+            LaunchedEffect(paymentSheetState.isVisible) {
+                if (paymentSheetState.isVisible) focusRequest.requestFocus()
+            }
+
+            ModalBottomSheet(
+                onDismissRequest = {
+                    focusManager.clearFocus()
+                    showPaymentSheet = false
+                },
+                sheetState = paymentSheetState,
+                dragHandle = null
+            ) {
+                PaymentView(
+                    sum = state.priceSum.toString(),
+                    moneyGivenText = state.moneyGivenText,
+                    moneyGiven = vm::moneyGiven,
+                    moneyGivenInputFocusRequester = focusRequest,
+                    change = state.change,
+                    breakDownChange = vm::breakDownChange,
+                    resetChangeBreakUp = vm::resetChange,
+                    contactLessState = state.contactLessState,
+                    onContactless = {
+                        vm.initiateContactLessPayment()
+                        focusManager.clearFocus()
+                        coroutineScope.launch {
+                            paymentSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!paymentSheetState.isVisible) {
+                                showPaymentSheet = false
+                            }
+                        }
+                    },
+                    onPayClick = {
+                        vm.paySelection()
+                        focusManager.clearFocus()
+                        coroutineScope.launch {
+                            paymentSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!paymentSheetState.isVisible) {
+                                showPaymentSheet = false
+                            }
+                        }
+                    }
+                )
             }
         }
+    }
+}
+
+private suspend fun handleSideEffects(
+    effect: BillingEffect,
+    context: Context
+) {
+    when (effect) {
+        is BillingEffect.Toast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
     }
 }

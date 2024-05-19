@@ -1,10 +1,10 @@
 package org.datepollsystems.waiterrobot.shared.features.order.repository
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
+import org.datepollsystems.waiterrobot.shared.core.repository.CachedRepository
 import org.datepollsystems.waiterrobot.shared.features.order.api.ProductApi
 import org.datepollsystems.waiterrobot.shared.features.order.api.models.ProductDto
 import org.datepollsystems.waiterrobot.shared.features.order.api.models.ProductGroupDto
@@ -18,96 +18,59 @@ import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import org.datepollsystems.waiterrobot.shared.utils.extensions.olderThan
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import org.datepollsystems.waiterrobot.shared.utils.extensions.runCatchingCancelable
 import kotlin.time.Duration.Companion.hours
 
-internal class ProductRepository : AbstractRepository(), KoinComponent {
-    private val productApi: ProductApi by inject()
-    private val productDb: ProductDatabase by inject()
-    private val coroutineScope: CoroutineScope by inject()
+internal class ProductRepository(
+    private val productApi: ProductApi,
+    private val productDb: ProductDatabase
+) : CachedRepository<List<ProductGroupEntry>, List<ProductGroup>>() {
 
-    init {
-        // Delete outdated at app start
-        coroutineScope.launch {
-            productDb.deleteOlderThan(maxAge)
-        }
+    override suspend fun onStart() {
+        productDb.deleteOlderThan(maxAge)
     }
 
     suspend fun getProductById(id: Long): Product? {
         return productDb.getProductById(id)?.toModel()
-            ?: getProductGroups(true) // TODO limit force update
-                .flatMap(ProductGroup::products)
-                .find { it.id == id }
+            ?: runCatchingCancelable {
+                update() // TODO limit updates?
+                productDb.getProductById(id)?.toModel()
+            }.getOrNull()
     }
 
-    suspend fun getProductGroups(forceUpdate: Boolean = false): List<ProductGroup> {
-        val eventId = CommonApp.settings.selectedEventId
-
-        fun loadFromDb(): List<ProductGroup>? {
-            logger.i { "Fetching products from DB ..." }
-            val dbProducts = productDb.getForEvent(eventId)
-            logger.d { "Found ${dbProducts.count()} products in DB" }
-
-            return if (dbProducts.isEmpty() || dbProducts.any { it.updated.olderThan(maxAge) }) {
-                null
-            } else {
-                dbProducts.map(ProductGroupEntry::toModel)
+    override fun query(): Flow<List<ProductGroupEntry>> =
+        productDb.getForEventFlow(CommonApp.settings.selectedEventId)
+            .map { groups ->
+                // TODO move this to db query?
+                groups.filter { it.products.isNotEmpty() } // Do not show groups that do not have products at all
+                    .sortedBy { it.name.lowercase() } // Sort groups with same position by name
+                    .sortedBy(ProductGroupEntry::position)
             }
-        }
 
-        suspend fun loadFromApiAndStore(): List<ProductGroup> {
-            logger.i { "Loading products from api ..." }
+    override suspend fun update() {
+        val eventId = CommonApp.settings.selectedEventId
+        logger.i { "Loading products from api ..." }
 
-            val timestamp = Now()
-            val apiProducts = productApi.getProducts(eventId)
-            logger.d { "Got ${apiProducts.sumOf { it.products.count() }} products from api" }
+        val timestamp = Now()
+        val apiProducts = productApi.getProducts(eventId)
+        logger.d { "Got ${apiProducts.sumOf { it.products.count() }} products from api" }
 
-            val modelGroups = apiProducts.map(ProductGroupDto::toModel)
-            val entryGroups = apiProducts.map { it.toEntry(eventId, timestamp) }
+        val entryGroups = apiProducts.map { it.toEntry(eventId, timestamp) }
 
-            logger.i { "Remove old products from DB ..." }
-            productDb.deleteForEvent(eventId)
-
-            logger.i { "Saving products to DB ..." }
-            productDb.insert(entryGroups)
-
-            return modelGroups
-        }
-
-        val result = when (forceUpdate) {
-            true -> loadFromApiAndStore()
-            false -> loadFromDb() ?: loadFromApiAndStore()
-        }
-
-        return result
-            .filter { it.products.isNotEmpty() } // Do not show groups that do not have products at all
-            .sortedBy { it.name.lowercase() } // Sort groups with same position by name
-            .sortedBy(ProductGroup::position)
+        logger.i { "Replace products in DB ..." }
+        productDb.replace(entryGroups)
     }
+
+    override fun mapDbEntity(dbEntity: List<ProductGroupEntry>): List<ProductGroup> =
+        dbEntity.map(ProductGroupEntry::toModel)
+
+    override fun shouldFetch(cache: List<ProductGroupEntry>): Boolean =
+        cache.isEmpty() || cache.any { it.updated.olderThan(maxAge) }
 
     companion object {
         private val maxAge = 24.hours
     }
 }
-
-private fun ProductGroupDto.toModel() = ProductGroup(
-    id = this.id,
-    name = this.name,
-    position = this.position,
-    products = this.products.map(ProductDto::toModel).sort()
-)
-
-private fun ProductDto.toModel() = Product(
-    id = this.id,
-    name = this.name,
-    price = this.price.cent,
-    soldOut = this.soldOut,
-    allergens = this.allergens.map { allergen ->
-        Allergen(allergen.id, allergen.name, allergen.shortName)
-    },
-    position = this.position,
-)
 
 private fun ProductGroupDto.toEntry(eventId: Long, timestamp: Instant) = ProductGroupEntry(
     id = this.id,
@@ -130,17 +93,17 @@ private fun ProductDto.toEntry() = ProductEntry(
 )
 
 private fun ProductEntry.toModel() = Product(
-    id = this.id!!,
-    name = this.name!!,
-    price = this.price!!.cent,
-    soldOut = this.soldOut!!,
-    allergens = this.allergens.map { Allergen(it.id!!, it.name!!, it.shortName!!) },
+    id = this.id,
+    name = this.name,
+    price = this.price.cent,
+    soldOut = this.soldOut,
+    allergens = this.allergens.map { Allergen(it.id, it.name, it.shortName) },
     position = this.position
 )
 
 private fun ProductGroupEntry.toModel() = ProductGroup(
-    id = this.id!!,
-    name = this.name!!,
+    id = this.id,
+    name = this.name,
     position = this.position,
     products = this.products.map(ProductEntry::toModel).sort()
 )

@@ -1,49 +1,48 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 
 @Composable
 fun Table(table: Table, onClick: (Table) -> Unit) {
-    val cardShape = RoundedCornerShape(10)
     Card(
-        shape = cardShape,
-        backgroundColor = MaterialTheme.colors.primary,
-        modifier = Modifier
-            .aspectRatio(1f)
-            .clip(cardShape)
-            .clickable { onClick(table) }
+        onClick = { onClick(table) },
+        modifier = Modifier.aspectRatio(1f)
     ) {
         Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = table.number.toString(),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.headlineMedium,
             )
+            if (table.hasOrders) {
+                Badge(
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {} // content != null -> large Badge
+            }
         }
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
-private fun TablePreview() {
-    WaiterRobotTheme {
-        Table(table = Table(0, 1, "Group 1"), onClick = {})
-    }
+private fun TablePreview() = Preview {
+    Table(table = Table(0, 1, "Group 1", hasOrders = true), onClick = {})
 }

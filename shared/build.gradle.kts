@@ -1,136 +1,127 @@
-import co.touchlab.faktory.internal.GithubCalls
-import co.touchlab.faktory.versionmanager.GitTagBasedVersionManager
-import co.touchlab.faktory.versionmanager.GitTagVersionManager
-import co.touchlab.faktory.versionmanager.GithubReleaseVersionWriter
-import co.touchlab.faktory.versionmanager.VersionManager
-import co.touchlab.faktory.versionmanager.VersionWriter
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import java.util.Date
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    kotlin("plugin.serialization")
-    id("com.android.library")
-    id("co.touchlab.faktory.kmmbridge") version "0.3.7"
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.android.library)
     `maven-publish`
-    id("dev.jamiecraane.plugins.kmmresources") version "1.0.0-alpha11" // Shared localization
-    id("io.realm.kotlin") version "1.10.2"
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.touchlab.kmmbridge)
+    alias(libs.plugins.touchlab.skie)
+    alias(libs.plugins.kmmresources)
+    alias(libs.plugins.realm)
 }
 
-version = "1.0" // Shared package has only 2 digit version, patch is managed by kmmbridge.
-
-val sharedNamespace = "org.datepollsystems.waiterrobot.shared"
 val generatedLocalizationRoot: String =
-    File(project.buildDir, "generated/localizations").absolutePath
+    File(project.layout.buildDirectory.asFile.get(), "generated/localizations").absolutePath
 val iosFrameworkName = "shared"
 
-kotlin {
-    android()
+group = project.property("SHARED_GROUP") as String
+version = project.property(
+    if (project.hasProperty("AUTO_VERSION")) "AUTO_VERSION" else "SHARED_BASE_VERSION"
+) as String
+val sharedNamespace = "$group.shared"
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+kotlin {
+    androidTarget {
+        publishAllLibraryVariants()
+    }
+
+    jvmToolchain(17)
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            // Must be set to false for shared localization (otherwise resources are not available)
+            isStatic = false
+            freeCompilerArgs += "-Xobjc-generics"
+        }
+    }
 
     // needed to export kotlin documentation in objective-c headers
     targets.withType<KotlinNativeTarget> {
         compilations["main"].kotlinOptions.freeCompilerArgs += "-Xexport-kdoc"
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
-        val commonMain by getting {
+        all {
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCRefinement")
+            languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+        }
+
+        commonMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/commonMain/kotlin")
 
             dependencies {
                 // Logger
-                api("co.touchlab:kermit:${Versions.kermitLogger}")
+                api(libs.touchlab.kermit)
 
                 // Dependency injection
-                implementation("io.insert-koin:koin-core:${Versions.koinDi}")
+                implementation(libs.koin.core)
 
                 // Architecture
-                api("org.orbit-mvi:orbit-core:${Versions.orbitMvi}") // MVI
-                api("dev.icerock.moko:mvvm-core:${Versions.mokoMvvm}") // ViewModelScope
+                api(libs.orbit.core) // MVI
+                api(libs.moko.mvvm) // ViewModelScope
+                implementation(libs.touchlab.skie.annotations)
+
+                // Permissions
+                api(libs.moko.permissions)
 
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-core:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-content-negotiation:${Versions.ktor}")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-auth:${Versions.ktor}")
-                implementation("io.ktor:ktor-client-logging:${Versions.ktor}")
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.encoding)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.serialization.json)
+                implementation(libs.ktor.client.auth)
+                implementation(libs.ktor.client.logging)
 
                 // Realm (Database)
-                implementation("io.realm.kotlin:library-base:${Versions.realm}")
+                implementation(libs.realm)
 
                 // SharedSettings
-                implementation("com.russhwolf:multiplatform-settings:${Versions.settings}")
-                implementation("com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}")
+                implementation(libs.settings)
+                implementation(libs.settings.coroutines)
 
                 // Helper
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // Also needed by android for ComposeDestination parameter serialization
+                api(libs.kotlinx.datetime)
+                // Also needed by android for ComposeDestination parameter serialization
+                api(libs.kotlinx.serialization.json)
             }
         }
-        val commonTest by getting {
+        commonTest {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
 
-        val androidMain by getting {
+        androidMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/androidMain/kotlin")
 
             dependencies {
                 // Dependency injection
-                api("io.insert-koin:koin-android:${Versions.koinDi}")
+                api(libs.koin.android)
 
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-cio:${Versions.ktor}")
+                implementation(libs.ktor.client.cio)
             }
         }
-        val androidUnitTest by getting
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
+        iosMain {
             // Include the generated localization source
             kotlin.srcDir("$generatedLocalizationRoot/iosMain/kotlin")
 
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-
             dependencies {
                 // Ktor (HTTP client)
-                implementation("io.ktor:ktor-client-darwin:${Versions.ktor}")
+                implementation(libs.ktor.client.darwin)
             }
-        }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
-        }
-    }
-
-    // Needed for kmmbrigde to create swift package
-    cocoapods {
-        name = iosFrameworkName
-        summary = "Shared KMM iOS-module of the WaiterRobot app"
-        homepage = "https://github.com/DatepollSystems/waiterrobot-mobile_android-shared"
-        authors = "DatepollSystems"
-        ios.deploymentTarget = "15"
-
-        framework {
-            // Must be set to false for shared localization (otherwise resources are not available)
-            isStatic = false
         }
     }
 
@@ -141,39 +132,43 @@ kotlin {
 
 android {
     namespace = sharedNamespace
-    compileSdk = Versions.androidCompileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
-        minSdk = Versions.androidMinSdk
-        targetSdk = Versions.androidTargetSdk
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
     // Include the generated localization string resources
     sourceSets["main"].res.srcDir("$generatedLocalizationRoot/androidMain/res")
 }
 
+addGithubPackagesRepository()
 kmmbridge {
     mavenPublishArtifacts()
-    /** [co.touchlab.faktory.KmmBridgeExtension.githubReleaseVersions] */
-    versionManager.set(CustomGitVersionManager(GitTagVersionManager))
-    versionWriter.set(GithubReleaseVersionWriter(GithubCalls)) // TODO modify to support draft releases, custom title and generation of release notes (for api see https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#create-a-release)?
     spm()
-    versionPrefix.set(version as String)
 }
-addGithubPackagesRepository()
 
 kmmResourcesConfig {
     androidApplicationId.set(sharedNamespace) // appId of the shared module
-    packageName.set("${sharedNamespace}.generated.localization")
+    packageName.set("$sharedNamespace.generated.localization")
     defaultLanguage.set("en")
     input.set(File(project.projectDir, "localization.yml"))
     output.set(project.projectDir)
     srcFolder.set(generatedLocalizationRoot) // place the generated files in the build folder
 }
 
+buildkonfig {
+    packageName = "$sharedNamespace.buildkonfig"
+    defaultConfigs {
+        buildConfigField(Type.STRING, "sharedVersion", version as String, const = true)
+    }
+}
+
 tasks {
+    val generateLocalizationsTask = named("generateLocalizations")
+
     // Plutil generates the localizations for ios
     val plutil = named("executePlutil") {
-        dependsOn(named("generateLocalizations"))
+        dependsOn(generateLocalizationsTask)
     }
 
     // Generate the localizations for all ios targets
@@ -185,52 +180,42 @@ tasks {
     }
 
     afterEvaluate {
-        // Copy the generated iOS localizations to the framework
+        // Copy the generated iOS localizations to the framework and set some task dependencies
         listOf("Release", "Debug").forEach { buildType ->
             named("assembleShared${buildType}XCFramework") {
+                dependsOn(generateLocalizationsTask)
                 doLast {
                     // TODO can we get this names from somewhere?
                     listOf("ios-arm64", "ios-arm64_x86_64-simulator").forEach { arch ->
                         copy {
                             from("$generatedLocalizationRoot/commonMain/resources/ios")
                             into(
-                                "${project.buildDir}/XCFrameworks/${buildType.lowercase()}/" +
-                                    "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
+                                File(
+                                    project.layout.buildDirectory.asFile.get(),
+                                    "XCFrameworks/${buildType.lowercase()}/" +
+                                        "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
+                                )
                             )
                         }
                     }
                 }
             }
+            listOf("X64", "Arm64", "SimulatorArm64").forEach { arch ->
+                findByName("skiePackageCustomSwift${buildType}FrameworkIos$arch")?.apply {
+                    dependsOn(generateLocalizationsTask)
+                }
+            }
+        }
+
+        // Make sure that the localizations are up to date for release
+        named("androidReleaseSourcesJar") {
+            dependsOn(generateLocalizationsTask)
         }
     }
 
     // Make sure that the localizations are always up to date
     named("preBuild") {
         dependsOn(named("generateLocalizations"))
-    }
-}
-
-/**
- * Adds a suffix to the version when a lava/pre release is made
- * see [co.touchlab.faktory.versionmanager.GitTagVersionManager]
- */
-class CustomGitVersionManager(
-    private val manager: GitTagBasedVersionManager
-) : VersionManager by manager {
-    override fun getVersion(
-        project: Project,
-        versionPrefix: String,
-        versionWriter: VersionWriter
-    ): String {
-        val baseVersion = manager.getVersion(project, versionPrefix, versionWriter)
-
-        // Add version suffix for dev releases
-        // e.g. main -> 1.0.1, develop -> 1.0.1-lava-1676142940
-        return when (val branch = project.property("GITHUB_BRANCH")) {
-            "main" -> baseVersion
-            "develop" -> "$baseVersion-lava-${Date().toInstant().epochSecond}"
-            else -> throw IllegalStateException("Unexpected value for property GITHUB_BRANCH: $branch")
-        }
     }
 }
 

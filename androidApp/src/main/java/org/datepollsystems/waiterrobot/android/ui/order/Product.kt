@@ -4,18 +4,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
+import org.datepollsystems.waiterrobot.shared.utils.euro
 
 @Composable
 fun Product(
@@ -27,7 +31,7 @@ fun Product(
         enabled = !product.soldOut,
         shape = RoundedCornerShape(10),
         contentPadding = PaddingValues(5.dp),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onSurface)
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
         // elevation = ButtonDefaults.elevation() // TODO yes/no?
     ) {
         Column(
@@ -36,23 +40,39 @@ fun Product(
         ) {
             Text(
                 text = product.name,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 textDecoration = if (product.soldOut) TextDecoration.LineThrough else null
             )
             if (product.allergens.isNotEmpty()) {
                 Text(
                     text = product.allergens.joinToString(", ") { it.shortName },
-                    style = MaterialTheme.typography.caption,
+                    style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     color = Color.LightGray
                 )
             }
             Text(
                 text = product.price.toString(),
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ProductPreview() = Preview {
+    Product(
+        product = Product(
+            id = 1,
+            name = "Beer",
+            price = 4.euro,
+            soldOut = false,
+            allergens = listOf(Allergen(1, "Egg", "E")),
+            position = 1
+        ),
+        onSelect = {}
+    )
 }

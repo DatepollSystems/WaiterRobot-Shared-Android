@@ -1,22 +1,13 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        val kotlinVersion = "1.9.0"
-        classpath("com.android.tools.build:gradle:8.1.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:${kotlinVersion}")
-    }
-}
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.23.1"
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.detekt) apply true
 }
 
 val detektReportMergeSarif by tasks.registering(ReportMergeTask::class) {
@@ -30,7 +21,7 @@ allprojects {
         mavenCentral()
     }
 
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = rootProject.libs.plugins.kotlin.detekt.get().pluginId)
 
     detekt {
         config.from(rootDir.resolve("detekt.yml"))
@@ -41,7 +32,7 @@ allprojects {
     }
 
     dependencies {
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.1")
+        detektPlugins(rootProject.libs.detekt.formatting)
     }
 
     tasks.withType<Detekt>().configureEach {

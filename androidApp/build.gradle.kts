@@ -1,14 +1,16 @@
+import com.android.build.api.dsl.VariantDimension
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.util.Date
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("com.github.triplet.play") version "3.8.4"
-    kotlin("android")
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.play.publisher)
+    alias(libs.plugins.google.ksp)
 }
 
 private val versionProperty by lazy {
@@ -17,22 +19,41 @@ private val versionProperty by lazy {
     }
 }
 
+private val localProperties = Properties().apply {
+    project.rootProject.file("local.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { load(it) }
+}
+
+fun fromProjectOrLocalProperties(name: String): Any? = run {
+    project.findProperty(name) ?: localProperties.getOrDefault(name, null)
+}
+
+val SHARED_GROUP: String by project
+val SHARED_BASE_VERSION: String by project
+
 version = versionProperty.getProperty("androidVersion")
+group = SHARED_GROUP
+
+kotlin {
+    jvmToolchain(17)
+}
 
 android {
     namespace = "org.datepollsystems.waiterrobot.android"
-    compileSdk = Versions.androidCompileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     androidResources {
         generateLocaleConfig = true
     }
 
     defaultConfig {
-        applicationId = "org.datepollsystems.waiterrobot.android"
+        applicationId = this@android.namespace
 
-        minSdk = Versions.androidMinSdk
-        targetSdk = Versions.androidTargetSdk
-        buildToolsVersion = Versions.androidBuildTools
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        buildToolsVersion = libs.versions.android.buildTools.get()
 
         versionName = version.toString()
         versionCode = run {
@@ -47,8 +68,8 @@ android {
     }
 
     signingConfigs {
-        val keyPassword: String? = project.findProperty("keyPassword")?.toString()
-        val storePassword: String? = project.findProperty("storePassword")?.toString()
+        val keyPassword: String? = fromProjectOrLocalProperties("keyPassword")?.toString()
+        val storePassword: String? = fromProjectOrLocalProperties("storePassword")?.toString()
         val keyStoreFile = file(".keys/app_sign.jks")
 
         // Only create signingConfig, when all needed configs are available
@@ -66,6 +87,7 @@ android {
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+            allowedHosts("*")
         }
 
         release {
@@ -81,7 +103,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.composeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
     packaging {
@@ -91,8 +113,6 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
@@ -102,7 +122,7 @@ android {
         create("lava") {
             dimension = "environment"
             applicationIdSuffix = ".lava"
-            buildConfigField("String", "API_BASE", "\"https://lava.kellner.team/api\"")
+            allowedHosts("*")
             manifestPlaceholders["host"] = "lava.kellner.team"
 
             // Use time-based versionCode for lava to allow multiple build per "base version"
@@ -117,8 +137,8 @@ android {
 
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE", "\"https://my.kellner.team/api\"")
             manifestPlaceholders["host"] = "my.kellner.team"
+            allowedHosts("my.kellner.team")
         }
     }
 
@@ -126,17 +146,21 @@ android {
         // Include the generated navigation sources
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin")
+                kotlin.srcDir(File(project.layout.buildDirectory.asFile.get(), "/generated/ksp/$name/kotlin"))
             }
         }
 
         // Write built version to file after creating a bundle (needed for ci, to create the version tag)
         if (this.name.endsWith("Release")) {
             tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
-                File(project.buildDir, "version.tag")
+                File(project.layout.buildDirectory.asFile.get(), "version.tag")
                     .writeText(this@variant.versionName)
             }
         }
+    }
+
+    tasks.withType<KotlinCompilationTask<*>> {
+        compilerOptions.freeCompilerArgs.add("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }
 
@@ -150,54 +174,85 @@ ksp {
 play {
     defaultToAppBundles.set(true)
     serviceAccountCredentials.set(file(".keys/service-account.json"))
-    track.set("internal")
     releaseStatus.set(ReleaseStatus.COMPLETED)
+    track.set("internal")
+}
+
+val remoteBuild = project.findProperty("remoteBuild") == "true" // Default false
+if (remoteBuild) {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/DatepollSystems/WaiterRobot-Shared-Android")
+            credentials {
+                username = project.property("GITHUB_PACKAGES_USERNAME") as String
+                password = project.property("GITHUB_PACKAGES_PASSWORD") as String
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation(project(":shared"))
+    if (remoteBuild) {
+        implementation("${SHARED_GROUP}:shared-android:${SHARED_BASE_VERSION}.+")
+    } else {
+        implementation(project(":shared"))
+    }
 
-    implementation("androidx.lifecycle:lifecycle-process:${Versions.androidxLifecycle}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycle}")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.location)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring(libs.android.desugar)
 
     // Compose
-    runtimeOnly("androidx.compose.compiler:compiler:${Versions.composeCompiler}")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.foundation:foundation:${Versions.compose}")
-    implementation("androidx.compose.foundation:foundation-layout:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-graphics:${Versions.compose}")
-    implementation("androidx.compose.ui:ui:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-tooling:${Versions.compose}")
-    implementation("androidx.compose.ui:ui-tooling-preview:${Versions.compose}")
-    implementation("androidx.compose.material:material:${Versions.compose}")
-    implementation("androidx.compose.material:material-icons-core:${Versions.compose}")
-    implementation("androidx.compose.material:material-icons-extended:${Versions.compose}")
+    implementation(platform(libs.androidx.compose.bom))
+    runtimeOnly(libs.androidx.compose.compiler)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.ui.core)
+    implementation(libs.androidx.compose.ui.graphics)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3.core)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Compose helpers
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation(libs.accompanist.permissions)
 
     // Architecture (MVI)
-    implementation("org.orbit-mvi:orbit-compose:${Versions.orbitMvi}")
+    implementation(libs.orbit.compose)
 
     // Dependency injection
-    implementation("io.insert-koin:koin-androidx-compose:3.4.6") // Not aligned with other koin version
+    implementation(libs.koin.compose) // Not aligned with other koin version
 
     // SafeCompose Navigation Args
-    implementation("io.github.raamcosta.compose-destinations:core:${Versions.composeDestinations}")
-    ksp("io.github.raamcosta.compose-destinations:ksp:${Versions.composeDestinations}")
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
 
     // CameraX
-    implementation("androidx.camera:camera-camera2:${Versions.camera}")
-    implementation("androidx.camera:camera-view:${Versions.camera}")
-    implementation("androidx.camera:camera-lifecycle:${Versions.camera}")
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.lifecycle)
 
     // QrCode Scanning
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation(libs.barcode.scanning)
 
     // In-App-Update support
-    implementation("com.google.android.play:app-update:2.1.0")
-    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
+
+    // Stripe Tap-To-Pay
+    implementation(libs.stripe.terminal)
+    implementation(libs.stripe.ttp)
+}
+
+private fun VariantDimension.allowedHosts(vararg hosts: String) {
+    buildConfigField(
+        type = String::class.simpleName!!,
+        name = "ALLOWED_HOSTS_CSV",
+        value = hosts.joinToString(",", "\"", "\"")
+    )
 }

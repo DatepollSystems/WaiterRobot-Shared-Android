@@ -1,20 +1,25 @@
 package org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list
 
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
+import org.datepollsystems.waiterrobot.shared.core.data.mapType
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
-import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroupWithTables
+import kotlin.native.HiddenFromObjC
 
 data class TableListState(
-    val filteredTableGroups: List<TableGroupWithTables> = emptyList(),
-    internal val selectedTableGroups: Set<TableGroup> = emptySet(),
-    internal val unselectedTableGroups: Set<TableGroup> = emptySet(),
+    @HiddenFromObjC
+    val tableGroups: Resource<List<TableGroup>> = Resource.Loading(),
+    @Deprecated("Legacy - Not used anymore")
     override val viewState: ViewState = ViewState.Loading
 ) : ViewModelState() {
-    override fun withViewState(viewState: ViewState): TableListState = copy(viewState = viewState)
 
-    val selectedTableGroupList: List<TableGroup> =
-        selectedTableGroups.sortedBy { it.name.lowercase() }
-    val unselectedTableGroupList: List<TableGroup> =
-        unselectedTableGroups.sortedBy { it.name.lowercase() }
+    @Suppress("unused") // iOS only
+    val tableGroupsArray by lazy {
+        tableGroups.mapType { it?.toTypedArray() }
+    }
+
+    @Deprecated("Legacy - Not used anymore")
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    override fun withViewState(viewState: ViewState): TableListState = copy(viewState = viewState)
 }

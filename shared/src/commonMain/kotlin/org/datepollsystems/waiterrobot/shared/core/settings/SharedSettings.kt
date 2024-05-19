@@ -1,35 +1,41 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
-import com.russhwolf.settings.*
-import com.russhwolf.settings.coroutines.getLongFlow
+import com.russhwolf.settings.ObservableSettings
+import com.russhwolf.settings.boolean
+import com.russhwolf.settings.nullableString
+import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.datepollsystems.waiterrobot.shared.features.auth.api.models.LoginResponseDto
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
+import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-@OptIn(ExperimentalSettingsApi::class)
 class SharedSettings : KoinComponent {
     private val settings: ObservableSettings by inject()
 
-    var eventName: String by settings.string(defaultValue = "Unknown")
-        internal set
+    val eventName get() = selectedEvent?.name ?: "Unknown"
+    val selectedEventId: Long get() = selectedEvent?.id ?: -1L
+
     var organisationName: String by settings.string(defaultValue = "Unknown")
         internal set
     var waiterName: String by settings.string(defaultValue = "Unknown")
         internal set
     var lastUpdateAvailableNote: Instant? by settings.nullableJsonSerialized()
 
+    internal var enableContactlessPayment: Boolean by settings.boolean(defaultValue = true)
+    internal var apiBase: String? by settings.nullableString()
+
     // Can not use the settings "native" serialization as this currently can not be combined with settings flow
     internal var tokens: Tokens? by settings.nullableJsonSerialized()
     internal val tokenFlow: Flow<Tokens?> =
         settings.jsonSerializedOrNullFlow(SharedSettings::tokens.name)
 
-    internal var selectedEventId: Long by settings.long("selectedEventId", defaultValue = -1L)
-    internal val selectedEventIdFlow: Flow<Long> =
-        settings.getLongFlow(key = "selectedEventId", defaultValue = -1)
+    internal var selectedEvent: Event? by settings.nullableJsonSerialized()
+    internal val selectedEventFlow: Flow<Event?> =
+        settings.jsonSerializedOrNullFlow(SharedSettings::selectedEvent.name)
 
     internal var theme: AppTheme by settings.jsonSerialized(defaultValue = AppTheme.SYSTEM)
     internal val themeFlow: Flow<AppTheme> =

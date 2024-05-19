@@ -1,25 +1,31 @@
 <p align="center">
-    <img src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/>
+    <img alt="WaiterRobot logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>    
 </p>
 <h1 align="center">WaiterRobot</h1>
-<p align="center">Lightning fast and simple gastronomy</p>
+<div align="center">
+    <span>Lightning fast and simple gastronomy</span><br>
+    <a href="https://play.google.com/store/apps/details?id=org.datepollsystems.waiterrobot.android">
+        <img alt="Get it on Google Play" height="60px" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"/>
+    </a>
+</div>
 
-# Android & shared
+# Android & Shared
 
-This repository includes the Android App ([androidApp](./androidApp)) and the shared KMM
-module ([shared](./shared)) for the WaiterRobot App. The iOS App can be
+This repository includes the Android app ([androidApp](./androidApp)) and the shared KMM
+module ([shared](./shared)) for the WaiterRobot App. The iOS app can be
 found [here](https://github.com/DatepollSystems/waiterrobot-mobile_iOS).
 
-The Android App depends on the shared module directly through a gradle project dependency.
+The shared module is published as an SPM package and Java/Android library to the 
+[GitHub Package Registry](https://github.com/orgs/DatepollSystems/packages?repo_name=WaiterRobot-Shared-Android).
+For this the [KMMBridge](https://github.com/touchlab/KMMBridge) tool is used.
 
-The shared module is also published as an SPM Package directly in this repo with a Package.swift in
-the repo root. Therefore [KMMBridge](https://github.com/touchlab/KMMBridge) is used. The SPM Package
-can be published by running the `KMM Bridge Publish Release` GitHub-Action.
+> For local development the Android module directly depends on the local shared version 
+> (gradle project dependency). When releasing the published library version is used.
 
 ## iOS dev with local KMM module version
 
 For a guide to use a local version of the KMM module
-see [KMMBridge local dev spm](https://touchlab.github.io/KMMBridge/spm/IOS_LOCAL_DEV_SPM)
+see [KMMBridge local dev spm](https://kmmbridge.touchlab.co/docs/spm/IOS_LOCAL_DEV_SPM)
 
 The main branch contains the `Package.swift` file ready for local dev.
 
@@ -37,28 +43,27 @@ The main branch contains the `Package.swift` file ready for local dev.
 
 Production release is triggered on push to main. The CI then builds the app and deploys it to
 the `internal` Track on Google Play. After testing the app then must be promoted to production
-manually from there. A tag in the form of `android-major.minor.patch` (e.g. android-1.0.0) is
+manually from there. A tag in the form of `android/major.minor.patch` (e.g. android/1.0.0) is
 created. (see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
 
 > Do not forget to bump the android version ([version.properties](androidApp/version.properties)) on
 > the dev branch after a production release was made.
 
-On each push to develop also a lava (dev) build is triggered and published to `internal` track of
+On each push to develop a lava (dev) build is triggered and published to `internal` track of
 the WaiterRobot Lava app on Google Play. A tag in the form
-of `android-major.minor.patch-lava-epochMinutes` is created (e.g. android-1.0.1-lava-27935730). (
+of `android/major.minor.patch-lava-epochMinutes` is created (e.g. android/1.0.1-lava-27935730). (
 see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
 
 ### Shared
 
-Production release is triggered on push to main (only when shared module changed). The CI then
-builds the Swift Package and releases to GitHub releases. A tag in the form of `major.minor.patch` (
-e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publishShared.yml)
-and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
+A release is triggered on push to main or develop (only when shared module changed). The CI then
+builds the shared Xcode Framework (Swift Package) and the shared Android library. Both artifacts
+are uploaded to the GitHub Package registry. A tag in the form of `major.minor.patch` (
+e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publish.yml))
 
-On each push to develop also a dev build is triggered and published to GitHub Packages. A tag in the
-form of `major.minor.patch-lava-epochSeconds` (e.g. 1.0.1-dev-1676143102) and a corresponding GitHub
-Release is created. (see [publishShared.yml](.github/workflows/publishAndroid.yml)
-and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
+> Unfortunately SPM does not support custom tag prefixes (e.g. shared/1.0.0) and kmmbridge
+> does not support tag suffixes (without creating a custom release action). Therefor the currently
+> the no shared identifier is added to the tag of shared releases.
 
 # Language, libraries and tools
 
@@ -66,7 +71,7 @@ and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 
 - [Kotlin](https://kotlinlang.org/)
 - [Kotlin Multiplatform (Mobile)](https://kotlinlang.org/lp/mobile/)
-- [KMMBridge](https://touchlab.github.io/KMMBridge/intro)
+- [KMMBridge](https://kmmbridge.touchlab.co/docs/)
 - [Ktor](https://ktor.io/) Http client
     - [Content Negotiation](https://ktor.io/docs/serialization-client.html) Body serialization
     - [Client Auth](https://ktor.io/docs/auth.html) Authentication (Bearer)
@@ -79,6 +84,7 @@ and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
 - [KMM Resources](https://github.com/jcraane/kmm-resources) shared localization
 - [KotlinX DateTime](https://github.com/Kotlin/kotlinx-datetime) Multiplatform DateTime
 - [KotlinX Serialization (Json)](https://github.com/Kotlin/kotlinx.serialization) JSON serialization
+- [BuildKonfig](https://github.com/yshrsmz/BuildKonfig) BuildConfig for Kotlin Multiplatform Projects
 
 ## Android
 
@@ -93,14 +99,14 @@ and [build.gradle.kts (shared)](shared/build.gradle.kts) kmmbridge config)
       permission management in JetpackCompose
 - [Barcode-Scanning](https://developers.google.com/ml-kit/vision/barcode-scanning/android)
   QR/Barcode scanner
+- [Gradle Play Publisher](https://github.com/Triple-T/gradle-play-publisher)
 
 # Further Resources and References
 
 - [Kotlin/kmm-sample](https://github.com/Kotlin/kmm-sample)
 - [KaMPKit](https://github.com/touchlab/KaMPKit) Collection of code and tools for getting started
   with KMP/KMM
-- [KMMBridge SPM sample (android + shared)](https://github.com/touchlab/KMMBridgeSampleKotlin)
-- [KMMBridge SPM sample (iOS)](https://github.com/touchlab/KMMBridgeSampleSpm)
+- [KMMBridge sample](https://github.com/touchlab/KMMBridgeSKIETemplate)
 - [joreilly/PeopleInSpace](https://github.com/joreilly/PeopleInSpace) Minimal KMP project using
   SwiftUI, Jetpack Compose, SQLDelight, Koin (also includes many other platforms)
 - [KMP library/tool collection 1](https://github.com/AAkira/Kotlin-Multiplatform-Libraries)

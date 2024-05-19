@@ -2,13 +2,6 @@ app:
   name:
     en: waiters.team
     de: kellner.team
-  genericError:
-    message:
-      en: Something went wrong. Please try again.
-      de: Etwas ist schief gelaufen. Bitte versuche es erneut.
-    title:
-      en: Error
-      de: Fehler
   forceUpdate:
     title:
       en: App Update Required
@@ -56,6 +49,9 @@ tableList:
   noTableFound:
     en: There are no tables for this event.
     de: Für dieses Event sind keine Tische verfügbar.
+  groupFilter:
+    en: Table groups
+    de: Tischgruppen
 tableDetail:
   title:
     en: Table %1$s (%2$s)
@@ -63,6 +59,9 @@ tableDetail:
   noOrder:
     en: There is currently no unpaid order for table %1$s (%2$s).
     de: Für den Tisch %1$s (%2$s) gibt es zurzeit keine unbezahlte Bestellungen.
+  newOrder:
+    en: New Order
+    de: Neue Bestellung
 login:
   title:
     en: Waiter login
@@ -84,6 +83,13 @@ login:
     desc:
       en: The code is not valid. Ask your oganisation admin for a new one.
       de: Der Login link ist ungültig. Bitte deinen Organisationsadministrator um einen neuen.
+  debugDialog:
+    inputLabel:
+      en: Login link
+      de: Anmeldelink
+    placeholder:
+      en: https://my.kellner.team/ml/signIn?
+      de: https://my.kellner.team/ml/signIn?
 qrScanner:
   cameraPermissionRequired:
     en: For QR-Code scanning the Camera permission is required!
@@ -129,7 +135,7 @@ switchEvent:
 order:
   keepOrder:
     en: Keep order
-    de: Bestellung behalte
+    de: Bestellung behalten
   notSent:
     title:
       en: Order not sent
@@ -141,6 +147,9 @@ order:
     en: Order for table %1$s (%2$s)
     de: Bestellung für Tisch %1$s (%2$s)
   addProduct:
+    en: Add Product
+    de: Produkt Hinzufügen
+  descAddProduct:
     en: Add a product to the order
     de: Füge ein Produkt zur Bestellung hinzu
   productSoldOut:
@@ -205,8 +214,11 @@ billing:
     en: Change
     de: Rückgeld
   pay:
-    en: Pay
-    de: Bezahlen
+    en: Pay Cash
+    de: Bar Bezahlen
+  payByCard:
+    en: Pay by Card
+    de: Mit Karte Bezahlen
   given:
     en: Given
     de: Gegeben
@@ -216,7 +228,37 @@ billing:
   noOpenBill:
     en: There is currently no open bill for table %1$s (%2$s)
     de: Es gibt derzeit keine offene Rechnung für den Tisch %1$s (%2$s)
+  amountToLow:
+    en: The selected payment method requires a minimum amount of %1$s.
+    de: Die ausgewählte Zahlungsmethode erfordert einen Mindestbetrag von %1$s.
+  stripe:
+    canceled:
+      title:
+        en: Card payment canceled
+        de: Kartenzahlung abgebrochen
+      desc:
+        en: The card payment was canceled. You can try again.
+        de: Die Kartenzahlung wurde abgebrochen. Du kannst es erneut versuchen.
+    failed:
+      title:
+        en: Card payment failed
+        de: Kartenzahlung fehlgeschlagen
+      desc:
+        en: The card payment failed. You can try again.
+        de: Die Kartenzahlung ist fehlgeschlagen. Du kannst es erneut versuchen.
+    success:
+      en: Card payment successful
+      de: Kartenzahlung erfolgreich
+    locationDisabled:
+      en: The location service is disabled. Please enable it to accept card payments.
+      de: Der Standortdienst ist deaktiviert. Bitte aktiviere ihn, um Kartenzahlungen zu akzeptieren.
+    nfcDisabled:
+      en: The NFC service is disabled. Please enable it to accept card payments.
+      de: Der NFC-Dienst ist deaktiviert. Bitte aktiviere ihn, um Kartenzahlungen zu akzeptieren.
 settings:
+  title:
+    en: Settings
+    de: Einstellungen
   logout:
     action:
       en: Logout
@@ -230,23 +272,27 @@ settings:
   keepLoggedIn:
     en: Keep logged-in
     de: Angemeldet bleiben
+  cardPayment:
+    title:
+      en: Card payment
+      de: Kartenzahlung
+    desc:
+      en: Enable and initialize the card payment module.
+      de: Kartenzahlungsmodul aktivieren und initialisieren.
   darkMode:
     title:
       en: Dark Mode
       de: Dunkelmodus
     useSystem:
       en: Use system setting
-      de: System einstellung verwenden
-  title:
-    en: Settings
-    de: Einstellungen
+      de: Systemeinstellung verwenden
   refresh:
     title:
       en: Refresh data
       de: Daten aktualisieren
     desc:
       en: Refresh stored data (tables, products, …)
-      de: Gespeicherte daten aktualisieren (Tische, Produkte, …)
+      de: Gespeicherte Daten aktualisieren (Tische, Produkte, …)
   version:
     title:
       en: App version
@@ -257,3 +303,85 @@ settings:
   privacyPolicy:
     en: Privacy Policy
     de: Datenschutz
+stripeInit:
+  title:
+    en: Initialize card payment
+    de: Kartenzahlungen initialisieren
+  locationDataSharingNotice:
+    en: The location data may be forwarded to our payment provider Stripe Inc. for payment processing. By continuing, you accept that data for payment processing will be processed by Stripe.
+    de: Die Standortdaten werden zur Zahlungsabwicklung gegebenenfalls an unserem Zahlungsanbieter Stripe Inc. weitergeleitet. Durch das Fortfahren akzeptierst du, dass Daten zur Zahlungsabwicklung von Stripe verarbeitet werden.
+  step:
+    start:
+      desc:
+        en: The event '%1$s' supports card payments. To accept card payments the payment module must be initialized.
+        de: Das Event '%1$s' unterstützt Kartenzahlungen. Um Kartenzahlungen zu akzeptieren, muss das Zahlungsmodul initialisiert werden.
+      action:
+        en: Initialize card payment
+        de: Kartenzahlungen initialisieren
+    grantLocationPermission:
+      desc:
+        en: To ensure secure card payments, the location permission is required.
+        de: Um sichere Kartenzahlungen zu gewährleisten, ist die Standortberechtigung erforderlich.
+      action:
+        en: Grant location permission
+        de: Standortberechtigung erteilen
+    enableGeoLocation:
+      desc:
+        en: To ensure secure card payments, the location service must be enabled.
+        de: Um sichere Kartenzahlungen zu gewährleisten, muss der Standortdienst aktiviert sein.
+      action:
+        en: Enable location service
+        de: Standortdienst aktivieren
+    enableNfc:
+      desc:
+        en: To accept card payments, the NFC service must be enabled.
+        de: Um Kartenzahlungen zu akzeptieren, muss der NFC-Dienst aktiviert sein.
+      action:
+        en: Enable NFC service
+        de: NFC-Dienst aktivieren
+    finished:
+      desc:
+        en: The card payment module is initialized. You can now accept card payments.
+        de: Das Kartenzahlungsmodul ist initialisiert. Du kannst jetzt Kartenzahlungen akzeptieren.
+      action:
+        en: Let's go
+        de: Los geht's
+    error:
+      desc:
+        en: An error occurred while initializing the card payment module. Please try again.
+        de: Beim Initialisieren des Kartenzahlungsmoduls ist ein Fehler aufgetreten. Bitte versuche es erneut.
+      action:
+        en: Retry
+        de: Erneut versuchen
+  error:
+    disabled:
+      en: Card payments are currently not possible.
+      de: Kartenzahlungen sind derzeit nicht möglich.
+    disabledForEvent:
+      en: Card payments are not enabled for this event.
+      de: Kartenzahlungen sind für dieses Event nicht aktiviert.
+    locationPermissionDenied:
+      en: Location permission denied
+      de: Standortberechtigung verweigert
+    terminalInitiationFailed:
+      en: Initialization of the card payment module failed.
+      de: Initialisierung des Kartenzahlungsmoduls fehlgeschlagen.
+    readerConnectionFailed:
+      en: Connection to the card payment module of the app failed.
+      de: Verbindung zum Kartenzahlungsmodul der App konnte nicht hergestellt werden.
+  continueWithoutStripe:
+    en: Continue without activating card payment
+    de: Ohne aktivierung der Kartenzahlung fortfahren
+exceptions:
+  retry:
+    en: Retry
+    de: Erneut versuchen
+  title:
+    en: Error
+    de: Fehler
+  generic:
+    en: Something went wrong. Please try again.
+    de: Etwas ist schief gelaufen. Bitte versuche es erneut.
+  accountNotActivated:
+    en: Your account is not activated. Please contact your Organization admin,
+    de: Dein Account ist nicht aktiviert. Bitte wende dich an deinen Organisationsadministrator.
