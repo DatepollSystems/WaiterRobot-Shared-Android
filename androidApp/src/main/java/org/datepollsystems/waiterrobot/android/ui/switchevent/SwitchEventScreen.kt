@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
+import org.datepollsystems.waiterrobot.shared.generated.localization.action
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.noEventFound
 import org.koin.androidx.compose.koinViewModel
@@ -53,34 +55,35 @@ fun SwitchEventScreen(
             // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be
             // on top of this part of the view
             Surface(modifier = Modifier.zIndex(1f)) {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(10.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Groups,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth(0.3f)
                             .aspectRatio(1f)
-                            .align(Alignment.CenterHorizontally)
                     )
                     Text(
                         text = L.switchEvent.desc(),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp)
+                        modifier = Modifier.padding(15.dp)
                     )
-                    HorizontalDivider()
                 }
             }
 
+            HorizontalDivider(thickness = 2.dp)
+
             View(
                 state = state,
+                modifier = Modifier.weight(1f),
                 onRefresh = vm::loadEvents
             ) {
                 if (state.events.isEmpty()) {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
                             .verticalScroll(rememberScrollState()) // Needed for Refreshable view
                     ) {
                         Text(
@@ -106,6 +109,18 @@ fun SwitchEventScreen(
                             HorizontalDivider()
                         }
                     }
+                }
+            }
+
+            HorizontalDivider()
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                TextButton(
+                    onClick = vm::logout,
+                ) {
+                    Text(L.settings.logout.action())
                 }
             }
         }
