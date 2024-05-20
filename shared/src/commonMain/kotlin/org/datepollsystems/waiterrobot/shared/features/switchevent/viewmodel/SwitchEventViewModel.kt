@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel
 
+import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
@@ -30,5 +31,9 @@ class SwitchEventViewModel internal constructor(
         repository.switchToEvent(event)
 
         updateParent<TableListViewModel>()
+    }
+
+    fun logout() = intent {
+        CommonApp.logout()
     }
 }
