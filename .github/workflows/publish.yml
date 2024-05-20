@@ -60,7 +60,7 @@ jobs:
       contents: write
       packages: write
     needs: changes
-    if: ${{ (github.event_name != 'workflow_dispatch' && needs.changes.outputs.shared == 'true') || (github.event_name == 'workflow_dispatch' && !github.event.inputs.androidOnly) }}
+    if: ${{ (github.event_name != 'workflow_dispatch' && needs.changes.outputs.shared == 'true') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.androidOnly == false || github.event.inputs.androidOnly == 'false')) }}
     uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildautoversion.yml@v1.1
     with:
       jvmVersion: 17
@@ -80,6 +80,6 @@ jobs:
   android-only:
     name: Release Android only
     needs: changes
-    if: ${{ (needs.changes.outputs.android == 'true' && needs.changes.outputs.shared == 'false') || (github.event_name == 'workflow_dispatch' && github.event.inputs.androidOnly) }}
+    if: ${{ (needs.changes.outputs.android == 'true' && needs.changes.outputs.shared == 'false') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.androidOnly == true || github.event.inputs.androidOnly == 'true')) }}
     uses: ./.github/workflows/publishAndroid.yml
     secrets: inherit
