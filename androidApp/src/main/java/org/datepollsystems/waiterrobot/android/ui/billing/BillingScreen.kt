@@ -135,56 +135,57 @@ fun BillingScreen(
                 }
             )
         },
-    ) {
-        BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
+        bottomSheet = {
+            if (showPaymentSheet) {
+                LaunchedEffect(paymentSheetState.isVisible) {
+                    if (paymentSheetState.isVisible) focusRequest.requestFocus()
+                }
 
-        if (showPaymentSheet) {
-            LaunchedEffect(paymentSheetState.isVisible) {
-                if (paymentSheetState.isVisible) focusRequest.requestFocus()
-            }
-
-            ModalBottomSheet(
-                onDismissRequest = {
-                    focusManager.clearFocus()
-                    showPaymentSheet = false
-                },
-                sheetState = paymentSheetState,
-                dragHandle = null
-            ) {
-                PaymentView(
-                    sum = state.priceSum.toString(),
-                    moneyGivenText = state.moneyGivenText,
-                    moneyGiven = vm::moneyGiven,
-                    moneyGivenInputFocusRequester = focusRequest,
-                    change = state.change,
-                    breakDownChange = vm::breakDownChange,
-                    resetChangeBreakUp = vm::resetChange,
-                    contactLessState = state.contactLessState,
-                    onContactless = {
-                        vm.initiateContactLessPayment()
+                ModalBottomSheet(
+                    onDismissRequest = {
                         focusManager.clearFocus()
-                        coroutineScope.launch {
-                            paymentSheetState.hide()
-                        }.invokeOnCompletion {
-                            if (!paymentSheetState.isVisible) {
-                                showPaymentSheet = false
-                            }
-                        }
+                        showPaymentSheet = false
                     },
-                    onPayClick = {
-                        vm.paySelection()
-                        focusManager.clearFocus()
-                        coroutineScope.launch {
-                            paymentSheetState.hide()
-                        }.invokeOnCompletion {
-                            if (!paymentSheetState.isVisible) {
-                                showPaymentSheet = false
+                    sheetState = paymentSheetState,
+                    dragHandle = null
+                ) {
+                    PaymentView(
+                        sum = state.priceSum.toString(),
+                        moneyGivenText = state.moneyGivenText,
+                        moneyGiven = vm::moneyGiven,
+                        moneyGivenInputFocusRequester = focusRequest,
+                        change = state.change,
+                        breakDownChange = vm::breakDownChange,
+                        resetChangeBreakUp = vm::resetChange,
+                        contactLessState = state.contactLessState,
+                        onContactless = {
+                            vm.initiateContactLessPayment()
+                            focusManager.clearFocus()
+                            coroutineScope.launch {
+                                paymentSheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!paymentSheetState.isVisible) {
+                                    showPaymentSheet = false
+                                }
+                            }
+                        },
+                        onPayClick = {
+                            vm.paySelection()
+                            focusManager.clearFocus()
+                            coroutineScope.launch {
+                                paymentSheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!paymentSheetState.isVisible) {
+                                    showPaymentSheet = false
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
+    ) {
+        BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
     }
 }
 
