@@ -28,9 +28,11 @@ class SwitchEventViewModel internal constructor(
     }
 
     fun onEventSelected(event: Event) = intent {
+        val needToPop = CommonApp.selectedEvent.value != null
         repository.switchToEvent(event)
 
         updateParent<TableListViewModel>()
+        if (needToPop) navigator.pop()
     }
 
     fun logout() = intent {
