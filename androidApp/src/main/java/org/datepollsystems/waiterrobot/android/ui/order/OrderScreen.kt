@@ -133,6 +133,35 @@ fun OrderScreen(
                     text = { Text(L.order.addProduct()) }
                 )
             }
+        },
+        bottomSheet = {
+            if (showProductSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        focusManager.clearFocus()
+                        showProductSheet = false
+                    },
+                    sheetState = productSheetState,
+                    dragHandle = null
+                ) {
+                    ProductSearch(
+                        productGroupsResource = state.productGroups,
+                        onSelect = {
+                            vm.addItem(it, 1)
+                            focusManager.clearFocus()
+                            coroutineScope.launch { productSheetState.hide() }
+                                .invokeOnCompletion { showProductSheet = false }
+                        },
+                        onFilter = vm::filterProducts,
+                        close = {
+                            focusManager.clearFocus()
+                            coroutineScope.launch { productSheetState.hide() }
+                                .invokeOnCompletion { showProductSheet = false }
+                        },
+                        refreshProducts = vm::refreshProducts
+                    )
+                }
+            }
         }
     ) {
         val orderResource = state.currentOrder
@@ -168,34 +197,6 @@ fun OrderScreen(
                         }
                     }
                 }
-            }
-        }
-
-        if (showProductSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    focusManager.clearFocus()
-                    showProductSheet = false
-                },
-                sheetState = productSheetState,
-                dragHandle = null
-            ) {
-                ProductSearch(
-                    productGroupsResource = state.productGroups,
-                    onSelect = {
-                        vm.addItem(it, 1)
-                        focusManager.clearFocus()
-                        coroutineScope.launch { productSheetState.hide() }
-                            .invokeOnCompletion { showProductSheet = false }
-                    },
-                    onFilter = vm::filterProducts,
-                    close = {
-                        focusManager.clearFocus()
-                        coroutineScope.launch { productSheetState.hide() }
-                            .invokeOnCompletion { showProductSheet = false }
-                    },
-                    refreshProducts = vm::refreshProducts
-                )
             }
         }
     }
