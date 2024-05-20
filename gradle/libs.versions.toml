@@ -15,7 +15,7 @@ detekt = "1.23.6"
 kotlinx-serialization-json = "1.6.3"
 kotlinx-datetime = "0.5.0"
 buildkonfig = "0.15.1"
-skie = "0.7.0"
+skie = "0.7.2"
 kmmbridge = "0.5.5"
 kmmresources = "1.0.0-alpha11"
 
