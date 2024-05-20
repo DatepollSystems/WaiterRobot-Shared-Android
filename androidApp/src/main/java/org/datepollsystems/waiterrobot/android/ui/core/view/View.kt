@@ -68,11 +68,12 @@ fun ScaffoldView(
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     title: String,
     topBarActions: @Composable RowScope.() -> Unit = {},
-    navigationIcon: @Composable (() -> Unit)? = null,
+    navigationIcon: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     onRefresh: (() -> Unit)? = null,
+    bottomSheet: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) = Scaffold(
     snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -80,7 +81,7 @@ fun ScaffoldView(
         TopAppBar(
             title = { Text(title) },
             actions = topBarActions,
-            navigationIcon = navigationIcon ?: {}
+            navigationIcon = navigationIcon
         )
     },
     bottomBar = bottomBar,
@@ -88,4 +89,5 @@ fun ScaffoldView(
     floatingActionButtonPosition = floatingActionButtonPosition,
 ) {
     View(state = state, paddingValues = it, onRefresh = onRefresh, content = content)
+    bottomSheet?.invoke()
 }
