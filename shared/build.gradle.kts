@@ -226,3 +226,11 @@ detekt {
         "src/iosMain/kotlin",
     )
 }
+
+skie {
+    build {
+        // TODO workaround for "No 'swiftinterface' files found within xxx"
+        //  Should be fixed in 0.7.1 but there is another issue (missing iosArm64)
+        enableSwiftLibraryEvolution.set(true)
+    }
+}
