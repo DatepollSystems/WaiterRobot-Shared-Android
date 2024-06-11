@@ -165,6 +165,7 @@ class OrderViewModel internal constructor(
     }
 
     private fun SimpleContext<OrderState>.productSoldOut(product: Product): OrderState {
+        refreshProducts()
         return state.copy(
             _currentOrder = Resource.Error(
                 L.order.productSoldOut.descOrderSent(product.name),

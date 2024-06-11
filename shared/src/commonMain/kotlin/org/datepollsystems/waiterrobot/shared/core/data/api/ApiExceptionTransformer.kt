@@ -12,6 +12,7 @@ internal fun HttpClientConfig<*>.installApiClientExceptionTransformer(json: Json
     expectSuccess = true
     HttpResponseValidator {
         handleResponseExceptionWithRequest { exception, request ->
+            // TODO maybe also map ServerExceptions (and also other HttpExceptions) to ApiException
             val clientException = exception as? ClientRequestException
                 ?: return@handleResponseExceptionWithRequest
 
