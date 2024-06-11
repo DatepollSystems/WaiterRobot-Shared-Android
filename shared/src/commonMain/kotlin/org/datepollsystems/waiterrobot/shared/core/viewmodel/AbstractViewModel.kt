@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.core.viewmodel
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -44,6 +45,8 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
         buildSettings = {
             exceptionHandler = CoroutineExceptionHandler { _, exception ->
                 when (exception) {
+                    is CancellationException -> Unit // Expected, nothing to do here
+
                     is ApiException.AppVersionTooOld -> intent {
                         navigator.replaceRoot(Screen.UpdateApp)
                     }
