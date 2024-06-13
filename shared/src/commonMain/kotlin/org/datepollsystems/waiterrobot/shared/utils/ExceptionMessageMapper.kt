@@ -37,6 +37,7 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.BillAmountTooLow -> L.billing.amountToLow(minAmount.cent.toString())
     is ApiException.StripeDisabled -> L.stripeInit.error.disabled()
     is ApiException.StripeNotActivated -> L.stripeInit.error.disabledForEvent()
+    is ApiException.ProductStockToLow -> L.order.stockToLow.title()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,
