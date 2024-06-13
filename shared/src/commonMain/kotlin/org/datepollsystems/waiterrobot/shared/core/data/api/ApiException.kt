@@ -55,6 +55,10 @@ internal sealed class ApiException : Exception() {
     class ProductSoldOut(val productId: Long) : ApiException()
 
     @Serializable
+    @SerialName("TOO_SMALL_STOCK")
+    class ProductStockToLow(val productId: Long, val remaining: Int = 0) : ApiException()
+
+    @Serializable
     @SerialName("ACCOUNT_NOT_ACTIVATED")
     class AccountNotActivated : ApiException()
 

@@ -106,6 +106,13 @@ class OrderViewModel internal constructor(
         } catch (e: ApiException.ProductSoldOut) {
             val soldOutProduct = order.first { it.product.id == e.productId }.product
             reduce { productSoldOut(soldOutProduct) }
+        } catch (e: ApiException.ProductStockToLow) {
+            val stockToLowProduct = order.first { it.product.id == e.productId }.product
+            if (e.remaining <= 0) {
+                reduce { productSoldOut(stockToLowProduct) }
+            } else {
+                reduce { stockToLow(stockToLowProduct, e.remaining) }
+            }
         }
     }
 
@@ -170,6 +177,16 @@ class OrderViewModel internal constructor(
             _currentOrder = Resource.Error(
                 L.order.productSoldOut.descOrderSent(product.name),
                 state._currentOrder.dataOrEmpty.minus(product.id)
+            )
+        )
+    }
+
+    private fun SimpleContext<OrderState>.stockToLow(product: Product, remaining: Int): OrderState {
+        refreshProducts()
+        return state.copy(
+            _currentOrder = Resource.Error(
+                L.order.stockToLow.desc(remaining.toString(), product.name),
+                state._currentOrder.dataOrEmpty
             )
         )
     }
