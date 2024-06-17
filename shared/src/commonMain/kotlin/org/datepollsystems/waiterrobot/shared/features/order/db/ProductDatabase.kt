@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import org.datepollsystems.waiterrobot.shared.core.data.db.AbstractDatabase
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductEntry
 import org.datepollsystems.waiterrobot.shared.features.order.db.model.ProductGroupEntry
-import org.datepollsystems.waiterrobot.shared.features.table.db.model.TableGroupEntry
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 import kotlin.time.Duration
 
@@ -24,7 +23,7 @@ internal class ProductDatabase : AbstractDatabase() {
         val idsToKeep = productGroups.mapTo(mutableSetOf(), ProductGroupEntry::id)
 
         realm.write {
-            delete(query<TableGroupEntry>("id == NONE $0", idsToKeep))
+            delete(query<ProductGroupEntry>("id == NONE $0", idsToKeep))
             productGroups.forEach { copyToRealm(it, UpdatePolicy.ALL) }
         }
     }

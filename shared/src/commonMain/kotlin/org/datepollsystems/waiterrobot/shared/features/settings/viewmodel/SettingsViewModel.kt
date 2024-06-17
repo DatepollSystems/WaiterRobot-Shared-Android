@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.settings.viewmodel
 
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -9,7 +8,6 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.table.repository.TableRepository
-import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.utils.launchCatching
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -26,12 +24,9 @@ class SettingsViewModel internal constructor(
 
     fun refreshAll() = intent {
         coroutineScope {
-            listOf(
-                launchCatching(logger) { tableRepo.refresh() },
-                launchCatching(logger) { productRepo.refresh() }
-            ).joinAll()
+            launchCatching(logger) { tableRepo.refresh() }
+            launchCatching(logger) { productRepo.refresh() }
         }
-        updateParent<TableListViewModel>()
     }
 
     fun switchEvent() = intent {
