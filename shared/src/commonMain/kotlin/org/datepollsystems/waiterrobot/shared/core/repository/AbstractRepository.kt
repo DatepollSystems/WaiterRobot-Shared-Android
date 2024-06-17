@@ -81,8 +81,8 @@ internal abstract class CachedRepository<EntityType, ModelType> : AbstractReposi
 
     suspend fun requery() {
         _flow.emit(
-            query().first().let {
-                _flow.value.map { it }
+            query().first().let { entity ->
+                _flow.value.map { mapDbEntity(entity) }
             }
         )
     }
