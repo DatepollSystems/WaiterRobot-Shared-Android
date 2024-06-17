@@ -1,7 +1,11 @@
 // swift-tools-version:5.3
 import PackageDescription
 
+// BEGIN KMMBRIDGE VARIABLES BLOCK (do not edit)
+let remoteKotlinUrl = "https://maven.pkg.github.com/DatepollSystems/WaiterRobot-Shared-Android/org/datepollsystems/waiterrobot/shared-kmmbridge/1.5.16/shared-kmmbridge-1.5.16.zip"
+let remoteKotlinChecksum = "5cfe494f1a297153b86bf031cac9460e68c66b0328b958a7ecbbe456f892c6bc"
 let packageName = "shared"
+// END KMMBRIDGE BLOCK
 
 let package = Package(
     name: packageName,
@@ -17,7 +21,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: packageName,
-            path: "./shared/build/XCFrameworks/debug/\(packageName).xcframework"
+            url: remoteKotlinUrl,
+            checksum: remoteKotlinChecksum
         )
         ,
     ]
