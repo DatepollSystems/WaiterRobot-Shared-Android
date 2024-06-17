@@ -2,6 +2,7 @@ package org.datepollsystems.waiterrobot.shared.features.table.repository
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
@@ -62,7 +63,11 @@ internal class TableRepository(
         }
 
     override fun query(): Flow<List<TableGroupEntry>> =
-        tableDb.getForEventFlow(CommonApp.settings.selectedEventId)
+        tableDb.getForEventFlow(CommonApp.settings.selectedEventId).map { groups ->
+            groups.filter { it.tables.isNotEmpty() } // Do not show groups that do not have tables at all
+                .sortedBy { it.name.lowercase() } // Sort groups with same position by name
+                .sortedBy(TableGroupEntry::position)
+        }
 
     override suspend fun update() {
         logger.i { "Loading Tables from api ..." }

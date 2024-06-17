@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,7 +50,6 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFo
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductSearch(
     productGroupsResource: Resource<List<ProductGroup>>,

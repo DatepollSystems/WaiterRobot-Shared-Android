@@ -162,6 +162,13 @@ order:
     descOrderAdd:
       en: \"%1$s\" is sold out. It is not added to the order.
       de: \"%1$s\" ist ausverkauft. Es wird der Bestellung nicht hinzugefügt.
+  stockToLow:
+    title:
+      en: Product stock to low
+      de: Produktbestand zu niedrig
+    desc:
+      en: There are only %1$s pieces of \"%2$s\" left. Reduce the quantity or remove it from the order.
+      de: Es sind nur noch %1$s Stück von \"%2$s\" übrig. Reduziere die Anzahl oder entferne es aus der Bestellung.
   addNoteDialog:
     title:
       de: Notiz für %1$s

@@ -24,13 +24,15 @@ internal class TableDatabase : AbstractDatabase() {
             .find { it.mapTo(mutableSetOf(), TableGroupEntry::id) }
         tableGroups.forEach {
             it.hidden = it.id in hiddenGroupIds
+            it.tables.forEach { table ->
+                table.hasOrders = table.id in tableIdsWithOrders
+            }
         }
 
         realm.write {
             delete(query<TableGroupEntry>("id == NONE $0", idsToKeep))
             tableGroups.forEach { copyToRealm(it, UpdatePolicy.ALL) }
         }
-        updateTablesWithOrder(tableIdsWithOrders)
     }
 
     suspend fun updateTablesWithOrder(tableIdsWithOrders: Set<Long>) {
