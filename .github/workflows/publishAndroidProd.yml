@@ -55,7 +55,7 @@ jobs:
         with:
           name: Android ${{ env.ANDROID_VERSION }}
           tag_name: ${{ env.VERSION_TAG }}
-          prerelease: false
+          prerelease: true # As the release is not yet available on the Play Store
           generate_release_notes: true
 
       - name: Bump version

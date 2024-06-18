@@ -12,7 +12,7 @@
 # Android & Shared
 
 This repository includes the Android app ([androidApp](./androidApp)) and the shared KMM
-module ([shared](./shared)) for the kellner.team App. The iOS app can be
+module ([shared](./shared)) for the [kellner.team](https://kellner.team) App. The iOS app can be
 found [here](https://github.com/DatepollSystems/waiterrobot-mobile_iOS).
 
 The shared module is published as an SPM package to
@@ -41,7 +41,8 @@ form of `android/major.minor.patch` (e.g. android/1.0.0) and triggers the CI bui
 taken from the [version.properties](androidApp/version.properties) file.
 The app is then automatically deployed to the `internal` track on Google Play.
 After the deployment is finished the version will be automatically bumped to the next patch version.
-After testing the app then must be promoted to production manually from there.
+The app must then be promoted to production manually from there after testing. When app is then
+approved by Google publish the approved changes and remove the pre-release flag on GitHub Releases.
 (see [publishAndroidProd.yml](.github/workflows/publishAndroidProd.yml))
 
 > It is also possible to create release a specific version. Just add the `v` parameter to the
