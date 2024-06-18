@@ -24,11 +24,9 @@ version = project.property(
 val sharedNamespace = "$group.shared"
 
 kotlin {
-    androidTarget {
-        publishAllLibraryVariants()
-    }
-
     jvmToolchain(17)
+
+    androidTarget()
 
     listOf(
         iosX64(),

@@ -1,0 +1,31 @@
+name: Publish Shared SPM
+concurrency: # Cancel currently running releases when a new one is started
+  group: publish-shared-spm
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+    paths:
+      - 'buildSrc/**'
+      - 'gradle/**'
+      - 'shared/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+
+jobs:
+  release-shared-spm:
+    name: Release shared SPM
+    permissions:
+      contents: write
+      packages: write
+    uses: touchlab/KMMBridgeGithubWorkflow/.github/workflows/faktorybuildautoversion.yml@v1.1
+    with:
+      jvmVersion: 17
+      versionBaseProperty: SHARED_BASE_VERSION
+      publishTask: kmmBridgePublish

@@ -1,7 +1,7 @@
 <p align="center">
-    <img alt="WaiterRobot logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>    
+    <img alt="kellner.team logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>    
 </p>
-<h1 align="center">WaiterRobot</h1>
+<h1 align="center">kellner.team</h1>
 <div align="center">
     <span>Lightning fast and simple gastronomy</span><br>
     <a href="https://play.google.com/store/apps/details?id=org.datepollsystems.waiterrobot.android">
@@ -12,58 +12,58 @@
 # Android & Shared
 
 This repository includes the Android app ([androidApp](./androidApp)) and the shared KMM
-module ([shared](./shared)) for the WaiterRobot App. The iOS app can be
+module ([shared](./shared)) for the kellner.team App. The iOS app can be
 found [here](https://github.com/DatepollSystems/waiterrobot-mobile_iOS).
 
-The shared module is published as an SPM package and Java/Android library to the 
-[GitHub Package Registry](https://github.com/orgs/DatepollSystems/packages?repo_name=WaiterRobot-Shared-Android).
+The shared module is published as an SPM package to
+the [GitHub Package Registry](https://github.com/orgs/DatepollSystems/packages?repo_name=WaiterRobot-Shared-Android).
 For this the [KMMBridge](https://github.com/touchlab/KMMBridge) tool is used.
-
-> For local development the Android module directly depends on the local shared version 
-> (gradle project dependency). When releasing the published library version is used.
 
 ## iOS dev with local KMM module version
 
 For a guide to use a local version of the KMM module
 see [KMMBridge local dev spm](https://kmmbridge.touchlab.co/docs/spm/IOS_LOCAL_DEV_SPM)
 
-The main branch contains the `Package.swift` file ready for local dev.
-
-### Short version
+### TLRD:
 
 1. `./gradlew spmDevBuild` (must be run after each change in the KMM module)
 2. Drag the whole KMM project folder (top level git folder) into the WaiterRobot project in Xcode
 3. Start programming :)
-4. When finished delete folder, make sure to select "Remove References"!!! (otherwise the whole KMM
-   project will be deleted locally)
+4. When finished delete the KMM project folder in Xcode, make sure to select "Remove
+   References"!!! (otherwise the whole KMM project will be deleted locally)
 
 ## Releasing
 
 ### Android
 
-Production release is triggered on push to main. The CI then builds the app and deploys it to
-the `internal` Track on Google Play. After testing the app then must be promoted to production
-manually from there. A tag in the form of `android/major.minor.patch` (e.g. android/1.0.0) is
-created. (see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
+Production release can be created with `./gradlew androidApp:release`. This creates a tag in the
+form of `android/major.minor.patch` (e.g. android/1.0.0) and triggers the CI build. The version is
+taken from the [version.properties](androidApp/version.properties) file.
+The app is then automatically deployed to the `internal` track on Google Play.
+After the deployment is finished the version will be automatically bumped to the next patch version.
+After testing the app then must be promoted to production manually from there.
+(see [publishAndroidProd.yml](.github/workflows/publishAndroidProd.yml))
 
-> Do not forget to bump the android version ([version.properties](androidApp/version.properties)) on
-> the dev branch after a production release was made.
+> It is also possible to create release a specific version. Just add the `v` parameter to the
+> command e.g. `./gradlew androidApp:release -Pv=3.0.2`. This will first bump the version to 3.0.2,
+> then create a production release and then bump the version to the next patch version.
 
 On each push to develop a lava (dev) build is triggered and published to `internal` track of
-the WaiterRobot Lava app on Google Play. A tag in the form
-of `android/major.minor.patch-lava-epochMinutes` is created (e.g. android/1.0.1-lava-27935730). (
-see [publishAndroid.yml](.github/workflows/publishAndroid.yml))
+the `lava kellner.team` app on Google Play. A tag in the form
+of `android/major.minor.patch-lava-epochMinutes` (e.g. android/1.0.1-lava-27935730) is created.
+(see [publishAndroidLava.yml](.github/workflows/publishAndroidLava.yml))
 
 ### Shared
 
-A release is triggered on push to main or develop (only when shared module changed). The CI then
-builds the shared Xcode Framework (Swift Package) and the shared Android library. Both artifacts
-are uploaded to the GitHub Package registry. A tag in the form of `major.minor.patch` (
-e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publish.yml))
+A release is triggered on each push to develop (only when the shared module changed). The CI then
+builds the shared Xcode Framework (Swift Package) and uploads it to the GitHub Package registry.
+A tag in the form of `major.minor.patch` (e.g. 1.0.0) is created.
+(see [publishSharedSpm.yml](.github/workflows/publishSharedSpm.yml))
 
-> Unfortunately SPM does not support custom tag prefixes (e.g. shared/1.0.0) and kmmbridge
-> does not support tag suffixes (without creating a custom release action). Therefor the currently
-> the no shared identifier is added to the tag of shared releases.
+> The Android app directly depends on the shared version in the repository (gradle project
+> dependency). -> Version is the same as the Android version itself.
+> The iOS app depends on the released SPM package in the GitHub Package registry. -> Each iOS
+> release depends on a specified shared version.
 
 # Language, libraries and tools
 
@@ -84,7 +84,8 @@ e.g. 1.0.0) is created. (see [publishShared.yml](.github/workflows/publish.yml))
 - [KMM Resources](https://github.com/jcraane/kmm-resources) shared localization
 - [KotlinX DateTime](https://github.com/Kotlin/kotlinx-datetime) Multiplatform DateTime
 - [KotlinX Serialization (Json)](https://github.com/Kotlin/kotlinx.serialization) JSON serialization
-- [BuildKonfig](https://github.com/yshrsmz/BuildKonfig) BuildConfig for Kotlin Multiplatform Projects
+- [BuildKonfig](https://github.com/yshrsmz/BuildKonfig) BuildConfig for Kotlin Multiplatform
+  Projects
 
 ## Android
 

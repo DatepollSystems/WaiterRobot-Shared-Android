@@ -1,13 +1,16 @@
-name: Publish Android
+name: Publish Android Prod
+concurrency:
+  group: publish-android-prod
+  cancel-in-progress: true
 
 on:
-  workflow_call:
+  push:
+    tags:
+      - 'android/*.*.*'
+      - '!android/*.*.*-*'
 
 jobs:
-  publish-android:
-    concurrency:
-      group: publish-android-${{ github.ref_name }}
-      cancel-in-progress: true
+  publish-android-prod:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -36,15 +39,8 @@ jobs:
           tar xzf .keys.tar.gz
           cd ..
 
-      - name: Release Android
-        if: ${{ github.ref_name == 'main' }}
-        run: ./gradlew publishProdReleaseApps --no-daemon -PkeyPassword=${{ secrets.KEY_PASSWORD }} -PstorePassword=${{ secrets.STORE_PASSWORD }} -PremoteBuild=true -PGITHUB_PACKAGES_USERNAME=cirunner -PGITHUB_PACKAGES_PASSWORD=${{ secrets.GITHUB_TOKEN }}
-        env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
-
-      - name: Release Android Lava
-        if: ${{ github.ref_name != 'main' }}
-        run: ./gradlew publishLavaReleaseApps --no-daemon -PkeyPassword=${{ secrets.KEY_PASSWORD }} -PstorePassword=${{ secrets.STORE_PASSWORD }} -PremoteBuild=true -PGITHUB_PACKAGES_USERNAME=cirunner -PGITHUB_PACKAGES_PASSWORD=${{ secrets.GITHUB_TOKEN }}
+      - name: Release Android Prod
+        run: ./gradlew publishProdReleaseApps --no-daemon -PkeyPassword=${{ secrets.KEY_PASSWORD }} -PstorePassword=${{ secrets.STORE_PASSWORD }}
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
 
@@ -54,20 +50,15 @@ jobs:
           echo "ANDROID_VERSION=${ANDROID_VERSION}" >> $GITHUB_ENV
           echo "VERSION_TAG=android/${ANDROID_VERSION}" >> $GITHUB_ENV
 
-      - name: Create version tag ${{ env.VERSION_TAG }}
-        run: |
-          git tag ${{ env.VERSION_TAG }}
-          git push origin ${{ env.VERSION_TAG }}
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Android ${{ env.ANDROID_VERSION }}
           tag_name: ${{ env.VERSION_TAG }}
-          prerelease: ${{ github.ref_name != 'main' }}
+          prerelease: false
           generate_release_notes: true
 
+      - name: Bump version
+        run: ./gradlew --no-daemon androidApp:bumpVersion
 
-      # TODO auto increase androidPatch in version.properties (on prod build only) and push (to dev branch, republish must be prevented then)?
-
-      # TODO add discord or other notification
+      # TODO add notification?

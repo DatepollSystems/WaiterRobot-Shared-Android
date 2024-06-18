@@ -13,9 +13,10 @@ plugins {
     alias(libs.plugins.google.ksp)
 }
 
+private fun getVersionPropertyFile() = File(project.projectDir, "version.properties")
 private val versionProperty by lazy {
     Properties().apply {
-        File(project.projectDir, "version.properties").inputStream().use { load(it) }
+        getVersionPropertyFile().inputStream().use { load(it) }
     }
 }
 
@@ -31,7 +32,6 @@ fun fromProjectOrLocalProperties(name: String): Any? = run {
 }
 
 val SHARED_GROUP: String by project
-val SHARED_BASE_VERSION: String by project
 
 version = versionProperty.getProperty("androidVersion")
 group = SHARED_GROUP
@@ -146,7 +146,12 @@ android {
         // Include the generated navigation sources
         kotlin.sourceSets {
             getByName(name) {
-                kotlin.srcDir(File(project.layout.buildDirectory.asFile.get(), "/generated/ksp/$name/kotlin"))
+                kotlin.srcDir(
+                    File(
+                        project.layout.buildDirectory.asFile.get(),
+                        "/generated/ksp/$name/kotlin"
+                    )
+                )
             }
         }
 
@@ -178,26 +183,8 @@ play {
     track.set("internal")
 }
 
-val remoteBuild = project.findProperty("remoteBuild") == "true" // Default false
-if (remoteBuild) {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/DatepollSystems/WaiterRobot-Shared-Android")
-            credentials {
-                username = project.property("GITHUB_PACKAGES_USERNAME") as String
-                password = project.property("GITHUB_PACKAGES_PASSWORD") as String
-            }
-        }
-    }
-}
-
 dependencies {
-    if (remoteBuild) {
-        implementation("${SHARED_GROUP}:shared-android:${SHARED_BASE_VERSION}.+")
-    } else {
-        implementation(project(":shared"))
-    }
+    implementation(project(":shared"))
 
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.runtime)
@@ -255,4 +242,97 @@ private fun VariantDimension.allowedHosts(vararg hosts: String) {
         name = "ALLOWED_HOSTS_CSV",
         value = hosts.joinToString(",", "\"", "\"")
     )
+}
+
+task("release") {
+    doLast {
+        val versionParam = findProperty("v")?.toString()
+
+        val nextVersion = if (versionParam != null) {
+            changeVersion(VersionNumber.fromString(versionParam))
+        } else {
+            VersionNumber.fromString(version.toString())
+        }
+
+        val versionTag = "android/$nextVersion"
+        println("Creating git tag $versionTag")
+        exec {
+            commandLine("git", "tag", versionTag)
+        }
+
+        println("Push git tag $versionTag to origin")
+        exec {
+            commandLine("git", "push", "origin", versionTag)
+        }
+    }
+}
+
+task("bumpVersion") {
+    doLast {
+        require(System.getenv("CI")?.lowercase() == true.toString()) {
+            "Only the CI is allowed to bump the version"
+        }
+
+        val currentVersion = VersionNumber.fromString(version.toString())
+        val nextVersion = currentVersion.nextPatch()
+
+        println("Bumping android version from $currentVersion to $nextVersion")
+        changeVersion(nextVersion)
+    }
+}
+
+private fun changeVersion(toVersion: VersionNumber): VersionNumber {
+    val currentVersion = VersionNumber.fromString(version.toString())
+    require(currentVersion < toVersion) {
+        "The new version $toVersion must be higher than the current version $currentVersion"
+    }
+
+    val propertiesFile = getVersionPropertyFile()
+    versionProperty.setProperty("androidVersion", toVersion.toString())
+    propertiesFile.outputStream().use { versionProperty.store(it, null) }
+
+    exec {
+        commandLine("git", "add", propertiesFile.absolutePath)
+    }
+    exec {
+        commandLine("git", "commit", "-m", "chore: Bump android version to $toVersion")
+    }
+    exec {
+        commandLine("git", "push")
+    }
+
+    return toVersion
+}
+
+data class VersionNumber(val major: Int, val minor: Int, val patch: Int) {
+    override fun toString(): String = "$major.$minor.$patch"
+
+    fun nextMajor() = VersionNumber(major + 1, 0, 0)
+
+    fun nextMinor() = VersionNumber(major, minor + 1, 0)
+
+    fun nextPatch() = VersionNumber(major, minor, patch + 1)
+
+    operator fun compareTo(other: VersionNumber): Int {
+        return when {
+            this.major != other.major -> this.major.compareTo(other.major)
+            this.minor != other.minor -> this.minor.compareTo(other.minor)
+            else -> this.patch.compareTo(other.patch)
+        }
+    }
+
+    companion object {
+        fun fromString(version: String): VersionNumber {
+            val split = version.removePrefix("v").split('.')
+            require(split.count() == 3) {
+                "The provided version '$version' is not valid. It must follow the pattern of x.y.z (e.g. 1.2.3)"
+            }
+
+            return VersionNumber(
+                major = split[0].toInt(),
+                minor = split[1].toInt(),
+                patch = split[2].toInt()
+            )
+        }
+    }
 }
