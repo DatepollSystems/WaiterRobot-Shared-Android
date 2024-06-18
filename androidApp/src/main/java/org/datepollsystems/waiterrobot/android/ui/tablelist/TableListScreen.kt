@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.tablelist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -27,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -67,35 +65,31 @@ fun TableListScreen(
             TopAppBar(
                 title = { Text(CommonApp.settings.eventName) },
                 actions = {
-                    IconButton(onClick = vm::openSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
-                    }
-                },
-            )
-        },
-        bottomBar = {
-            val tableGroups = state.tableGroups.data
-            if (!tableGroups.isNullOrEmpty()) {
-                BottomAppBar(
-                    actions = {
-                        Box {
+                    val tableGroups = state.tableGroups.data
+                    if (!tableGroups.isNullOrEmpty()) {
+                        BadgedBox(
+                            badge = {
+                                if (tableGroups.any { it.hidden }) {
+                                    Badge {
+                                        Text(text = "!")
+                                    }
+                                }
+                            }
+                        ) {
                             IconButton(onClick = { showFilterSheet = true }) {
                                 Icon(
                                     Icons.Filled.FilterList,
                                     contentDescription = "Filter table groups"
                                 )
                             }
-
-                            if (tableGroups.any { it.hidden }) {
-                                Badge(modifier = Modifier.align(Alignment.TopEnd)) {
-                                    Text(text = "1")
-                                }
-                            }
                         }
                     }
-                )
-            }
-        }
+                    IconButton(onClick = vm::openSettings) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                    }
+                },
+            )
+        },
     ) { paddingValues ->
         RefreshableView(
             modifier = Modifier.padding(paddingValues),
@@ -141,7 +135,7 @@ private fun TableGrid(
             ErrorBar(message = groupsResource.userMessage, retryAction = refresh)
         }
 
-        if (tableGroups.isNullOrEmpty()) {
+        if (tableGroups.isNullOrEmpty() || tableGroups.all(TableGroup::hidden)) {
             CenteredText(
                 modifier = Modifier.weight(1f),
                 text = L.tableList.noTableFound(),
