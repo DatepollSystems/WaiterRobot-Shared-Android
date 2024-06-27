@@ -1,7 +1,7 @@
 [versions]
 # Shared
-kotlin = "1.9.24" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
-ksp = "1.9.24-1.0.20" # First part must match the kotlin version
+kotlin = "2.0.0" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
+ksp = "2.0.0-1.0.22" # First part must match the kotlin version
 kermit = "2.0.3"
 koin = "3.5.6"
 orbitMvi = "8.0.0"
@@ -9,7 +9,7 @@ mokoMvvm = "0.16.1"
 ktor = "2.3.11"
 mokoPermissions = "0.18.0"
 settings = "1.1.1"
-realm = "1.16.0"
+realm = "2.0.0"
 detekt = "1.23.6"
 kotlinx-serialization-json = "1.6.3"
 kotlinx-datetime = "0.6.0"
