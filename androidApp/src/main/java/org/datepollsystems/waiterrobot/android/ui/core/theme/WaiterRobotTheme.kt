@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -27,10 +28,13 @@ fun WaiterRobotTheme(
     }
 }
 
-private val lightColorScheme = lightColorScheme(
+val ColorScheme.isDarkTheme: Boolean
+    get() = this == darkColorScheme
+
+val lightColorScheme = lightColorScheme(
     // TODO colorScheme
 )
 
-private val darkColorScheme = darkColorScheme(
+val darkColorScheme = darkColorScheme(
     // TODO colorScheme
 )

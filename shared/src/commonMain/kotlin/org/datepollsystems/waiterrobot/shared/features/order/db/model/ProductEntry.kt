@@ -9,13 +9,14 @@ import kotlinx.datetime.Instant
 import org.datepollsystems.waiterrobot.shared.utils.Cents
 import org.datepollsystems.waiterrobot.shared.utils.extensions.Now
 
-internal class ProductGroupEntry constructor() : RealmObject {
+internal class ProductGroupEntry() : RealmObject {
     @PrimaryKey
     var id: Long = -1
     var name: String = ""
     var eventId: Long = -1
     var position: Int = Int.MAX_VALUE
     var products: RealmList<ProductEntry> = realmListOf()
+    var color: String? = null
     var updatedAt: Long = 0L
 
     val updated: Instant
@@ -26,6 +27,7 @@ internal class ProductGroupEntry constructor() : RealmObject {
         name: String,
         eventId: Long,
         position: Int,
+        color: String?,
         products: List<ProductEntry>,
         updatedAt: Instant = Now()
     ) : this() {
@@ -33,6 +35,7 @@ internal class ProductGroupEntry constructor() : RealmObject {
         this.name = name
         this.eventId = eventId
         this.position = position
+        this.color = color
         this.products = products.toRealmList()
         this.updatedAt = updatedAt.toEpochMilliseconds()
     }
@@ -65,7 +68,7 @@ internal class ProductEntry() : RealmObject {
     }
 }
 
-internal class AllergenEntry constructor() : RealmObject {
+internal class AllergenEntry() : RealmObject {
     @PrimaryKey
     var id: Long = -1
     var name: String = ""

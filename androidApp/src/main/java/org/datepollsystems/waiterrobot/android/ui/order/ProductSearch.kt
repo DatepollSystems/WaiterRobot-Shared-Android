@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.order
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,14 +34,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
+import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
+import org.datepollsystems.waiterrobot.android.util.getContentColor
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
@@ -49,6 +54,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.allGroups
 import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 
 @Composable
 fun ProductSearch(
@@ -127,10 +133,14 @@ fun ProductSearch(
                         text = { Text(L.productSearch.allGroups()) }
                     )
                     productGroups.forEachIndexed { index, productGroup ->
+                        val backgroundColor =
+                            productGroup.color?.let { Color(it.toColorInt()).desaturateOnDarkMode() }
+                        val textColor = backgroundColor?.getContentColor() ?: Color.Unspecified
                         Tab(
+                            modifier = Modifier.background(backgroundColor ?: Color.Unspecified),
                             selected = pagerState.currentPage == index + 1,
                             onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
-                            text = { Text(productGroup.name) }
+                            text = { Text(text = productGroup.name, color = textColor) }
                         )
                     }
                 }
@@ -152,6 +162,9 @@ fun ProductSearch(
                                         items(productGroup.products, key = Product::id) { product ->
                                             Product(
                                                 product = product,
+                                                color = productGroup.color.emptyToNull()?.let {
+                                                    Color(it.toColorInt())
+                                                },
                                                 onSelect = { onSelect(product) }
                                             )
                                         }
@@ -164,11 +177,15 @@ fun ProductSearch(
                             CenteredText(text = "No products", scrollAble = false)
                         } else {
                             ProductLazyVerticalGrid {
-                                items(
-                                    productGroups[pageIndex - 1].products,
-                                    key = Product::id
-                                ) { product ->
-                                    Product(product = product, onSelect = { onSelect(product) })
+                                val productGroup = productGroups[pageIndex - 1]
+                                items(productGroup.products, key = Product::id) { product ->
+                                    Product(
+                                        product = product,
+                                        color = productGroup.color?.let {
+                                            Color(it.toColorInt())
+                                        },
+                                        onSelect = { onSelect(product) }
+                                    )
                                 }
                             }
                         }

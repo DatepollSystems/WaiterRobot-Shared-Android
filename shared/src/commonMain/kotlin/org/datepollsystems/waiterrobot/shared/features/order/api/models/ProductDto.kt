@@ -7,6 +7,7 @@ import org.datepollsystems.waiterrobot.shared.utils.Cents
 internal class ProductGroupDto(
     val id: Long,
     val name: String,
+    val color: String?,
     val products: List<ProductDto>,
     val position: Int = Int.MAX_VALUE,
 )

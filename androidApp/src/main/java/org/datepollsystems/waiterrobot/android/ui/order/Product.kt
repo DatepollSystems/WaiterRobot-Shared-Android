@@ -17,6 +17,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
+import org.datepollsystems.waiterrobot.android.util.getContentColor
 import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.utils.euro
@@ -24,14 +26,21 @@ import org.datepollsystems.waiterrobot.shared.utils.euro
 @Composable
 fun Product(
     product: Product,
+    color: Color?,
     onSelect: () -> Unit,
 ) {
+    val backgroundColor = color?.desaturateOnDarkMode()
     OutlinedButton(
         onClick = onSelect,
         enabled = !product.soldOut,
         shape = RoundedCornerShape(10),
         contentPadding = PaddingValues(5.dp),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = backgroundColor?.getContentColor()
+                ?: MaterialTheme.colorScheme.onSurface,
+            containerColor = backgroundColor ?: Color.Unspecified,
+            disabledContainerColor = backgroundColor?.copy(alpha = 0.5f) ?: Color.Unspecified,
+        )
         // elevation = ButtonDefaults.elevation() // TODO yes/no?
     ) {
         Column(
@@ -73,6 +82,7 @@ private fun ProductPreview() = Preview {
             allergens = listOf(Allergen(1, "Egg", "E")),
             position = 1
         ),
+        color = null,
         onSelect = {}
     )
 }

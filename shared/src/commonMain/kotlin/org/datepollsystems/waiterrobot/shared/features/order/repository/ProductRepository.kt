@@ -77,6 +77,7 @@ private fun ProductGroupDto.toEntry(eventId: Long, timestamp: Instant) = Product
     name = this.name,
     eventId = eventId,
     position = this.position,
+    color = this.color,
     products = this.products.map { it.toEntry() },
     updatedAt = timestamp
 )
@@ -105,6 +106,7 @@ private fun ProductGroupEntry.toModel() = ProductGroup(
     id = this.id,
     name = this.name,
     position = this.position,
+    color = this.color,
     products = this.products.map(ProductEntry::toModel).sort()
 )
 
