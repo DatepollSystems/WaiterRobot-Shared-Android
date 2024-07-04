@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.util.bestContrastColor
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.getContentColor
 import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
@@ -40,7 +41,8 @@ fun Product(
                 ?: MaterialTheme.colorScheme.onSurface,
             containerColor = backgroundColor ?: Color.Unspecified,
             disabledContainerColor = backgroundColor?.copy(alpha = 0.5f) ?: Color.Unspecified,
-        )
+        ),
+        border = if (backgroundColor == null) ButtonDefaults.outlinedButtonBorder(!product.soldOut) else null,
         // elevation = ButtonDefaults.elevation() // TODO yes/no?
     ) {
         Column(
@@ -58,7 +60,8 @@ fun Product(
                     text = product.allergens.joinToString(", ") { it.shortName },
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
-                    color = Color.LightGray
+                    color = backgroundColor?.bestContrastColor(Color.LightGray, Color.DarkGray)
+                        ?: Color.LightGray
                 )
             }
             Text(
