@@ -27,7 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
@@ -165,6 +167,7 @@ private fun TableGrid(
                         items(group.tables, key = Table::id) { table ->
                             Table(
                                 table = table,
+                                color = group.color?.let { Color(it.toColorInt()) },
                                 onClick = { onTableClick(table) }
                             )
                         }

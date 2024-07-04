@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.shared.features.table.models.TableGroup
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.groupFilter
@@ -103,7 +104,8 @@ private fun TableGroupFilter(tableGroup: TableGroup, onToggle: () -> Unit) {
             modifier = Modifier
                 .size(40.dp)
                 .background(
-                    color = tableGroup.color?.let { Color(it.toColorInt()) } ?: Color.Transparent,
+                    color = tableGroup.color?.let { Color(it.toColorInt()).desaturateOnDarkMode() }
+                        ?: Color.Transparent,
                     shape = CircleShape
                 )
         )
