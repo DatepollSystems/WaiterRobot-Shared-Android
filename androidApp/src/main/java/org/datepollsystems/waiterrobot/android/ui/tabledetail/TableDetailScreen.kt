@@ -60,7 +60,7 @@ fun TableDetailScreen(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text(L.tableDetail.title(table.number.toString(), table.groupName)) },
+                title = { Text(L.tableDetail.title(table.groupName, table.number.toString())) },
                 navigationIcon = {
                     IconButton(onClick = navigator::popBackStack) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -111,7 +111,7 @@ fun TableDetailScreen(
                     if (orderedItems.isNullOrEmpty()) {
                         CenteredText(
                             modifier = Modifier.weight(1f),
-                            text = L.tableDetail.noOrder(table.number.toString(), table.groupName),
+                            text = L.tableDetail.noOrder(table.groupName, table.number.toString()),
                             scrollAble = true
                         )
                     } else {

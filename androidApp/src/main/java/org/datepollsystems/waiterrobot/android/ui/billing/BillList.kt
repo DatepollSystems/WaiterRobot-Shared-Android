@@ -31,7 +31,7 @@ fun BillList(
         Column {
             if (billItems.isEmpty()) {
                 CenteredText(
-                    text = L.billing.noOpenBill(table.number.toString(), table.groupName),
+                    text = L.billing.noOpenBill(table.groupName, table.number.toString()),
                     scrollAble = true
                 )
             } else {

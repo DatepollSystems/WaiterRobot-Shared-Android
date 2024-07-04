@@ -95,7 +95,7 @@ fun BillingScreen(
 
     ScaffoldView(
         state = state,
-        title = L.billing.title(table.number.toString(), table.groupName),
+        title = L.billing.title(table.groupName, table.number.toString()),
         navigationIcon = {
             IconButton(onClick = ::goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")

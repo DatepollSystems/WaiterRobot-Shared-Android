@@ -112,7 +112,7 @@ fun OrderScreen(
 
     ScaffoldView(
         state = state,
-        title = L.order.title(table.number.toString(), table.groupName),
+        title = L.order.title(table.groupName, table.number.toString()),
         navigationIcon = {
             IconButton(onClick = ::goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
