@@ -298,7 +298,7 @@ private fun changeVersion(toVersion: VersionNumber): VersionNumber {
         commandLine("git", "commit", "-m", "chore: Bump android version to $toVersion")
     }
     exec {
-        commandLine("git", "push")
+        commandLine("git", "push", "origin", "HEAD")
     }
 
     return toVersion
