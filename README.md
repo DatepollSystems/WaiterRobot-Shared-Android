@@ -38,10 +38,10 @@ see [KMMBridge local dev spm](https://kmmbridge.touchlab.co/docs/spm/IOS_LOCAL_D
 
 Production release can be created with `./gradlew androidApp:release`. This creates a tag in the
 form of `android/major.minor.patch` (e.g. android/1.0.0) and triggers the CI build. The version is
-taken from the [version.properties](androidApp/version.properties) file.
-The app is then automatically deployed to the `internal` track on Google Play.
-After the deployment is finished the version will be automatically bumped to the next patch version.
-The app must then be promoted to production manually from there after testing. When app is then
+taken from the [version.properties](androidApp/version.properties) file. After the tag is pushed
+the version will be automatically bumped to the next patch version.
+The CI will then then automatically deployed the app to the `internal` track on Google Play.
+The app must then be promoted to production manually from there after testing. When the app is then
 approved by Google publish the approved changes and remove the pre-release flag on GitHub Releases.
 (see [publishAndroidProd.yml](.github/workflows/publishAndroidProd.yml))
 

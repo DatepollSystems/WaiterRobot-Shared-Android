@@ -248,13 +248,13 @@ task("release") {
     doLast {
         val versionParam = findProperty("v")?.toString()
 
-        val nextVersion = if (versionParam != null) {
+        val releaseVersion = if (versionParam != null) {
             changeVersion(VersionNumber.fromString(versionParam))
         } else {
             VersionNumber.fromString(version.toString())
         }
 
-        val versionTag = "android/$nextVersion"
+        val versionTag = "android/$releaseVersion"
         println("Creating git tag $versionTag")
         exec {
             commandLine("git", "tag", versionTag)
@@ -264,19 +264,8 @@ task("release") {
         exec {
             commandLine("git", "push", "origin", versionTag)
         }
-    }
-}
 
-task("bumpVersion") {
-    doLast {
-        require(System.getenv("CI")?.lowercase() == true.toString()) {
-            "Only the CI is allowed to bump the version"
-        }
-
-        val currentVersion = VersionNumber.fromString(version.toString())
-        val nextVersion = currentVersion.nextPatch()
-
-        println("Bumping android version from $currentVersion to $nextVersion")
+        val nextVersion = releaseVersion.nextPatch()
         changeVersion(nextVersion)
     }
 }
@@ -287,6 +276,7 @@ private fun changeVersion(toVersion: VersionNumber): VersionNumber {
         "The new version $toVersion must be higher than the current version $currentVersion"
     }
 
+    println("Bumping android version from $currentVersion to $toVersion")
     val propertiesFile = getVersionPropertyFile()
     versionProperty.setProperty("androidVersion", toVersion.toString())
     propertiesFile.outputStream().use { versionProperty.store(it, null) }
@@ -298,7 +288,7 @@ private fun changeVersion(toVersion: VersionNumber): VersionNumber {
         commandLine("git", "commit", "-m", "chore: Bump android version to $toVersion")
     }
     exec {
-        commandLine("git", "push", "origin", "HEAD")
+        commandLine("git", "push")
     }
 
     return toVersion
