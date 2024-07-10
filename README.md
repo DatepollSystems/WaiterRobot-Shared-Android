@@ -45,7 +45,7 @@ The app must then be promoted to production manually from there after testing. W
 approved by Google publish the approved changes and remove the pre-release flag on GitHub Releases.
 (see [publishAndroidProd.yml](.github/workflows/publishAndroidProd.yml))
 
-> It is also possible to create release a specific version. Just add the `v` parameter to the
+> It is also possible to release a specific version. Just add the `v` parameter to the
 > command e.g. `./gradlew androidApp:release -Pv=3.0.2`. This will first bump the version to 3.0.2,
 > then create a production release and then bump the version to the next patch version.
 
