@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.toColorInt
 import org.datepollsystems.waiterrobot.android.ui.core.theme.darkColorScheme
 import org.datepollsystems.waiterrobot.android.ui.core.theme.isDarkTheme
 import org.datepollsystems.waiterrobot.android.ui.core.theme.lightColorScheme
@@ -64,7 +63,7 @@ fun Test() {
     val colors = listOf(
         "#ebefff", "#1b2347", "#c9d1fb", "#6750A4", "#D4Dbfa", "#607dff", "#f8ffa8", "#efff32",
         "#e0ffc0", "#acff56", "#ffdbf7", "#ff60Dc",
-    )
+    ).mapNotNull { it.toColor() }
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -81,8 +80,7 @@ fun Test() {
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
-            colors.forEach {
-                val color = ComposeColor(it.toColorInt())
+            colors.forEach { color ->
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 15.dp, vertical = 10.dp)
@@ -112,7 +110,7 @@ fun Test() {
                 textAlign = TextAlign.Center
             )
             colors.forEach {
-                val color = ComposeColor(it.toColorInt()).desaturateOnDarkMode(true)
+                val color = it.desaturateOnDarkMode(true)
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 15.dp, vertical = 10.dp)

@@ -18,6 +18,7 @@ internal class ProductDto(
     val name: String,
     val soldOut: Boolean,
     val price: Cents,
+    val color: String?,
     val allergens: List<AllergenDto>,
     val position: Int = Int.MAX_VALUE,
 )

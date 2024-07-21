@@ -27,9 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
@@ -39,6 +37,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
+import org.datepollsystems.waiterrobot.android.util.toColor
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.table.models.Table
@@ -167,7 +166,7 @@ private fun TableGrid(
                         items(group.tables, key = Table::id) { table ->
                             Table(
                                 table = table,
-                                color = group.color?.let { Color(it.toColorInt()) },
+                                color = group.color.toColor(),
                                 onClick = { onTableClick(table) }
                             )
                         }

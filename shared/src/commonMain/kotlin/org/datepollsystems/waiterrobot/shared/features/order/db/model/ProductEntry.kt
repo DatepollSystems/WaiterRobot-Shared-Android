@@ -47,6 +47,7 @@ internal class ProductEntry() : RealmObject {
     var name: String = ""
     var price: Cents = 0
     var soldOut: Boolean = false
+    var color: String? = null
     var allergens: RealmList<AllergenEntry> = realmListOf()
     var position: Int = Int.MAX_VALUE
 
@@ -56,6 +57,7 @@ internal class ProductEntry() : RealmObject {
         name: String,
         price: Cents,
         soldOut: Boolean,
+        color: String?,
         allergens: List<AllergenEntry>,
         position: Int,
     ) : this() {
@@ -63,6 +65,7 @@ internal class ProductEntry() : RealmObject {
         this.name = name
         this.price = price
         this.soldOut = soldOut
+        this.color = color
         this.allergens = allergens.toRealmList()
         this.position = position
     }

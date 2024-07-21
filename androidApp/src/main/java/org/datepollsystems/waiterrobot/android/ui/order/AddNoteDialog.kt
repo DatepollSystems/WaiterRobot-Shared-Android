@@ -72,18 +72,19 @@ fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?
 private fun AddNoteDialogPreview() = Preview {
     AddNoteDialog(
         item = OrderItem(
-            org.datepollsystems.waiterrobot.shared.features.order.models.Product(
-                1,
-                "Beer",
-                4.euro,
-                false,
-                emptyList(),
-                1
+            product = org.datepollsystems.waiterrobot.shared.features.order.models.Product(
+                id = 1,
+                name = "Beer",
+                price = 4.euro,
+                soldOut = false,
+                color = null,
+                allergens = emptyList(),
+                position = 1
             ),
-            1,
-            "Test some note"
+            amount = 1,
+            note = "Test some note"
         ),
-        {},
-        { _ -> }
+        onDismiss = {},
+        onSave = { _ -> }
     )
 }
