@@ -42,7 +42,8 @@ class BillingViewModel internal constructor(
     fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
         val items = billingRepository.getBillForTable(
-            table = table, selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
+            table = table,
+            selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
         ).associateBy { it.virtualId }
 
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
