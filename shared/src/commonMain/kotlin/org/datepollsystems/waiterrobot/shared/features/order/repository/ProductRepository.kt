@@ -87,6 +87,7 @@ private fun ProductDto.toEntry() = ProductEntry(
     name = this.name,
     price = this.price,
     soldOut = this.soldOut,
+    color = this.color,
     allergens = this.allergens.map {
         AllergenEntry(id = it.id, name = it.name, shortName = it.shortName)
     },
@@ -98,6 +99,7 @@ private fun ProductEntry.toModel() = Product(
     name = this.name,
     price = this.price.cent,
     soldOut = this.soldOut,
+    color = this.color,
     allergens = this.allergens.map { Allergen(it.id, it.name, it.shortName) },
     position = this.position
 )

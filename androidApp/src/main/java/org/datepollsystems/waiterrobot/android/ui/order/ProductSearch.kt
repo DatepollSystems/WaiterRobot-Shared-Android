@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
@@ -46,6 +45,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.getContentColor
+import org.datepollsystems.waiterrobot.android.util.toColor
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.features.order.models.ProductGroup
@@ -54,7 +54,6 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.allGroups
 import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
 import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 
 @Composable
 fun ProductSearch(
@@ -134,7 +133,7 @@ fun ProductSearch(
                     )
                     productGroups.forEachIndexed { index, productGroup ->
                         val backgroundColor =
-                            productGroup.color?.let { Color(it.toColorInt()).desaturateOnDarkMode() }
+                            productGroup.color.toColor()?.desaturateOnDarkMode()
                         val textColor = backgroundColor?.getContentColor() ?: Color.Unspecified
                         Tab(
                             modifier = Modifier.background(backgroundColor ?: Color.Unspecified),
@@ -162,9 +161,7 @@ fun ProductSearch(
                                         items(productGroup.products, key = Product::id) { product ->
                                             Product(
                                                 product = product,
-                                                color = productGroup.color.emptyToNull()?.let {
-                                                    Color(it.toColorInt())
-                                                },
+                                                groupColor = productGroup.color.toColor(),
                                                 onSelect = { onSelect(product) }
                                             )
                                         }
@@ -181,9 +178,7 @@ fun ProductSearch(
                                 items(productGroup.products, key = Product::id) { product ->
                                     Product(
                                         product = product,
-                                        color = productGroup.color?.let {
-                                            Color(it.toColorInt())
-                                        },
+                                        groupColor = productGroup.color.toColor(),
                                         onSelect = { onSelect(product) }
                                     )
                                 }

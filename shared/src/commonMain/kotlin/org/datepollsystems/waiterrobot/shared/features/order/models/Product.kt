@@ -7,6 +7,7 @@ data class Product(
     val name: String,
     val price: Money,
     val soldOut: Boolean,
+    val color: String?,
     val allergens: List<Allergen>,
     val position: Int,
 )

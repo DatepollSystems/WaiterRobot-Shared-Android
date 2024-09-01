@@ -20,6 +20,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.android.util.bestContrastColor
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.getContentColor
+import org.datepollsystems.waiterrobot.android.util.toColor
 import org.datepollsystems.waiterrobot.shared.features.order.models.Allergen
 import org.datepollsystems.waiterrobot.shared.features.order.models.Product
 import org.datepollsystems.waiterrobot.shared.utils.euro
@@ -27,10 +28,10 @@ import org.datepollsystems.waiterrobot.shared.utils.euro
 @Composable
 fun Product(
     product: Product,
-    color: Color?,
+    groupColor: Color?,
     onSelect: () -> Unit,
 ) {
-    val backgroundColor = color?.desaturateOnDarkMode()
+    val backgroundColor = (product.color.toColor() ?: groupColor)?.desaturateOnDarkMode()
     OutlinedButton(
         onClick = onSelect,
         enabled = !product.soldOut,
@@ -82,10 +83,11 @@ private fun ProductPreview() = Preview {
             name = "Beer",
             price = 4.euro,
             soldOut = false,
+            color = null,
             allergens = listOf(Allergen(1, "Egg", "E")),
             position = 1
         ),
-        color = null,
+        groupColor = null,
         onSelect = {}
     )
 }
