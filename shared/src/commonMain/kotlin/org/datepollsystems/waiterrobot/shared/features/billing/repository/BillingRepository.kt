@@ -9,16 +9,16 @@ internal class BillingRepository(
     private val billingApi: BillingApi,
 ) : AbstractRepository() {
 
-    suspend fun getBillForTable(table: Table): List<BillItem> {
-        return billingApi.getBillForTable(table.id).getBillItems()
+    suspend fun getBillForTable(table: Table, selectAll: Boolean): List<BillItem> {
+        return billingApi.getBillForTable(table.id).getBillItems(selectAll)
     }
 
-    suspend fun payBill(table: Table, items: List<BillItem>): List<BillItem> {
+    suspend fun payBill(table: Table, items: List<BillItem>, selectAll: Boolean): List<BillItem> {
         return billingApi.payBill(
             table.id,
             items.flatMap {
                 it.orderProductIds.take(it.selectedForBill)
             }
-        ).openBill.getBillItems()
+        ).openBill.getBillItems(selectAll)
     }
 }

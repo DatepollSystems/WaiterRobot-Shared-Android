@@ -47,6 +47,13 @@ class SharedSettings : KoinComponent {
     internal var skipMoneyBackDialog: Boolean by settings.boolean(defaultValue = false)
     internal val skipMoneyBackDialogFlow: Flow<Boolean> =
         settings.getBooleanFlow(SharedSettings::skipMoneyBackDialog.name, defaultValue = false)
+
+    internal var paymentSelectAllProductsByDefault: Boolean by settings.boolean(defaultValue = false)
+    internal val paymentSelectAllProductsByDefaultFlow: Flow<Boolean> =
+        settings.getBooleanFlow(
+            SharedSettings::paymentSelectAllProductsByDefault.name,
+            defaultValue = false
+        )
 }
 
 @Serializable

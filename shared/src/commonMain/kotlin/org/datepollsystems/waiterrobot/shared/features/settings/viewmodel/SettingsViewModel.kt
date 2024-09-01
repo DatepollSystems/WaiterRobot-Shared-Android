@@ -52,6 +52,11 @@ class SettingsViewModel internal constructor(
         }
     }
 
+    fun togglePaymentSelectAllProductsByDefault(value: Boolean? = null) = intent {
+        CommonApp.settings.paymentSelectAllProductsByDefault =
+            value ?: !state.paymentSelectAllProductsByDefault
+    }
+
     fun logout() = intent {
         CommonApp.logout()
     }
@@ -66,6 +71,11 @@ class SettingsViewModel internal constructor(
             launch {
                 CommonApp.settings.skipMoneyBackDialogFlow.collect {
                     reduce { state.copy(skipMoneyBackDialog = it) }
+                }
+            }
+            launch {
+                CommonApp.settings.paymentSelectAllProductsByDefaultFlow.collect {
+                    reduce { state.copy(paymentSelectAllProductsByDefault = it) }
                 }
             }
         }

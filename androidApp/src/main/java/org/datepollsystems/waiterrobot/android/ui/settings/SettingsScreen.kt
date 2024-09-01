@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.CurrencyExchange
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -190,6 +191,18 @@ fun SettingsScreen(
                         )
                     },
                     onClick = vm::toggleSkipMoneyBackDialog
+                )
+                settingsItem(
+                    icon = { Icon(Icons.Outlined.SelectAll, contentDescription = null) },
+                    title = L.settings.payment.selectAllProductsByDefault.title(),
+                    subtitle = L.settings.payment.selectAllProductsByDefault.desc(),
+                    action = {
+                        Switch(
+                            checked = state.paymentSelectAllProductsByDefault,
+                            onCheckedChange = vm::togglePaymentSelectAllProductsByDefault
+                        )
+                    },
+                    onClick = vm::togglePaymentSelectAllProductsByDefault
                 )
                 if (selectedEvent?.stripeSettings is Event.StripeSettings.Enabled) {
                     settingsItem(

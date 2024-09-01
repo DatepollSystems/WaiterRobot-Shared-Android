@@ -314,6 +314,13 @@ settings:
       confirmAction:
         en: I understand, skip dialog
         de: Ich verstehe, Dialog überspringen
+    selectAllProductsByDefault:
+      title:
+        en: Select all products by default
+        de: Standardmäßig alle Produkte auswählen
+      desc:
+        en: When opening the payment screen all products are selected by default.
+        de: Beim Öffnen des Zahlungsbildschirms sind standardmäßig alle Produkte ausgewählt.
     cardPayment:
       title:
         en: Card payment
