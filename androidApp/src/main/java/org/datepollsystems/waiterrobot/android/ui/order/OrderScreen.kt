@@ -158,8 +158,13 @@ fun OrderScreen(
                         onFilter = vm::filterProducts,
                         close = {
                             focusManager.clearFocus()
-                            coroutineScope.launch { productSheetState.hide() }
-                                .invokeOnCompletion { showProductSheet = false }
+                            when {
+                                state.currentOrder.data.isNullOrEmpty() -> vm.abortOrder()
+                                else -> {
+                                    coroutineScope.launch { productSheetState.hide() }
+                                        .invokeOnCompletion { showProductSheet = false }
+                                }
+                            }
                         },
                         refreshProducts = vm::refreshProducts
                     )
