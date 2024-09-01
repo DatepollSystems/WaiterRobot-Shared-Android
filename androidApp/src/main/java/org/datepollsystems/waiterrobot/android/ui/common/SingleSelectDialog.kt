@@ -81,7 +81,7 @@ private fun <T : Any> RadioButtonRow(
 private fun SingleSelectDialogPreview() = Preview {
     Column {
         SingleSelectDialog(
-            title = L.settings.darkMode.title(),
+            title = L.settings.general.darkMode.title(),
             options = AppTheme.entries,
             optionId = AppTheme::ordinal,
             optionText = { it.settingsText() },

@@ -45,7 +45,12 @@ class BillingViewModel internal constructor(
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
     }
 
-    fun paySelection() = intent {
+    fun paySelection(paymentSheetShown: Boolean = false) = intent {
+        if (!CommonApp.settings.skipMoneyBackDialog && !paymentSheetShown) {
+            postSideEffect(BillingEffect.ShowPaymentSheet)
+            return@intent
+        }
+
         reduce { state.withViewState(viewState = ViewState.Loading) }
 
         val newBillItems = billingRepository.payBill(

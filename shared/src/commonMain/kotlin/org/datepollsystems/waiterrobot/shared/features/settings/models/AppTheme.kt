@@ -13,7 +13,7 @@ enum class AppTheme {
     DARK;
 
     fun settingsText() = when (this) {
-        SYSTEM -> L.settings.darkMode.useSystem()
+        SYSTEM -> L.settings.general.darkMode.useSystem()
         LIGHT -> L.dialog.off()
         DARK -> L.dialog.on()
     }

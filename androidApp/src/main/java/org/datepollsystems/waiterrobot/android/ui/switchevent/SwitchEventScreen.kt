@@ -120,7 +120,7 @@ fun SwitchEventScreen(
                 TextButton(
                     onClick = vm::logout,
                 ) {
-                    Text(L.settings.logout.action())
+                    Text(L.settings.general.logout.action())
                 }
             }
         }

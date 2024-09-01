@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.settings.viewmodel
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -19,7 +20,7 @@ class SettingsViewModel internal constructor(
 ) : AbstractViewModel<SettingsState, SettingsEffect>(SettingsState()) {
 
     override suspend fun SimpleSyntax<SettingsState, NavOrViewModelEffect<SettingsEffect>>.onCreate() {
-        watchAppTheme()
+        watchSettings()
     }
 
     fun refreshAll() = intent {
@@ -42,13 +43,31 @@ class SettingsViewModel internal constructor(
         navigator.push(Screen.StripeInitializationScreen)
     }
 
+    fun toggleSkipMoneyBackDialog(value: Boolean? = null, confirmed: Boolean = false) = intent {
+        val newValue = value ?: !state.skipMoneyBackDialog
+        if (newValue && !confirmed) {
+            postSideEffect(SettingsEffect.ConfirmSkipMoneyBackDialog)
+        } else {
+            CommonApp.settings.skipMoneyBackDialog = newValue
+        }
+    }
+
     fun logout() = intent {
         CommonApp.logout()
     }
 
-    private fun watchAppTheme() = intent {
-        CommonApp.appTheme.collect {
-            reduce { state.copy(currentAppTheme = it) }
+    private fun watchSettings() = intent {
+        coroutineScope {
+            launch {
+                CommonApp.appTheme.collect {
+                    reduce { state.copy(currentAppTheme = it) }
+                }
+            }
+            launch {
+                CommonApp.settings.skipMoneyBackDialogFlow.collect {
+                    reduce { state.copy(skipMoneyBackDialog = it) }
+                }
+            }
         }
     }
 }
