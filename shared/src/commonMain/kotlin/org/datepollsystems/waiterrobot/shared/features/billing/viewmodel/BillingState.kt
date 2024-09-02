@@ -30,7 +30,11 @@ data class BillingState(
 
     val priceSum: Money by lazy { _billItems.values.sumOf(BillItem::priceSum) }
 
+    @Deprecated("Use hasCustomSelection instead", ReplaceWith("hasCustomSelection"))
     val hasSelectedItems: Boolean by lazy { _billItems.any { it.value.selectedForBill > 0 } }
+    val hasCustomSelection: Boolean by lazy {
+        _billItems.any { it.value.selectedForBill > 0 && it.value.selectedForBill != it.value.ordered }
+    }
 
     val contactLessState: ContactLessState by lazy {
         if (CommonApp.stripeProvider?.connectedToReader?.value != true) return@lazy ContactLessState.DISABLED

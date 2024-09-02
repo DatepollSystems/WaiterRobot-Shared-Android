@@ -78,7 +78,7 @@ fun BillingScreen(
 
     fun goBack() {
         when {
-            state.hasSelectedItems -> showConfirmGoBack = true
+            state.hasCustomSelection -> showConfirmGoBack = true
             else -> vm.abortBill()
         }
     }
