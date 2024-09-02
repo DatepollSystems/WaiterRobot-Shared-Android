@@ -3,7 +3,6 @@ package org.datepollsystems.waiterrobot.android.ui.settings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.outlined.Contactless
 import androidx.compose.material.icons.outlined.CurrencyExchange
 import androidx.compose.material.icons.outlined.Groups
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -28,6 +27,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,48 +85,35 @@ private fun SettingsItem(
     action: (@Composable () -> Unit)?,
     onClick: (() -> Unit)?
 ) {
-    Surface {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .let {
+                if (onClick != null) {
+                    it.clickable(onClick = onClick)
+                } else {
+                    it
+                }
+            }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
         Row(
-            modifier = modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .let {
-                        if (onClick != null) {
-                            it.clickable(onClick = onClick)
-                        } else {
-                            it
-                        }
-                    },
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SettingsIcon(icon = icon)
+                if (icon != null) {
+                    icon()
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
                 SettingsTitle(title = title, subtitle = subtitle)
             }
             if (action != null) {
-                Box(
-                    modifier = Modifier.size(64.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    action()
-                }
+                Spacer(modifier = Modifier.width(12.dp))
+                action()
             }
-        }
-    }
-}
-
-@Composable
-private fun SettingsIcon(
-    modifier: Modifier = Modifier,
-    icon: (@Composable () -> Unit)? = null
-) {
-    Box(
-        modifier = modifier.size(64.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (icon != null) {
-            icon()
         }
     }
 }
@@ -161,7 +151,7 @@ fun LazyListScope.settingsSection(
             style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary),
             modifier = modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp)
+                .padding(start = 12.dp, top = 16.dp)
         )
     }
     items()
@@ -170,6 +160,7 @@ fun LazyListScope.settingsSection(
 @Preview
 @Composable
 private fun SettingsPreview() = Preview {
+    var selected by remember { mutableStateOf(false) }
     LazyColumn {
         settingsSection(L.settings.general.title()) {
             settingsItem(
@@ -185,9 +176,6 @@ private fun SettingsPreview() = Preview {
                 onClick = {}
             )
             settingsItem(
-                icon = {
-                    Icon(Icons.Outlined.Refresh, contentDescription = "Refresh data")
-                },
                 title = L.settings.general.refresh.title(),
                 subtitle = L.settings.general.refresh.desc(),
                 onClick = {}
@@ -200,9 +188,9 @@ private fun SettingsPreview() = Preview {
                 title = L.settings.payment.skipMoneyBackDialog.title(),
                 subtitle = L.settings.payment.skipMoneyBackDialog.desc(),
                 action = {
-                    Switch(checked = true, onCheckedChange = null)
+                    Switch(checked = selected, onCheckedChange = { selected = !selected })
                 },
-                onClick = {}
+                onClick = { selected = !selected }
             )
             settingsItem(
                 icon = {
