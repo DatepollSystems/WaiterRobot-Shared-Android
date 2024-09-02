@@ -1,7 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.core.settings
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.boolean
+import com.russhwolf.settings.coroutines.getBooleanFlow
 import com.russhwolf.settings.nullableString
 import com.russhwolf.settings.string
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +15,7 @@ import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@OptIn(ExperimentalSettingsApi::class)
 class SharedSettings : KoinComponent {
     private val settings: ObservableSettings by inject()
 
@@ -40,6 +43,17 @@ class SharedSettings : KoinComponent {
     internal var theme: AppTheme by settings.jsonSerialized(defaultValue = AppTheme.SYSTEM)
     internal val themeFlow: Flow<AppTheme> =
         settings.jsonSerializedFlow(SharedSettings::theme.name, AppTheme.SYSTEM)
+
+    internal var skipMoneyBackDialog: Boolean by settings.boolean(defaultValue = false)
+    internal val skipMoneyBackDialogFlow: Flow<Boolean> =
+        settings.getBooleanFlow(SharedSettings::skipMoneyBackDialog.name, defaultValue = false)
+
+    internal var paymentSelectAllProductsByDefault: Boolean by settings.boolean(defaultValue = false)
+    internal val paymentSelectAllProductsByDefaultFlow: Flow<Boolean> =
+        settings.getBooleanFlow(
+            SharedSettings::paymentSelectAllProductsByDefault.name,
+            defaultValue = false
+        )
 }
 
 @Serializable

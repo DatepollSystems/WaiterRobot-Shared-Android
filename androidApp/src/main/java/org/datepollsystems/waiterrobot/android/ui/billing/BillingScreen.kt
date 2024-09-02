@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.android.ui.billing
 
-import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
@@ -60,7 +59,6 @@ fun BillingScreen(
 ) {
     val state by vm.collectAsState()
     val context = LocalContext.current
-    vm.handleSideEffects(navigator) { handleSideEffects(it, context) }
 
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
@@ -70,6 +68,13 @@ fun BillingScreen(
     val paymentSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    vm.handleSideEffects(navigator) {
+        when (it) {
+            is BillingEffect.Toast -> Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            BillingEffect.ShowPaymentSheet -> showPaymentSheet = true
+        }
+    }
 
     fun goBack() {
         when {
@@ -125,9 +130,7 @@ fun BillingScreen(
                     if (state.hasSelectedItems) {
                         FloatingActionButton(
                             modifier = Modifier.padding(start = 16.dp),
-                            onClick = {
-                                showPaymentSheet = true
-                            }
+                            onClick = vm::paySelection
                         ) {
                             Icon(Icons.Filled.EuroSymbol, contentDescription = "Pay")
                         }
@@ -170,7 +173,7 @@ fun BillingScreen(
                             }
                         },
                         onPayClick = {
-                            vm.paySelection()
+                            vm.paySelection(paymentSheetShown = true)
                             focusManager.clearFocus()
                             coroutineScope.launch {
                                 paymentSheetState.hide()
@@ -186,14 +189,5 @@ fun BillingScreen(
         }
     ) {
         BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
-    }
-}
-
-private suspend fun handleSideEffects(
-    effect: BillingEffect,
-    context: Context
-) {
-    when (effect) {
-        is BillingEffect.Toast -> Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
     }
 }

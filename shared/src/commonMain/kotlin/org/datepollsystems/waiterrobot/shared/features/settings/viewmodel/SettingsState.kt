@@ -9,10 +9,12 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 
 data class SettingsState(
     val currentAppTheme: AppTheme = CommonApp.settings.theme,
+    val skipMoneyBackDialog: Boolean = CommonApp.settings.skipMoneyBackDialog,
+    val paymentSelectAllProductsByDefault: Boolean = CommonApp.settings.paymentSelectAllProductsByDefault,
     override val viewState: ViewState = ViewState.Idle
 ) : ViewModelState() {
     val versionString
-        get() = L.settings.version.desc(
+        get() = L.settings.about.version.desc(
             CommonApp.appInfo.appVersion,
             CommonApp.appInfo.appBuild.toString()
         )

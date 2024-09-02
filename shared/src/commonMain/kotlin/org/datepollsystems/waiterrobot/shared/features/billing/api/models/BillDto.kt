@@ -22,7 +22,7 @@ internal class BillResponseDto(
         val orderProductIds: List<Long>
     )
 
-    fun getBillItems(): List<BillItem> {
+    fun getBillItems(selectAllForBill: Boolean): List<BillItem> {
         return implodedOrderProducts.mapNotNull {
             // Safeguard
             if (it.orderProductIds.isEmpty()) return@mapNotNull null
@@ -31,7 +31,7 @@ internal class BillResponseDto(
                 baseProductId = it.baseProductId,
                 name = it.name,
                 ordered = it.amount,
-                selectedForBill = 0,
+                selectedForBill = if (selectAllForBill) it.amount else 0,
                 pricePerPiece = it.pricePerPiece.cent,
                 orderProductIds = it.orderProductIds
             )

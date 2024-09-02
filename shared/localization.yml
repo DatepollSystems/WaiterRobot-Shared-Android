@@ -266,50 +266,82 @@ settings:
   title:
     en: Settings
     de: Einstellungen
-  logout:
-    action:
-      en: Logout
-      de: Abmelden
-    desc:
-      en: Do you really want to logout from '%1$s'? Once logged out you have to request a new login code from your organisation admin. If you only want to switch the event you can do so in the settings.
-      de: Willst du dich wirklich von '%1$s' abmelden? Wenn du dich abgemeldet hast musst du einen neuen Anmeldecode von deinem Organisationsadministrator anfordern. Falls du nur das Event wechseln möchtest kannst du das in den Einstellungen machen.
+  general:
     title:
-      en: Logout from %1$s
-      de: Von %1$s abmelden
-  keepLoggedIn:
-    en: Keep logged-in
-    de: Angemeldet bleiben
-  cardPayment:
+      en: General
+      de: Allgemein
+    logout:
+      action:
+        en: Logout
+        de: Abmelden
+      desc:
+        en: Do you really want to logout from '%1$s'? Once logged out you have to request a new login code from your organisation admin. If you only want to switch the event you can do so in the settings.
+        de: Willst du dich wirklich von '%1$s' abmelden? Wenn du dich abgemeldet hast musst du einen neuen Anmeldecode von deinem Organisationsadministrator anfordern. Falls du nur das Event wechseln möchtest kannst du das in den Einstellungen machen.
+      title:
+        en: Logout from %1$s
+        de: Von %1$s abmelden
+    keepLoggedIn:
+      en: Keep logged-in
+      de: Angemeldet bleiben
+    darkMode:
+      title:
+        en: Dark Mode
+        de: Dunkelmodus
+      useSystem:
+        en: Use system setting
+        de: Systemeinstellung verwenden
+    refresh:
+      title:
+        en: Refresh data
+        de: Daten aktualisieren
+      desc:
+        en: Refresh stored data (tables, products, …)
+        de: Gespeicherte Daten aktualisieren (Tische, Produkte, …)
+  payment:
     title:
-      en: Card payment
-      de: Kartenzahlung
-    desc:
-      en: Enable and initialize the card payment module.
-      de: Kartenzahlungsmodul aktivieren und initialisieren.
-  darkMode:
+      en: Payment
+      de: Zahlung
+    skipMoneyBackDialog:
+      title:
+        en: Skip money back dialog
+        de: Rückgeld Dialog überspringen
+      desc:
+        en: Do not show the money back dialog in the payment screen.
+        de: Den Rückgeld Dialog im Zahlungsbildschirm nicht anzeigen.
+      confirmDesc:
+        en: Are you sure you want to skip the money back dialog? When enabled the money back dialog will not be shown anymore and clicking on the payment button will directly mark the selected products as payed. Currently this can not be undone.
+        de: Bist du sicher, dass du den Rückgeld Dialog überspringen möchtest? Wenn aktiviert wird der Rückgeld Dialog nicht mehr angezeigt und das Klicken auf den Zahlungsbutton markiert die ausgewählten Produkte direkt als bezahlt. Dies kann derzeit nicht rückgängig gemacht werden.
+      confirmAction:
+        en: I understand, skip dialog
+        de: Ich verstehe, Dialog überspringen
+    selectAllProductsByDefault:
+      title:
+        en: Select all products by default
+        de: Standardmäßig alle Produkte auswählen
+      desc:
+        en: When opening the payment screen all products are selected by default.
+        de: Beim Öffnen des Zahlungsbildschirms sind standardmäßig alle Produkte ausgewählt.
+    cardPayment:
+      title:
+        en: Card payment
+        de: Kartenzahlung
+      desc:
+        en: Enable and initialize the card payment module.
+        de: Kartenzahlungsmodul aktivieren und initialisieren.
+  about:
     title:
-      en: Dark Mode
-      de: Dunkelmodus
-    useSystem:
-      en: Use system setting
-      de: Systemeinstellung verwenden
-  refresh:
-    title:
-      en: Refresh data
-      de: Daten aktualisieren
-    desc:
-      en: Refresh stored data (tables, products, …)
-      de: Gespeicherte Daten aktualisieren (Tische, Produkte, …)
-  version:
-    title:
-      en: App version
-      de: App Version
-    desc:
-      en: Version %1$s (%2$s)
-      de: Version %1$s (%2$s)
-  privacyPolicy:
-    en: Privacy Policy
-    de: Datenschutz
+      en: About
+      de: Über
+    version:
+      title:
+        en: App version
+        de: App Version
+      desc:
+        en: Version %1$s (%2$s)
+        de: Version %1$s (%2$s)
+    privacyPolicy:
+      en: Privacy Policy
+      de: Datenschutz
 stripeInit:
   title:
     en: Initialize card payment

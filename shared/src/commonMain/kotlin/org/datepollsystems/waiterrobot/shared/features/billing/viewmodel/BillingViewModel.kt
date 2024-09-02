@@ -41,16 +41,26 @@ class BillingViewModel internal constructor(
 
     fun loadBill() = intent {
         reduce { state.withViewState(viewState = ViewState.Loading) }
-        val items = billingRepository.getBillForTable(table).associateBy { it.virtualId }
+        val items = billingRepository.getBillForTable(
+            table = table,
+            selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
+        ).associateBy { it.virtualId }
+
         reduce { state.copy(_billItems = items, viewState = ViewState.Idle) }
     }
 
-    fun paySelection() = intent {
+    fun paySelection(paymentSheetShown: Boolean = false) = intent {
+        if (!CommonApp.settings.skipMoneyBackDialog && !paymentSheetShown) {
+            postSideEffect(BillingEffect.ShowPaymentSheet)
+            return@intent
+        }
+
         reduce { state.withViewState(viewState = ViewState.Loading) }
 
         val newBillItems = billingRepository.payBill(
             table = table,
-            items = state.billItems.filter { it.selectedForBill > 0 }
+            items = state.billItems.filter { it.selectedForBill > 0 },
+            selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
         )
 
         reduce {
@@ -234,7 +244,8 @@ class BillingViewModel internal constructor(
 
     private fun cancelPayment(paymentIntent: PaymentIntent) = intent {
         reduce { state.copy(paymentErrorDialog = null, viewState = ViewState.Loading) }
-        val newBillItems = stripeApi.cancelPaymentIntent(paymentIntent).getBillItems()
+        val newBillItems = stripeApi.cancelPaymentIntent(paymentIntent)
+            .getBillItems(selectAllForBill = CommonApp.settings.paymentSelectAllProductsByDefault)
         reduce {
             state.copy(
                 viewState = ViewState.Idle,

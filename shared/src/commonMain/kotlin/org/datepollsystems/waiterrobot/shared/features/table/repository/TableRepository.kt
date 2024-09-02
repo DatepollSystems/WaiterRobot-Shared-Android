@@ -57,7 +57,7 @@ internal class TableRepository(
 
     suspend fun getUnpaidItemsForTable(table: Table): Flow<Resource<List<OrderedItem>>> =
         remoteResource {
-            billingRepository.getBillForTable(table).map {
+            billingRepository.getBillForTable(table, selectAll = false).map {
                 OrderedItem(it.baseProductId, it.name, it.ordered, it.virtualId)
             }
         }
