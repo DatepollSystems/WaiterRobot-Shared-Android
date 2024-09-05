@@ -79,6 +79,10 @@ internal sealed class ApiException : Exception() {
     class BillAmountTooLow(val minAmount: Cents) : ApiException()
 
     @Serializable
+    @SerialName("BILL_PRODUCTS_ALREADY_PAYED")
+    class BillProductsAlreadyPayed(val orderProductIds: Set<Long>) : ApiException()
+
+    @Serializable
     @SerialName("STRIPE_NOT_ACTIVATED")
     class StripeNotActivated(val eventId: Long) : ApiException()
 
