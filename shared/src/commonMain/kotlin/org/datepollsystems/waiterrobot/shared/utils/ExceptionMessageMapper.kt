@@ -6,6 +6,7 @@ import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.getLogger
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.accountNotActivated
+import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyCreated
 import org.datepollsystems.waiterrobot.shared.generated.localization.amountToLow
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.disabled
@@ -38,6 +39,7 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.StripeDisabled -> L.stripeInit.error.disabled()
     is ApiException.StripeNotActivated -> L.stripeInit.error.disabledForEvent()
     is ApiException.ProductStockToLow -> L.order.stockToLow.title()
+    is ApiException.OrderAlreadySubmitted -> L.order.alreadyCreated()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,

@@ -16,6 +16,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc
 import org.datepollsystems.waiterrobot.shared.generated.localization.descOrderSent
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
+import org.datepollsystems.waiterrobot.shared.utils.randomUUID
 import org.orbitmvi.orbit.syntax.simple.SimpleContext
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -28,6 +29,8 @@ class OrderViewModel internal constructor(
     private val table: Table,
     private val initialItemId: Long?
 ) : AbstractViewModel<OrderState, OrderEffect>(OrderState()) {
+
+    private var currentOrderId = randomUUID()
 
     override suspend fun SimpleSyntax<OrderState, NavOrViewModelEffect<OrderEffect>>.onCreate() {
         coroutineScope {
@@ -99,7 +102,8 @@ class OrderViewModel internal constructor(
         }
 
         try {
-            orderRepository.sendOrder(table, order)
+            orderRepository.sendOrder(table, order, currentOrderId)
+            currentOrderId = randomUUID()
 
             reduce { state.copy(_currentOrder = Resource.Success(emptyMap())) }
             navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
@@ -113,6 +117,10 @@ class OrderViewModel internal constructor(
             } else {
                 reduce { stockToLow(stockToLowProduct, e.remaining) }
             }
+        } catch (_: ApiException.OrderAlreadySubmitted) {
+            logger.w("Order was already submitted")
+            reduce { state.copy(_currentOrder = Resource.Success(emptyMap())) }
+            navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
         }
     }
 

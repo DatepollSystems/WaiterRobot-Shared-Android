@@ -85,4 +85,8 @@ internal sealed class ApiException : Exception() {
     @Serializable
     @SerialName("STRIPE_DISABLED")
     class StripeDisabled : ApiException()
+
+    @Serializable
+    @SerialName("ORDER_ALREADY_SUBMITTED")
+    class OrderAlreadySubmitted : ApiException()
 }
