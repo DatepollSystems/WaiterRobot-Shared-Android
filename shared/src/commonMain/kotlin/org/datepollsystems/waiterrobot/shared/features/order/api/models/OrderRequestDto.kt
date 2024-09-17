@@ -6,7 +6,8 @@ import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
 @Serializable
 class OrderRequestDto(
     val tableId: Long,
-    val products: List<OrderItemDto>
+    val products: List<OrderItemDto>,
+    val clientOrderId: String,
 ) : RequestBodyDto {
     @Serializable
     class OrderItemDto(

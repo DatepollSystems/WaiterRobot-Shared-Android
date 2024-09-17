@@ -8,8 +8,8 @@ import org.datepollsystems.waiterrobot.shared.features.table.models.Table
 
 internal class OrderRepository(private val orderApi: OrderApi) : AbstractRepository() {
 
-    suspend fun sendOrder(table: Table, order: List<OrderItem>) {
+    suspend fun sendOrder(table: Table, order: List<OrderItem>, orderId: String) {
         val items = order.map { OrderRequestDto.OrderItemDto(it.product.id, it.amount, it.note) }
-        orderApi.sendOrder(OrderRequestDto(table.id, items))
+        orderApi.sendOrder(OrderRequestDto(table.id, items, orderId))
     }
 }

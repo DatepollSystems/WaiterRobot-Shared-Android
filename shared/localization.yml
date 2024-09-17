@@ -179,6 +179,9 @@ order:
     inputPlaceholder:
       de: 1x ohne Tomaten
       en: 1x without tomato
+  alreadyCreated:
+    en: Order was already sent.
+    de: Bestellung wurde bereits gesendet.
   couldNotFindProduct:
     title:
       de: Produkt nicht gefunden.
