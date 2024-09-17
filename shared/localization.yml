@@ -238,6 +238,13 @@ billing:
   noOpenBill:
     en: There is currently no open bill for table \"%1$s - %2$s\"
     de: Es gibt derzeit keine offene Rechnung für den Tisch \"%1$s - %2$s\"
+  productsAlreadyPayed:
+    title:
+      en: Already payed
+      de: Bereits bezahlt
+    desc:
+      en: Some of the selected products are already payed.
+      de: Einige der ausgewählten Produkte sind bereits bezahlt.
   amountToLow:
     en: The selected payment method requires a minimum amount of %1$s.
     de: Die ausgewählte Zahlungsmethode erfordert einen Mindestbetrag von %1$s.

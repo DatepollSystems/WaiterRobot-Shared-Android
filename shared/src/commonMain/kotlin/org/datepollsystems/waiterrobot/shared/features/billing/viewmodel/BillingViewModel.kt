@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
 
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
@@ -57,18 +58,27 @@ class BillingViewModel internal constructor(
 
         reduce { state.withViewState(viewState = ViewState.Loading) }
 
-        val newBillItems = billingRepository.payBill(
-            table = table,
-            items = state.billItems.filter { it.selectedForBill > 0 },
-            selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
-        )
+        try {
+            val newBillItems = billingRepository.payBill(
+                table = table,
+                items = state.billItems.filter { it.selectedForBill > 0 },
+                selectAll = CommonApp.settings.paymentSelectAllProductsByDefault
+            )
 
-        reduce {
-            state.copy(
-                viewState = ViewState.Idle,
-                _billItems = newBillItems.associateBy { it.virtualId },
-                change = null,
-                moneyGivenText = ""
+            reduce {
+                state.copy(
+                    viewState = ViewState.Idle,
+                    _billItems = newBillItems.associateBy { it.virtualId },
+                    change = null,
+                    moneyGivenText = ""
+                )
+            }
+        } catch (_: ApiException.BillProductsAlreadyPayed) {
+            logger.i("Some products have already been payed.")
+            reduceError(
+                L.billing.productsAlreadyPayed.title(),
+                L.billing.productsAlreadyPayed.desc(),
+                dismiss = ::loadBill
             )
         }
     }

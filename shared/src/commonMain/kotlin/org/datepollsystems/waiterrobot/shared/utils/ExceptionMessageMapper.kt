@@ -40,6 +40,7 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.StripeNotActivated -> L.stripeInit.error.disabledForEvent()
     is ApiException.ProductStockToLow -> L.order.stockToLow.title()
     is ApiException.OrderAlreadySubmitted -> L.order.alreadyCreated()
+    is ApiException.BillProductsAlreadyPayed -> L.billing.productsAlreadyPayed.desc()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,
