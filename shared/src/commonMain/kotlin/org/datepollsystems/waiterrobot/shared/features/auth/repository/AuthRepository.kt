@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.auth.repository
 
+import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.protocol.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
@@ -85,6 +87,9 @@ internal class AuthRepository(
         backgroundScope.launch {
             logger.d { "Refreshing user details" }
             val waiter = waiterApi.getMySelf()
+            Sentry.setUser(
+                User(id = waiter.id.toString())
+            )
             CommonApp.settings.organisationName = waiter.organisationName
             CommonApp.settings.waiterName = waiter.name
             logger.d { "Stored user details" }

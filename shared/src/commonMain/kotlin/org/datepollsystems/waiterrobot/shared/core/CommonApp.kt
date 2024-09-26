@@ -3,6 +3,7 @@ package org.datepollsystems.waiterrobot.shared.core
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.pluginOrNull
+import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +45,13 @@ object CommonApp : KoinComponent {
     ) {
         this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, allowedHostsCsv)
         this.stripeProvider = stripeProvider
+
+        Sentry.init { options ->
+            options.dsn = "https://ae6f703d02014a2ebe206a1d43007ac0@glitchtip.kellner.team/3"
+            // options.environment = "production" // TODO
+            options.release = appVersion
+            options.dist = os.toString()
+        }
     }
 
     internal val isLoggedIn: StateFlow<Boolean> by lazy {
@@ -94,6 +102,8 @@ object CommonApp : KoinComponent {
         settings.waiterName = ""
         // Reset to default, so that after next login the user will be asked again
         settings.enableContactlessPayment = true
+
+        Sentry.setUser(null)
 
         // Clear the tokens from the client, so that they get reloaded.
         val apiClients = getKoin().getAll<AuthorizedClient>()
