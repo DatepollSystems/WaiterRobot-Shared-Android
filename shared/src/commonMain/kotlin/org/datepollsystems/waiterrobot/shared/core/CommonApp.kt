@@ -4,6 +4,8 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.pluginOrNull
 import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.SentryEvent
+import io.sentry.kotlin.multiplatform.protocol.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +16,15 @@ import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
+import org.datepollsystems.waiterrobot.shared.core.sentry.SentryTag
+import org.datepollsystems.waiterrobot.shared.core.sentry.removeTag
+import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.utils.extensions.toUrl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -43,15 +49,28 @@ object CommonApp : KoinComponent {
         allowedHostsCsv: String,
         stripeProvider: StripeProvider? = null
     ) {
-        this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, allowedHostsCsv)
-        this.stripeProvider = stripeProvider
-
         Sentry.init { options ->
             options.dsn = "https://ae6f703d02014a2ebe206a1d43007ac0@glitchtip.kellner.team/3"
-            // options.environment = "production" // TODO
-            options.release = appVersion
-            options.dist = os.toString()
+            options.environment = "unknown" // Will be set in sentryBeforeSendEvent as it can change
+            options.release = "${os.name} $appVersion"
+            options.beforeSend = ::sentryBeforeSendEvent
         }
+        Sentry.configureScope { scope ->
+            scope.setTag(SentryTag.OS, os.toString())
+            scope.setTag(SentryTag.OS_NAME, os.name)
+            scope.user = settings.waiterId?.let { User(id = it) }
+            settings.selectedEvent?.let { selectedEvent ->
+                scope.setTag(SentryTag.ORGANIZATION_ID, selectedEvent.organisationId.toString())
+                scope.setTag(SentryTag.EVENT_ID, selectedEvent.id.toString())
+            }
+        }
+
+        this.appInfo = AppInfo(appVersion, appBuild, phoneModel, os, allowedHostsCsv)
+        Sentry.configureScope { scope ->
+            scope.setExtra("appInfo", appInfo.toString())
+        }
+
+        this.stripeProvider = stripeProvider
     }
 
     internal val isLoggedIn: StateFlow<Boolean> by lazy {
@@ -98,12 +117,17 @@ object CommonApp : KoinComponent {
 
         settings.tokens = null // This also triggers a change to the isLoggedInFlow
         settings.selectedEvent = null
+        settings.waiterId = null
         settings.organisationName = ""
         settings.waiterName = ""
         // Reset to default, so that after next login the user will be asked again
         settings.enableContactlessPayment = true
 
-        Sentry.setUser(null)
+        Sentry.configureScope { scope ->
+            scope.user = null
+            scope.removeTag(SentryTag.ORGANIZATION_ID)
+            scope.removeTag(SentryTag.EVENT_ID)
+        }
 
         // Clear the tokens from the client, so that they get reloaded.
         val apiClients = getKoin().getAll<AuthorizedClient>()
@@ -122,6 +146,11 @@ object CommonApp : KoinComponent {
             stripeProvider?.shouldInitializeTerminal() == true -> Screen.StripeInitializationScreen
             else -> Screen.TableListScreen
         }
+    }
+
+    private fun sentryBeforeSendEvent(event: SentryEvent): SentryEvent = event.apply {
+        // Environment can change at any time but can't be configured via the scope so load it when sending
+        environment = settings.apiBase?.toUrl()?.host ?: "unknown"
     }
 
     const val MIN_UPDATE_INFO_HOURS = 24

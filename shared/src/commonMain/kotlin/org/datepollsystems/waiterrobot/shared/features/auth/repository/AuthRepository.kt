@@ -6,6 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
+import org.datepollsystems.waiterrobot.shared.core.sentry.SentryTag
+import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.auth.api.WaiterApi
@@ -87,9 +89,11 @@ internal class AuthRepository(
         backgroundScope.launch {
             logger.d { "Refreshing user details" }
             val waiter = waiterApi.getMySelf()
-            Sentry.setUser(
-                User(id = waiter.id.toString())
-            )
+            Sentry.configureScope { scope ->
+                scope.user = User(id = waiter.id.toString())
+                scope.setTag(SentryTag.ORGANIZATION_ID, waiter.organisationId.toString())
+            }
+            CommonApp.settings.waiterId = waiter.id.toString()
             CommonApp.settings.organisationName = waiter.organisationName
             CommonApp.settings.waiterName = waiter.name
             logger.d { "Stored user details" }

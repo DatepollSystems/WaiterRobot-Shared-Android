@@ -18,7 +18,7 @@ skie = "0.8.2"
 kmmbridge = "0.5.5"
 kmmresources = "1.0.0-alpha11"
 
-# When updating also update the "Sentry-Dynamic.xcframework" in the shared folder to the required/supported version
+# When updating also update the "Sentry-Dynamic.xcframework" in the shared folder to a required/supported version (see Info.plist for curent version)
 # 1. Go to https://github.com/getsentry/sentry-cocoa/releases
 # 2. Download the latest "Sentry-Dynamic.xcframework.zip"
 # 3. Unzip the file and delte everything from the folders except "ios-arm64" & "ios-arm64_x86_64-simulator"

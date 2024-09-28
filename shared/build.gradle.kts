@@ -218,7 +218,6 @@ tasks {
             named("assembleShared${buildType}XCFramework") {
                 dependsOn(generateLocalizationsTask)
                 doLast {
-                    // TODO can we get this names from somewhere?
                     listOf("ios-arm64", "ios-arm64_x86_64-simulator").forEach { arch ->
                         copy {
                             from("$generatedLocalizationRoot/commonMain/resources/ios")
