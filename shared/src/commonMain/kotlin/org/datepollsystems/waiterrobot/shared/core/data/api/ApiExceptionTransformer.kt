@@ -18,13 +18,14 @@ internal fun HttpClientConfig<*>.installApiClientExceptionTransformer(json: Json
             val clientException = exception as? ClientRequestException
                 ?: return@handleResponseExceptionWithRequest
 
+            val logger = CommonApp.getLogger("ApiClientExceptionTransformer")
             // Get as string and do custom serialization here, so we can fallback to a generic error
             // with the basic error information if the client does not know the codeName.
             val jsonString = clientException.response.bodyAsText()
-            throw try {
+            val apiException = try {
                 json.decodeFromString<ApiException>(jsonString)
             } catch (e: SerializationException) {
-                CommonApp.getLogger("ApiClientExceptionTransformer").w(
+                logger.w(
                     ExceptionWithData(
                         message = "Could not deserialize ApiException",
                         cause = e,
@@ -36,6 +37,10 @@ internal fun HttpClientConfig<*>.installApiClientExceptionTransformer(json: Json
                 }
                 json.decodeFromString<ApiException.Generic>(jsonString)
             }
+
+            logger.i(apiException) { "Request ClientError: ${apiException.codeName}" }
+
+            throw apiException
         }
     }
 }

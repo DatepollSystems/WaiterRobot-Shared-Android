@@ -6,14 +6,6 @@ import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 
 val SentryKtorBreadcrumbsPlugin = createClientPlugin("SentryKtorBreadcrumbsPlugin") {
-    onRequest { request, _ ->
-        Sentry.addBreadcrumb(
-            Breadcrumb.http(
-                url = request.url.toString(),
-                method = request.method.value,
-            )
-        )
-    }
     onResponse { response ->
         Sentry.addBreadcrumb(
             Breadcrumb.http(

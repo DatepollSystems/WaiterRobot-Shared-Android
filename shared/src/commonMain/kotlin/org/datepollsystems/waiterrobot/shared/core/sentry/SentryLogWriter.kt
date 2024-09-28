@@ -17,13 +17,13 @@ class SentryLogWriter : LogWriter() {
             Severity.Verbose, Severity.Debug -> return
             Severity.Info -> {
                 Sentry.configureScope {
-                    it.addBreadcrumb(Breadcrumb.info(message))
-                    if (throwable != null) {
-                        it.addBreadcrumb(
-                            Breadcrumb.error(throwable.toString())
-                                .apply { level = severity.toSentryLevel() }
-                        )
-                    }
+                    it.addBreadcrumb(
+                        Breadcrumb.info(message).apply {
+                            if (throwable != null) {
+                                setData("exception", throwable.toString())
+                            }
+                        }
+                    )
                 }
             }
 
