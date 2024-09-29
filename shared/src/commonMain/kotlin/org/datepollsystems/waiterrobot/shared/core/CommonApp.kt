@@ -4,7 +4,6 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.pluginOrNull
 import io.sentry.kotlin.multiplatform.Sentry
-import io.sentry.kotlin.multiplatform.SentryEvent
 import io.sentry.kotlin.multiplatform.protocol.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,13 +18,14 @@ import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.sentry.SentryTag
 import org.datepollsystems.waiterrobot.shared.core.sentry.removeTag
+import org.datepollsystems.waiterrobot.shared.core.sentry.sentryBeforeBreadcrumb
+import org.datepollsystems.waiterrobot.shared.core.sentry.sentryBeforeSendEvent
 import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
-import org.datepollsystems.waiterrobot.shared.utils.extensions.toUrl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.dsl.KoinAppDeclaration
@@ -58,6 +58,7 @@ object CommonApp : KoinComponent {
             options.environment = "unknown" // Will be set in sentryBeforeSendEvent as it can change
             options.release = "${os.name} $appVersion"
             options.beforeSend = ::sentryBeforeSendEvent
+            options.beforeBreadcrumb = ::sentryBeforeBreadcrumb
         }
 
         initKoin(koinPlatformDeclaration) // Required for the settings to work
@@ -156,11 +157,6 @@ object CommonApp : KoinComponent {
             stripeProvider?.shouldInitializeTerminal() == true -> Screen.StripeInitializationScreen
             else -> Screen.TableListScreen
         }
-    }
-
-    private fun sentryBeforeSendEvent(event: SentryEvent): SentryEvent = event.apply {
-        // Environment can change at any time but can't be configured via the scope so load it when sending
-        environment = settings.apiBase?.toUrl()?.host ?: "unknown"
     }
 
     const val MIN_UPDATE_INFO_HOURS = 24
