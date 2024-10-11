@@ -1,21 +1,21 @@
 [versions]
 # Shared
-kotlin = "1.9.24" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
-ksp = "1.9.24-1.0.20" # First part must match the kotlin version
+kotlin = "2.0.21" # Always check https://developer.android.com/jetpack/androidx/releases/compose-kotlin for compose version compatibility
+ksp = "2.0.21-1.0.25" # First part must match the kotlin version
 kermit = "2.0.3"
-koin = "3.5.6"
-orbitMvi = "8.0.0"
+koin = "4.0.0"
+orbitMvi = "9.0.0"
 mokoMvvm = "0.16.1"
-ktor = "2.3.11"
+ktor = "3.0.0"
 mokoPermissions = "0.18.0"
 settings = "1.1.1"
-realm = "1.16.0"
+realm = "3.0.0"
 detekt = "1.23.6"
 kotlinx-serialization-json = "1.6.3"
 kotlinx-datetime = "0.6.0"
 buildkonfig = "0.15.1"
 skie = "0.8.2"
-kmmbridge = "0.5.5"
+kmmbridge = "1.0.1"
 kmmresources = "1.0.0-alpha11"
 
 # Android
@@ -34,7 +34,7 @@ androidx-compose-activity = "1.9.0"
 compose-destinations = "1.10.2"
 play-publisher = "3.9.1"
 accompanistPermissions = "0.34.0"
-koinCompose = "3.5.6"
+koinCompose = "4.0.0"
 appUpdate = "2.1.0"
 barcodeScanning = "17.2.0"
 stripe = "3.5.0"
