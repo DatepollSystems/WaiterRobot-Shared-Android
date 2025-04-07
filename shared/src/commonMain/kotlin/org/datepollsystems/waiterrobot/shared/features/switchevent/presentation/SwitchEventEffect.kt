@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel
+package org.datepollsystems.waiterrobot.shared.features.switchevent.presentation
 
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 

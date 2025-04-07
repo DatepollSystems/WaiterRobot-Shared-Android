@@ -7,7 +7,7 @@ import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.Lo
 import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
-import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
+import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.list.TableListViewModel

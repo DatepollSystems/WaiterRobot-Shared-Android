@@ -7,7 +7,7 @@ import org.datepollsystems.waiterrobot.shared.features.order.orderModule
 import org.datepollsystems.waiterrobot.shared.features.product.productModule
 import org.datepollsystems.waiterrobot.shared.features.settings.di.settingsModule
 import org.datepollsystems.waiterrobot.shared.features.stripe.di.stripeModule
-import org.datepollsystems.waiterrobot.shared.features.switchevent.di.switchEventModule
+import org.datepollsystems.waiterrobot.shared.features.switchevent.switchEventModule
 import org.datepollsystems.waiterrobot.shared.features.table.tableModule
 import org.datepollsystems.waiterrobot.shared.root.di.rootModule
 import org.koin.core.component.KoinComponent

@@ -1,19 +1,22 @@
-package org.datepollsystems.waiterrobot.shared.features.switchevent.repository
+package org.datepollsystems.waiterrobot.shared.features.switchevent.data
 
 import io.sentry.kotlin.multiplatform.Sentry
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
+import org.datepollsystems.waiterrobot.shared.core.data.EventProvider
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
 import org.datepollsystems.waiterrobot.shared.core.sentry.SentryTag
 import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
-import org.datepollsystems.waiterrobot.shared.features.switchevent.api.EventLocationApi
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.data.remote.EventLocationApi
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.repository.SwitchEventRepository
 import org.datepollsystems.waiterrobot.shared.utils.extensions.runCatchingCancelable
 
-internal class SwitchEventRepository(
+internal class SwitchEventRepositoryImpl(
     private val eventLocationApi: EventLocationApi,
-) : AbstractRepository() {
+    private val eventProvider: EventProvider,
+) : SwitchEventRepository, AbstractRepository() {
 
-    suspend fun getEvents(): Result<List<Event>> = runCatchingCancelable {
+    override suspend fun getEvents(): Result<List<Event>> = runCatchingCancelable {
         eventLocationApi.getEvents().map {
             Event(
                 id = it.id,
@@ -31,8 +34,8 @@ internal class SwitchEventRepository(
         }
     }
 
-    suspend fun switchToEvent(event: Event): Boolean {
-        val oldEventId = CommonApp.settings.selectedEvent?.id
+    override suspend fun switchToEvent(event: Event): Boolean {
+        val oldEventId = eventProvider.value?.id
         CommonApp.settings.selectedEvent = event
         Sentry.configureScope { scope ->
             scope.setTag(SentryTag.EVENT_ID, event.id.toString())

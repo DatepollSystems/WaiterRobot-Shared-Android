@@ -1,10 +1,10 @@
-package org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel
+package org.datepollsystems.waiterrobot.shared.features.switchevent.presentation
 
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
-import org.datepollsystems.waiterrobot.shared.features.switchevent.repository.SwitchEventRepository
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.repository.SwitchEventRepository
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 

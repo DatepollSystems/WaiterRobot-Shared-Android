@@ -2,7 +2,7 @@ package org.datepollsystems.waiterrobot.shared.core.data
 
 import kotlinx.coroutines.flow.Flow
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 
 internal interface EventProvider {
     val value: Event?

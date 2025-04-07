@@ -34,7 +34,7 @@ import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
+import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.action
 import org.datepollsystems.waiterrobot.shared.generated.localization.desc

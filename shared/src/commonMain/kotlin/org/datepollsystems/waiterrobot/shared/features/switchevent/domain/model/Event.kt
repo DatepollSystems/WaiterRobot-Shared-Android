@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.switchevent.models
+package org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
