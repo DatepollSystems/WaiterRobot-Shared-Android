@@ -1,8 +1,9 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.repository
+package org.datepollsystems.waiterrobot.shared.features.billing.data
 
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
-import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
-import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.BillingApi
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.BillRepository
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.utils.extensions.runCatchingCancelable
 

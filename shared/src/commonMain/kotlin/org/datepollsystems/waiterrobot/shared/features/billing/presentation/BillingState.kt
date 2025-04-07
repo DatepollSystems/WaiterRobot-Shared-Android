@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
+package org.datepollsystems.waiterrobot.shared.features.billing.presentation
 
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
@@ -6,8 +6,8 @@ import org.datepollsystems.waiterrobot.shared.core.data.asListResource
 import org.datepollsystems.waiterrobot.shared.core.data.objCArray
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
-import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakUp
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.ChangeBreakUp.Companion.breakUp
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.cent

@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
+package org.datepollsystems.waiterrobot.shared.features.billing.presentation
 
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
@@ -7,14 +7,14 @@ import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
-import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.BillingRepositoryImpl
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.GeoLocationDisabledException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.NfcDisabledException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.PaymentCanceledException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp.Companion.breakDown
+import org.datepollsystems.waiterrobot.shared.features.billing.data.BillingRepositoryImpl
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.PayBillRequestDto
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.GeoLocationDisabledException
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.NfcDisabledException
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.PaymentCanceledException
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.StripeProvider
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.ChangeBreakUp.Companion.breakDown
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table

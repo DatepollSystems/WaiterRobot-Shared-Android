@@ -1,7 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.table
 
 import org.datepollsystems.waiterrobot.shared.core.di.sharedViewModelOf
-import org.datepollsystems.waiterrobot.shared.features.billing.di.billingModule
+import org.datepollsystems.waiterrobot.shared.features.billing.billingModule
 import org.datepollsystems.waiterrobot.shared.features.table.data.TableGroupRepositoryImpl
 import org.datepollsystems.waiterrobot.shared.features.table.data.TableRepositoryImpl
 import org.datepollsystems.waiterrobot.shared.features.table.data.local.TableDatabase

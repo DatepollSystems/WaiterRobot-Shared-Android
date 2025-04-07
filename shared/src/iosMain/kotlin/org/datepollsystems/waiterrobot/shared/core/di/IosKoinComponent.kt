@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
 import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel

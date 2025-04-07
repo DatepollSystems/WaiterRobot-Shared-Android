@@ -23,7 +23,7 @@ import org.datepollsystems.waiterrobot.shared.core.sentry.sentryBeforeSendEvent
 import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
 import org.koin.core.component.KoinComponent

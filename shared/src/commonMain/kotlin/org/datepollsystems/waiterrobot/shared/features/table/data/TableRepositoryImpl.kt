@@ -1,7 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.table.data
 
 import org.datepollsystems.waiterrobot.shared.core.repository.AbstractRepository
-import org.datepollsystems.waiterrobot.shared.features.billing.api.BillingApi
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.BillingApi
 import org.datepollsystems.waiterrobot.shared.features.table.data.local.TableDatabase
 import org.datepollsystems.waiterrobot.shared.features.table.data.remote.TableApi
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.OrderedItem

@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.models
+package org.datepollsystems.waiterrobot.shared.features.billing.domain.model
 
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.times

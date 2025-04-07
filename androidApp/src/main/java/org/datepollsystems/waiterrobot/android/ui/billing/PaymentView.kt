@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingState
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.ChangeBreakUp
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingState
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.ChangeBreakUp
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.change
 import org.datepollsystems.waiterrobot.shared.generated.localization.given

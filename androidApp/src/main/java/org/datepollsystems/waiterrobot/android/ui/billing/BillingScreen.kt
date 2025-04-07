@@ -38,8 +38,8 @@ import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingEffect
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingEffect
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway

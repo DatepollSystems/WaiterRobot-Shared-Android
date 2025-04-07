@@ -1,9 +1,9 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.repository
+package org.datepollsystems.waiterrobot.shared.features.billing.domain.repository
 
 import kotlinx.coroutines.flow.StateFlow
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 
 interface StripeProvider {
     val connectedToReader: StateFlow<Boolean>

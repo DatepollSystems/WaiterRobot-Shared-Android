@@ -2,7 +2,7 @@ package org.datepollsystems.waiterrobot.shared.core.di
 
 import co.touchlab.kermit.Logger
 import org.datepollsystems.waiterrobot.shared.features.auth.di.loginModule
-import org.datepollsystems.waiterrobot.shared.features.billing.di.billingModule
+import org.datepollsystems.waiterrobot.shared.features.billing.billingModule
 import org.datepollsystems.waiterrobot.shared.features.order.orderModule
 import org.datepollsystems.waiterrobot.shared.features.product.productModule
 import org.datepollsystems.waiterrobot.shared.features.settings.di.settingsModule

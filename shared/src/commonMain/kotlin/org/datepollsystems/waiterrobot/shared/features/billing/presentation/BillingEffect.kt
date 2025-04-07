@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.viewmodel
+package org.datepollsystems.waiterrobot.shared.features.billing.presentation
 
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 

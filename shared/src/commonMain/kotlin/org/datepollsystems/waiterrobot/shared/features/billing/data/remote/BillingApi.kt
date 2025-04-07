@@ -1,11 +1,11 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.api
+package org.datepollsystems.waiterrobot.shared.features.billing.data.remote
 
 import io.ktor.client.call.body
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedApi
 import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.BillResponseDto
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillResponseDto
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.BillResponseDto
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.PayBillRequestDto
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.PayBillResponseDto
 
 internal class BillingApi(client: AuthorizedClient) : AuthorizedApi("v2/waiter/billing", client) {
 

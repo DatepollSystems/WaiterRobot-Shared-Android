@@ -1,9 +1,9 @@
-package org.datepollsystems.waiterrobot.shared.features.billing.api.models
+package org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
-import org.datepollsystems.waiterrobot.shared.features.billing.models.BillItem
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
 import org.datepollsystems.waiterrobot.shared.utils.Cents
 import org.datepollsystems.waiterrobot.shared.utils.cent
 
