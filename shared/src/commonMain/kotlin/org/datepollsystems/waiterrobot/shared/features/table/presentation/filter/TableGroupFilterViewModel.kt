@@ -36,8 +36,4 @@ class TableGroupFilterViewModel internal constructor(
     fun hideAll() = intent {
         hideTableGroupUseCases.hideAll()
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

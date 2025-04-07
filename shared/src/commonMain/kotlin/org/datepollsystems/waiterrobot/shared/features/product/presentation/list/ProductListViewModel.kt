@@ -48,8 +48,4 @@ class ProductListViewModel internal constructor(
             reduce { state.copy(productGroups = state.productGroups.error(error)) }
         }
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

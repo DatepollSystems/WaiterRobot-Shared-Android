@@ -39,10 +39,6 @@ class SettingsViewModel internal constructor(
         }
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun refreshAll() = intent {
         coroutineScope {
             launchCatching(logger) { refreshTableGroupsUseCase() }

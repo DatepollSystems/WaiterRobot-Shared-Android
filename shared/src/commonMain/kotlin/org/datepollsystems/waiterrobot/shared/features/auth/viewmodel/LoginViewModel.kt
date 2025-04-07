@@ -37,8 +37,4 @@ class LoginViewModel internal constructor(
             logger.d(e) { "Error with debug login link: $link" }
         }
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

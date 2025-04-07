@@ -46,10 +46,6 @@ class TableListViewModel internal constructor(
         }
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun refreshTables() = intent {
         refreshTablesInternal()
     }

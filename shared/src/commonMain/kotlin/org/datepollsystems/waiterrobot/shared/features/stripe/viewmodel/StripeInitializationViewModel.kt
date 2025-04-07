@@ -28,10 +28,6 @@ class StripeInitializationViewModel internal constructor(
         setLocationId()
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun startInitialization() = intent {
         if (!setLocationId()) return@intent
 

@@ -16,10 +16,6 @@ class SwitchEventViewModel internal constructor(
         loadEvents()
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun loadEvents() = intent {
         reduce { state.copy(events = Resource.Loading(state.events.data)) }
         repository.getEvents()

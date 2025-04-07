@@ -44,8 +44,4 @@ class RegisterViewModel internal constructor(
         // TODO confirm?
         navigator.pop()
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

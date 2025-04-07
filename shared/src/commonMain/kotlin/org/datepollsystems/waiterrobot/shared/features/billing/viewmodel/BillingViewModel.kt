@@ -46,10 +46,6 @@ class BillingViewModel internal constructor(
         }
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun refreshBill() = intent { refreshBillInternal() }
 
     private suspend fun refreshBillInternal() = subIntent {

@@ -1,7 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
 import kotlinx.coroutines.coroutineScope
-import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -214,11 +213,5 @@ class OrderViewModel internal constructor(
     private fun Product.toNewOrderItem(): OrderItem {
         require(!soldOut) { "Product is sold out, not allowed to add to an Order" }
         return OrderItem(product = this, amount = 0, note = null)
-    }
-
-    private val Resource<Map<Long, OrderItem>>.dataOrEmpty get() = this.data ?: emptyMap()
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
     }
 }

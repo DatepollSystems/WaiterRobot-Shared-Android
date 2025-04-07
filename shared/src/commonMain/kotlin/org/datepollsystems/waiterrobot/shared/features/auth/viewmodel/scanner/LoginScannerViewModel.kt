@@ -55,8 +55,4 @@ class LoginScannerViewModel internal constructor(
     fun goBack() = intent {
         navigator.pop()
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

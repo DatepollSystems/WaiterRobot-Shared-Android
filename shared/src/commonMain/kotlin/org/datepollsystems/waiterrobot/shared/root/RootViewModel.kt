@@ -124,8 +124,4 @@ class RootViewModel internal constructor(
             }
         }.collect()
     }
-
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
 }

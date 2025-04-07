@@ -24,10 +24,6 @@ class TableDetailViewModel internal constructor(
         }
     }
 
-    override suspend fun onUnhandledException(exception: Throwable) {
-        TODO("Not yet implemented")
-    }
-
     fun refreshOrder() = intent {
         reduce { state.copy(orderedItems = state.orderedItems.loading()) }
         loadOrder()

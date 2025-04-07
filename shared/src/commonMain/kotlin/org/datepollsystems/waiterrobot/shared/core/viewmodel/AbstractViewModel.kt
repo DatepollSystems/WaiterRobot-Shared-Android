@@ -8,7 +8,6 @@ import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavAction
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
-import org.datepollsystems.waiterrobot.shared.utils.extensions.runCatchingCancelable
 import org.koin.core.component.KoinComponent
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -40,16 +39,9 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
                     }
 
                     else -> {
-                        logger.w(exception) {
+                        logger.e(exception) {
                             "Unhandled exception in intent. " +
                                 "Exceptions should be handled directly in the intent!"
-                        }
-                        intent {
-                            runCatchingCancelable {
-                                onUnhandledException(exception)
-                            }.onFailure { e ->
-                                logger.e(e) { "Exception in onUnhandledException" }
-                            }
                         }
                     }
                 }
@@ -58,7 +50,6 @@ abstract class AbstractViewModel<S : ViewModelState, E : ViewModelEffect>(
     )
 
     protected open suspend fun onCreate(): Unit = Unit
-    protected abstract suspend fun onUnhandledException(exception: Throwable)
 
     @OrbitDsl
     protected val SimpleSyntax<S, NavOrViewModelEffect<E>>.navigator get() = Navigator(simpleSyntax = this)
