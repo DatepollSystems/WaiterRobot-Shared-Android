@@ -8,7 +8,7 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
 import org.datepollsystems.waiterrobot.shared.features.billing.presentation.ChangeBreakUp.Companion.breakUp
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.euro

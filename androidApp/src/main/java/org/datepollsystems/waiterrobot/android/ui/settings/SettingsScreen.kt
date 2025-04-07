@@ -38,7 +38,7 @@ import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsEffect
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.action
 import org.datepollsystems.waiterrobot.shared.generated.localization.cancel

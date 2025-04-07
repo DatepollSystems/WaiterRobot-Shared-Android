@@ -11,7 +11,7 @@ import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.Tokens
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
 import org.datepollsystems.waiterrobot.shared.features.auth.api.WaiterApi
-import org.datepollsystems.waiterrobot.shared.features.switchevent.repository.SwitchEventRepository
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.repository.SwitchEventRepository
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.koin.core.component.inject
 
