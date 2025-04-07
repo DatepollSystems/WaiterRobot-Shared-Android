@@ -31,7 +31,7 @@ data class BillingState(
     val billItemsArray: Resource<Array<BillItem>> by billItems.objCArray()
 
     val priceSum: Money by lazy {
-        _billItems.data?.values?.sumOf { it.pricePerPiece * it.ordered } ?: Money(0)
+        _billItems.data?.values?.sumOf { it.pricePerPiece * it.selectedForBill } ?: Money(0)
     }
 
     val hasSelectedItems: Boolean by lazy {
