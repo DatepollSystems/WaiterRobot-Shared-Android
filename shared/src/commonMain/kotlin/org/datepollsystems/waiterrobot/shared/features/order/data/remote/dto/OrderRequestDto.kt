@@ -1,7 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.order.data.remote.dto
 
 import kotlinx.serialization.Serializable
-import org.datepollsystems.waiterrobot.shared.core.data.api.RequestBodyDto
+import org.datepollsystems.waiterrobot.shared.core.data.remote.RequestBodyDto
 
 @Serializable
 class OrderRequestDto(

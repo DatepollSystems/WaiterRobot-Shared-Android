@@ -2,8 +2,8 @@ package org.datepollsystems.waiterrobot.shared.features.table.data.remote
 
 import io.ktor.client.call.body
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedApi
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedApi
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.features.table.data.remote.dto.TableGroupDto
 import org.datepollsystems.waiterrobot.shared.features.table.data.remote.dto.UnpaidTableIdsDto
 

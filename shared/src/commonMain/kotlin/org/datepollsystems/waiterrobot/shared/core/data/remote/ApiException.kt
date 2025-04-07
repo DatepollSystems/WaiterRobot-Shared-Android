@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.data.api
+package org.datepollsystems.waiterrobot.shared.core.data.remote
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName

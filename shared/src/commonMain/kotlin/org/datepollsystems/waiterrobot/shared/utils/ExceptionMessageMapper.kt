@@ -2,7 +2,7 @@ package org.datepollsystems.waiterrobot.shared.utils
 
 import kotlinx.coroutines.CancellationException
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.remote.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.getLogger
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
 import org.datepollsystems.waiterrobot.shared.generated.localization.accountNotActivated

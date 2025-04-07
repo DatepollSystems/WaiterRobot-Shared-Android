@@ -21,7 +21,7 @@ import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.CommonApp.MIN_UPDATE_INFO_HOURS
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
-import org.datepollsystems.waiterrobot.shared.root.RootViewModel
+import org.datepollsystems.waiterrobot.shared.root.presentation.RootViewModel
 import org.datepollsystems.waiterrobot.shared.utils.extensions.defaultOnNull
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent

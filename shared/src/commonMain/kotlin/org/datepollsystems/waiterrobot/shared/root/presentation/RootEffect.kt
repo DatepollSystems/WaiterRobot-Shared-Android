@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.root
+package org.datepollsystems.waiterrobot.shared.root.presentation
 
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 

@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.data.api
+package org.datepollsystems.waiterrobot.shared.core.data.remote
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient

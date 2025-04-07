@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.initKoin
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen

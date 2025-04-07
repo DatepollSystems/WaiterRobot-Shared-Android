@@ -11,9 +11,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.datepollsystems.waiterrobot.shared.core.data.EventProvider
 import org.datepollsystems.waiterrobot.shared.core.data.SettingsEventProvider
-import org.datepollsystems.waiterrobot.shared.core.data.api.createAuthorizedClient
-import org.datepollsystems.waiterrobot.shared.core.data.api.createBasicClient
-import org.datepollsystems.waiterrobot.shared.core.data.db.createRealmDB
+import org.datepollsystems.waiterrobot.shared.core.data.local.createRealmDB
+import org.datepollsystems.waiterrobot.shared.core.data.remote.createAuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.remote.createBasicClient
 import org.datepollsystems.waiterrobot.shared.core.sentry.SentryLogWriter
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope

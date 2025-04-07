@@ -1,4 +1,4 @@
-package org.datepollsystems.waiterrobot.shared.core.data.db
+package org.datepollsystems.waiterrobot.shared.core.data.local
 
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration

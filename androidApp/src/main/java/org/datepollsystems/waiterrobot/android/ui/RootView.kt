@@ -16,8 +16,8 @@ import org.datepollsystems.waiterrobot.android.ui.core.route
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
-import org.datepollsystems.waiterrobot.shared.root.RootEffect
-import org.datepollsystems.waiterrobot.shared.root.RootViewModel
+import org.datepollsystems.waiterrobot.shared.root.presentation.RootEffect
+import org.datepollsystems.waiterrobot.shared.root.presentation.RootViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable

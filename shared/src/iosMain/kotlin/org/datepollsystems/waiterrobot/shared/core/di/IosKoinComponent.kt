@@ -11,7 +11,7 @@ import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.detail.TableDetailViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.list.TableListViewModel
-import org.datepollsystems.waiterrobot.shared.root.RootViewModel
+import org.datepollsystems.waiterrobot.shared.root.presentation.RootViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf

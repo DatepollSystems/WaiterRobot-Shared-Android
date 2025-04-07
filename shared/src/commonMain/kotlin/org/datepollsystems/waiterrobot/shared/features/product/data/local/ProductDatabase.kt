@@ -6,7 +6,7 @@ import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmQuery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.datepollsystems.waiterrobot.shared.core.data.db.AbstractDatabase
+import org.datepollsystems.waiterrobot.shared.core.data.local.AbstractDatabase
 import org.datepollsystems.waiterrobot.shared.features.order.data.local.entity.AllergenEntity
 import org.datepollsystems.waiterrobot.shared.features.order.data.local.entity.ProductEntity
 import org.datepollsystems.waiterrobot.shared.features.order.data.local.entity.ProductGroupEntity
