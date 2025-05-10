@@ -11,8 +11,8 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import org.datepollsystems.waiterrobot.android.generated.navigation.NavGraphs
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
+import org.datepollsystems.waiterrobot.android.ui.core.direction
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
-import org.datepollsystems.waiterrobot.android.ui.core.route
 import org.datepollsystems.waiterrobot.android.ui.core.theme.WaiterRobotTheme
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
@@ -42,7 +42,7 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
                 navGraph = NavGraphs.root,
                 engine = navEngine,
                 navController = navController,
-                startRoute = remember { CommonApp.getNextRootScreen().route }
+                start = remember { CommonApp.getNextRootScreen().direction }
             )
         }
     }

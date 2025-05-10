@@ -1,8 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.core
 
-import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.authProvider
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
-import io.ktor.client.plugins.pluginOrNull
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.User
 import kotlinx.coroutines.CoroutineScope
@@ -143,10 +142,7 @@ object CommonApp : KoinComponent {
         // Clear the tokens from the client, so that they get reloaded.
         val apiClients = getKoin().getAll<AuthorizedClient>()
         apiClients.forEach {
-            it.delegate.pluginOrNull(Auth)
-                ?.providers
-                ?.filterIsInstance<BearerAuthProvider>()
-                ?.forEach(BearerAuthProvider::clearToken)
+            it.delegate.authProvider<BearerAuthProvider>()?.clearToken()
         }
     }
 

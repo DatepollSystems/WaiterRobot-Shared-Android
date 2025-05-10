@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.BuildConfig
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.shared.generated.localization.L
@@ -25,7 +26,7 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.openStore
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun UpdateAppScreen() {
     Scaffold(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },

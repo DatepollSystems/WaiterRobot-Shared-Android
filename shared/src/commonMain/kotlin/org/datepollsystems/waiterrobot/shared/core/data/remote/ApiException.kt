@@ -63,6 +63,10 @@ internal sealed class ApiException : Exception() {
     class AccountNotActivated : ApiException()
 
     @Serializable
+    @SerialName("NO_LICENCE")
+    class NoLicence : ApiException()
+
+    @Serializable
     @SerialName("WAITER_AUTH_TOKEN_INCORRECT")
     class WaiterTokenIncorrect : ApiException()
 

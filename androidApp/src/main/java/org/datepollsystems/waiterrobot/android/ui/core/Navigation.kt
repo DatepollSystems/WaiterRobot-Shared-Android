@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.navigation.popBackStack
-import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.spec.Route
 import org.datepollsystems.waiterrobot.android.generated.navigation.destinations.BillingScreenDestination
@@ -56,18 +53,18 @@ private fun NavController.handleNavAction(navAction: NavAction, logger: Logger) 
     logger.d { "Handling nav action: $navAction" }
     when (navAction) {
         NavAction.Pop -> popBackStack()
-        is NavAction.PopUpTo -> popBackStack(navAction.screen.route, navAction.inclusive)
-        is NavAction.Push -> navigate(navAction.screen.direction)
+        is NavAction.PopUpTo -> popBackStack(navAction.screen.route.route, navAction.inclusive)
+        is NavAction.Push -> navigate(navAction.screen.direction.route)
         is NavAction.PopUpAndPush -> {
-            navigate(navAction.screen.direction) {
-                popUpTo(navAction.popUpTo.route) {
+            navigate(navAction.screen.direction.route) {
+                popUpTo(navAction.popUpTo.route.route) {
                     inclusive = navAction.inclusive
                 }
             }
         }
 
         is NavAction.ReplaceRoot -> {
-            navigate(navAction.screen.direction) {
+            navigate(navAction.screen.direction.route) {
                 launchSingleTop = true
                 popUpTo(this@handleNavAction.graph.id) {
                     inclusive = true

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
@@ -56,7 +57,7 @@ import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun OrderScreen(
     table: Table,
     initialItemId: Long? = null,

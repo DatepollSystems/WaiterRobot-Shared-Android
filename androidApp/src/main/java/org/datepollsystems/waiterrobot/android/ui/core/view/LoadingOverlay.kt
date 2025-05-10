@@ -50,4 +50,3 @@ fun ViewStateOverlay(
         Column(content = content)
     }
 }
-

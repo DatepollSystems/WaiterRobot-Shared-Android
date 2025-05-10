@@ -2,7 +2,6 @@ package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
 import kotlinx.coroutines.coroutineScope
 import org.datepollsystems.waiterrobot.shared.core.data.remote.ApiException
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
@@ -21,11 +20,12 @@ import org.datepollsystems.waiterrobot.shared.generated.localization.ok
 import org.datepollsystems.waiterrobot.shared.generated.localization.title
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.datepollsystems.waiterrobot.shared.utils.randomUUID
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
 
+@OptIn(OrbitExperimental::class)
 @Suppress("TooManyFunctions")
 class OrderViewModel internal constructor(
     private val getProductUseCase: GetProductUseCase,
@@ -82,6 +82,8 @@ class OrderViewModel internal constructor(
                         }
                     }
 
+                    is ApiException.NoLicence -> noLicence()
+
                     is ApiException.OrderAlreadySubmitted -> {
                         logger.w("Order was already submitted")
                         navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
@@ -90,15 +92,15 @@ class OrderViewModel internal constructor(
                     else -> {
                         logger.e(e) { "Failed to send order" }
                         reduce {
-                            val dismiss: () -> Unit = {
-                                intent { reduce { state.copy(orderingState = ViewState.Idle) } }
-                            }
                             state.copy(
                                 orderingState = ViewState.Error(
                                     L.exceptions.title(),
                                     L.exceptions.generic(),
-                                    onDismiss = dismiss,
-                                    primaryButton = DialogState.Button(L.dialog.ok(), dismiss)
+                                    onDismiss = ::dismissOrderError,
+                                    primaryButton = DialogState.Button(
+                                        L.dialog.ok(),
+                                        ::dismissOrderError
+                                    )
                                 )
                             )
                         }
@@ -159,17 +161,22 @@ class OrderViewModel internal constructor(
         }
     }
 
-    fun removeItem(id: Long) = intent {
+    private fun dismissOrderError() {
+        intent {
+            reduce { state.copy(orderingState = ViewState.Idle) }
+        }
+    }
+
+    private fun removeItem(id: Long) = intent {
         reduce {
             state.copy(
-                _currentOrder = state._currentOrder.minus(id)
+                _currentOrder = state._currentOrder.minus(id),
+                orderingState = ViewState.Idle
             )
         }
     }
 
-    private suspend fun SimpleSyntax<OrderState, NavOrViewModelEffect<OrderEffect>>.productSoldOut(
-        product: Product
-    ) {
+    private suspend fun productSoldOut(product: Product) = subIntent {
         refreshProducts()
         reduce {
             state.copy(
@@ -186,21 +193,29 @@ class OrderViewModel internal constructor(
         }
     }
 
-    private suspend fun SimpleSyntax<OrderState, NavOrViewModelEffect<OrderEffect>>.stockToLow(
-        product: Product,
-        remaining: Int
-    ) {
+    private suspend fun stockToLow(product: Product, remaining: Int) = subIntent {
         refreshProducts()
         reduce {
             state.copy(
                 orderingState = ViewState.Error(
                     title = L.order.stockToLow.title(),
                     text = L.order.stockToLow.desc(remaining.toString(), product.name),
-                    onDismiss = {},
-                    primaryButton = DialogState.Button(
-                        text = L.dialog.ok(),
-                        action = { }
-                    )
+                    onDismiss = ::dismissOrderError,
+                    primaryButton = DialogState.Button(L.dialog.ok(), ::dismissOrderError)
+                )
+            )
+        }
+    }
+
+    private suspend fun noLicence() = subIntent {
+        reduce {
+            state.copy(
+                orderingState = ViewState.Error(
+                    title = "No License",
+                    text = "There is no active licence for this event. Your organization administrator " +
+                        "needs to buy a licence for this event to use this app.",
+                    onDismiss = ::dismissOrderError,
+                    primaryButton = DialogState.Button(L.dialog.ok(), ::dismissOrderError)
                 )
             )
         }

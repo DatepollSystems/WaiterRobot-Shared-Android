@@ -23,7 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -85,9 +87,9 @@ private fun TableGroupFilter(
             )
             Spacer(modifier = Modifier.weight(1f))
 
-            // TODO replace with SegmentedButton when available for compose
-            //  (https://m3.material.io/components/segmented-buttons/overview)
-            val allGroupsShown = groups.none(TableGroup::hidden)
+            val allGroupsShown by remember(groups) {
+                derivedStateOf { groups.none(TableGroup::hidden) }
+            }
             IconToggleButton(
                 checked = allGroupsShown,
                 enabled = !allGroupsShown,
@@ -98,7 +100,9 @@ private fun TableGroupFilter(
                     contentDescription = "Select all groups"
                 )
             }
-            val allGroupsHidden = groups.all(TableGroup::hidden)
+            val allGroupsHidden by remember(groups) {
+                derivedStateOf { groups.all(TableGroup::hidden) }
+            }
             IconToggleButton(
                 checked = allGroupsHidden,
                 enabled = !allGroupsHidden,

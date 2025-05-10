@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -27,10 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.common.SingleSelectDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
@@ -52,7 +55,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun SettingsScreen(
     navigator: NavController,
     vm: SettingsViewModel = koinViewModel()
@@ -146,6 +149,7 @@ fun SettingsScreen(
         },
     ) { padding ->
         val uriHandler = LocalUriHandler.current
+        val context = LocalContext.current
 
         LazyColumn(
             modifier = Modifier.padding(padding)
@@ -178,7 +182,10 @@ fun SettingsScreen(
                     },
                     title = L.settings.general.refresh.title(),
                     subtitle = L.settings.general.refresh.desc(),
-                    onClick = vm::refreshAll
+                    onClick = {
+                        Toast.makeText(context, "Refreshing data...", Toast.LENGTH_SHORT).show()
+                        vm.refreshAll()
+                    }
                 )
             }
 

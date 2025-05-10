@@ -29,7 +29,8 @@ import org.datepollsystems.waiterrobot.shared.utils.euro
 fun ColumnScope.BillList(
     table: Table,
     billItemResource: Resource<List<BillItem>>,
-    addAction: (id: Long, amount: Int) -> Unit
+    addAction: (id: Long, amount: Int) -> Unit,
+    refresh: () -> Unit,
 ) {
     if (billItemResource is Resource.Loading && billItemResource.data == null) {
         LoadingView()
@@ -37,7 +38,7 @@ fun ColumnScope.BillList(
         val billItems = billItemResource.data
 
         if (billItemResource is Resource.Error) {
-            ErrorBar(message = billItemResource.userMessage) // TODO , retryAction = vm::refreshOrder)
+            ErrorBar(message = billItemResource.userMessage, retryAction = refresh)
         }
 
         if (billItems.isNullOrEmpty()) {
@@ -109,7 +110,8 @@ private fun BillListPreview() = Preview {
                     BillItem(2, "Fries", 5, 0, 3.euro),
                 )
             ),
-            addAction = { _, _ -> }
+            addAction = { _, _ -> },
+            refresh = {},
         )
     }
 }

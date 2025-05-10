@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
@@ -46,7 +47,7 @@ import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun TableDetailScreen(
     table: Table,
     vm: TableDetailViewModel = koinViewModel { parametersOf(table) },

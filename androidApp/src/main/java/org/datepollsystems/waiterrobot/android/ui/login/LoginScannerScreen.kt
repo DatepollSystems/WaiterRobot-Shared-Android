@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.android.ui.scanner.QrCodeScanner
@@ -26,7 +27,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun LoginScannerScreen(
     vm: LoginScannerViewModel = koinViewModel(),
     navigator: NavController

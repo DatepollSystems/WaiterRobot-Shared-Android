@@ -41,6 +41,7 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.ProductStockToLow -> L.order.stockToLow.title()
     is ApiException.OrderAlreadySubmitted -> L.order.alreadyCreated()
     is ApiException.BillProductsAlreadyPayed -> L.billing.productsAlreadyPayed.desc()
+    is ApiException.NoLicence -> "There is no license for this event."
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,

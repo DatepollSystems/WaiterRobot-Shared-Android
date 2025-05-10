@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
@@ -52,7 +53,7 @@ import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun BillingScreen(
     table: Table,
     navigator: NavController,
@@ -191,7 +192,8 @@ fun BillingScreen(
             BillList(
                 table = table,
                 billItemResource = state.billItems,
-                addAction = vm::addItem
+                addAction = vm::addItem,
+                refresh = vm::refreshBill
             )
         }
     }

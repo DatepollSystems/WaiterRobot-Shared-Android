@@ -2,8 +2,8 @@ import com.android.build.api.dsl.VariantDimension
 import com.android.build.gradle.internal.dsl.NdkOptions.DebugSymbolLevel
 import com.github.triplet.gradle.androidpublisher.ReleaseStatus
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.util.Date
+import java.util.Locale
 import java.util.Properties
 
 plugins {
@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.play.publisher)
     alias(libs.plugins.google.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 private fun getVersionPropertyFile() = File(project.projectDir, "version.properties")
@@ -102,10 +103,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -157,7 +154,13 @@ android {
 
         // Write built version to file after creating a bundle (needed for ci, to create the version tag)
         if (this.name.endsWith("Release")) {
-            tasks.findByName("publish${this.name.capitalizeAsciiOnly()}Bundle")!!.doLast {
+            tasks.findByName(
+                "publish${
+                    this.name.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                    }
+                }Bundle"
+            )!!.doLast {
                 File(project.layout.buildDirectory.asFile.get(), "version.tag")
                     .writeText(this@variant.versionName)
             }
@@ -195,7 +198,6 @@ dependencies {
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
-    runtimeOnly(libs.androidx.compose.compiler)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui.core)
