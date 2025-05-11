@@ -5,9 +5,10 @@ ksp = "2.0.20-1.0.25" # First part must match the kotlin version
 kermit = "2.0.3"
 koin = "3.5.6"
 orbitMvi = "8.0.0"
-mokoMvvm = "0.16.1"
 ktor = "3.0.3"
-mokoPermissions = "0.18.0"
+moko-mvvm = "0.16.1"
+moko-permissions = "0.18.0"
+moko-resources = "0.24.5"
 settings = "1.1.1"
 realm = "3.0.0" # migrate to some other db as this is only minimal (community) support anymore
 detekt = "1.23.6"
@@ -29,7 +30,6 @@ sentry = "0.9.0"
 android-minSdk = "26"
 android-targetSdk = "35"
 android-compileSdk = "35"
-android-buildTools = "34.0.0"
 android-gradle = "8.9.2"
 android-camera = "1.4.2"
 android-desugar = "2.1.5"
@@ -102,8 +102,9 @@ settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutine
 
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbitMvi" }
 orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbitMvi" }
-moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
-moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mokoPermissions" }
+moko-mvvm = { module = "dev.icerock.moko:mvvm-core", version.ref = "moko-mvvm" }
+moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "moko-permissions" }
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "moko-resources" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 sentry = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sentry" }
@@ -122,3 +123,4 @@ touchlab-skie = { id = "co.touchlab.skie", version.ref = "skie" }
 touchlab-kmmbridge = { id = "co.touchlab.kmmbridge", version.ref = "kmmbridge" }
 realm = { id = "io.realm.kotlin", version.ref = "realm" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }

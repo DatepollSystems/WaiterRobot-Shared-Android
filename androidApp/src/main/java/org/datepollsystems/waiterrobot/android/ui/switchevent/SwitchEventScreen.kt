@@ -32,14 +32,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.action
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.noEventFound
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -70,7 +68,7 @@ fun SwitchEventScreen(
                             .aspectRatio(1f)
                     )
                     Text(
-                        text = L.switchEvent.desc(),
+                        text = MR.strings.switchEvent_desc(),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(15.dp)
                     )
@@ -94,7 +92,7 @@ fun SwitchEventScreen(
                                 .verticalScroll(rememberScrollState()) // Needed for Refreshable view
                         ) {
                             Text(
-                                text = L.switchEvent.noEventFound(),
+                                text = MR.strings.switchEvent_noEventFound(),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -128,7 +126,7 @@ fun SwitchEventScreen(
                 TextButton(
                     onClick = vm::logout,
                 ) {
-                    Text(L.settings.general.logout.action())
+                    Text(MR.strings.settings_general_logout_action())
                 }
             }
         }

@@ -1,11 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel
 
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelState
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.disabledForEvent
-import org.datepollsystems.waiterrobot.shared.generated.localization.locationPermissionDenied
-import org.datepollsystems.waiterrobot.shared.generated.localization.readerConnectionFailed
-import org.datepollsystems.waiterrobot.shared.generated.localization.terminalInitiationFailed
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 data class StripeInitializationState(
     val step: Step = Step.Start,
@@ -19,17 +17,18 @@ data class StripeInitializationState(
         data object EnableGeoLocation : Step()
         data object EnableNfc : Step()
         data object Finished : Step()
-        sealed class Error(val description: String, val retryAble: Boolean = true) : Step() {
+        sealed class Error(val description: StringDesc, val retryAble: Boolean = true) : Step() {
             data object StripeDisabledForEvent :
-                Error(L.stripeInit.error.disabledForEvent(), retryAble = false)
+                Error(MR.strings.stripeInit_error_disabled_forEvent.desc(), retryAble = false)
 
             data object GeolocationPermissionDenied :
-                Error(L.stripeInit.error.locationPermissionDenied())
+                Error(MR.strings.stripeInit_error_location_denied.desc())
 
             data object TerminalInitializationFailed :
-                Error(L.stripeInit.error.terminalInitiationFailed())
+                Error(MR.strings.stripeInit_error_terminal_init.desc())
 
-            data object ReaderConnectionFailed : Error(L.stripeInit.error.readerConnectionFailed())
+            data object ReaderConnectionFailed :
+                Error(MR.strings.stripeInit_error_reader_connection.desc())
         }
 
         companion object {

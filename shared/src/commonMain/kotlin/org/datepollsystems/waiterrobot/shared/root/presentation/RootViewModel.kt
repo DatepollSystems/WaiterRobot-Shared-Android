@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.root.presentation
 
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -14,12 +15,7 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 import org.datepollsystems.waiterrobot.shared.features.auth.repository.AuthRepository
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyLoggedIn
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.invalid
-import org.datepollsystems.waiterrobot.shared.generated.localization.ok
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.root.data.remote.RootApi
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
@@ -53,7 +49,7 @@ class RootViewModel internal constructor(
             }.let { }
         } catch (e: IllegalArgumentException) {
             logger.e(e) { "Could not construct deeplink from url: $url" }
-            postSideEffect(RootEffect.ShowSnackBar(L.deepLink.invalid()))
+            postSideEffect(RootEffect.ShowSnackBar(MR.strings.deeplink_invalid.desc()))
         }
     }
 
@@ -65,7 +61,7 @@ class RootViewModel internal constructor(
             //  and relaunched, therefor the snackbar would be also cancelled.
             //  -> find a better solution (google does not recommend side effects
             delay(1.seconds)
-            postSideEffect(RootEffect.ShowSnackBar(L.deepLink.alreadyLoggedIn()))
+            postSideEffect(RootEffect.ShowSnackBar(MR.strings.deeplink_alreadyLoggedIn.desc()))
             return
         }
 
@@ -88,10 +84,10 @@ class RootViewModel internal constructor(
             reduce {
                 state.copy(
                     viewState = ViewState.Error(
-                        L.root.invalidLoginLink.title(),
-                        L.root.invalidLoginLink.desc(),
+                        MR.strings.root_invalidLoginLink_title.desc(),
+                        MR.strings.root_invalidLoginLink_desc.desc(),
                         onDismiss = dismiss,
-                        primaryButton = DialogState.Button(L.dialog.ok(), dismiss)
+                        primaryButton = DialogState.Button(MR.strings.dialog_ok.desc(), dismiss)
                     )
                 )
             }

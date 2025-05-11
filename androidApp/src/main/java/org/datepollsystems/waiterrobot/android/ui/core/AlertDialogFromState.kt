@@ -12,17 +12,17 @@ import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
 fun AlertDialogFromState(dialog: DialogState) {
     AlertDialog(
         onDismissRequest = dialog.onDismiss,
-        title = { Text(text = dialog.title) },
-        text = { Text(text = dialog.text) },
+        title = { Text(text = dialog.title()) },
+        text = { Text(text = dialog.text()) },
         confirmButton = {
             Button(onClick = dialog.primaryButton.action) {
-                Text(text = dialog.primaryButton.text)
+                Text(text = dialog.primaryButton.text())
             }
         },
         dismissButton = dialog.secondaryButton?.let { button ->
             {
                 TextButton(onClick = button.action) {
-                    Text(text = button.text)
+                    Text(text = button.text())
                 }
             }
         }

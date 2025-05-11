@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.touchlab.kmmbridge)
     alias(libs.plugins.touchlab.skie)
     alias(libs.plugins.realm)
+    alias(libs.plugins.moko.resources)
 }
 
 val iosFrameworkName = "shared"
@@ -56,6 +57,7 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCRefinement")
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+            languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitExperimental")
         }
 
         commonMain {
@@ -70,6 +72,9 @@ kotlin {
                 api(libs.orbit.core) // MVI
                 api(libs.moko.mvvm) // ViewModelScope
                 implementation(libs.touchlab.skie.annotations)
+
+                // Localization
+                api(libs.moko.resources)
 
                 // Permissions
                 api(libs.moko.permissions)
@@ -145,6 +150,10 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(Type.STRING, "sharedVersion", version as String, const = true)
     }
+}
+
+multiplatformResources {
+    resourcesPackage.set("$sharedNamespace.localization")
 }
 
 tasks {

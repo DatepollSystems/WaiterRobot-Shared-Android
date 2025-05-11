@@ -20,10 +20,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.BuildConfig
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.message
-import org.datepollsystems.waiterrobot.shared.generated.localization.openStore
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 @Composable
 @Destination<RootGraph>
@@ -32,7 +30,7 @@ fun UpdateAppScreen() {
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text(L.app.forceUpdate.title()) },
+                title = { Text(MR.strings.app_forceUpdate_title()) },
             )
         },
     ) { contentPadding ->
@@ -42,7 +40,7 @@ fun UpdateAppScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = L.app.forceUpdate.message(),
+                    text = MR.strings.app_forceUpdate_message(),
                     textAlign = TextAlign.Center
                 )
 
@@ -61,7 +59,7 @@ fun UpdateAppScreen() {
                         }
                     }
                 ) {
-                    Text(L.app.forceUpdate.openStore("Play Store"))
+                    Text(MR.strings.app_forceUpdate_openStore("Play Store"))
                 }
             }
         }

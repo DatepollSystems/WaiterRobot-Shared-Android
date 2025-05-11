@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.billing.presentation
 
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
@@ -18,12 +20,7 @@ import org.datepollsystems.waiterrobot.shared.features.billing.presentation.Chan
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.StripeApi
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.locationDisabled
-import org.datepollsystems.waiterrobot.shared.generated.localization.nfcDisabled
-import org.datepollsystems.waiterrobot.shared.generated.localization.success
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.datepollsystems.waiterrobot.shared.utils.extensions.runCatchingCancelable
 import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
@@ -93,9 +90,12 @@ class BillingViewModel internal constructor(
                     reduce {
                         state.copy(
                             paymentState = ViewState.Error(
-                                L.billing.productsAlreadyPayed.title(),
-                                L.billing.productsAlreadyPayed.desc(),
-                                primaryButton = DialogState.Button("Refresh", ::refreshBill),
+                                MR.strings.billing_alreadyPaid_title.desc(),
+                                MR.strings.billing_alreadyPaid_desc.desc(),
+                                primaryButton = DialogState.Button(
+                                    MR.strings.dialog_refresh.desc(),
+                                    ::refreshBill
+                                ),
                                 onDismiss = ::dismissPaymentState
                             )
                         )
@@ -107,9 +107,12 @@ class BillingViewModel internal constructor(
                     reduce {
                         state.copy(
                             paymentState = ViewState.Error(
-                                title = L.exceptions.title(),
+                                title = MR.strings.exceptions_title.desc(),
                                 text = e.getLocalizedUserMessage(),
-                                primaryButton = DialogState.Button("Refresh", ::refreshBill),
+                                primaryButton = DialogState.Button(
+                                    MR.strings.dialog_refresh.desc(),
+                                    ::refreshBill
+                                ),
                                 onDismiss = ::dismissPaymentState
                             )
                         )
@@ -150,9 +153,12 @@ class BillingViewModel internal constructor(
             reduce {
                 state.copy(
                     paymentState = ViewState.Error(
-                        title = L.exceptions.title(),
+                        title = MR.strings.exceptions_title.desc(),
                         text = e.getLocalizedUserMessage(),
-                        primaryButton = DialogState.Button("Refresh", ::refreshBill),
+                        primaryButton = DialogState.Button(
+                            MR.strings.dialog_refresh.desc(),
+                            ::refreshBill
+                        ),
                         onDismiss = ::dismissPaymentState
                     )
                 )
@@ -254,16 +260,16 @@ class BillingViewModel internal constructor(
         stripeProvider: StripeProvider,
         paymentIntent: PaymentIntent
     ) {
-        fun Throwable.getDialogTitle(): String = when (this) {
-            is PaymentCanceledException -> L.billing.stripe.canceled.title()
-            else -> L.billing.stripe.failed.title()
+        fun Throwable.getDialogTitle(): StringDesc = when (this) {
+            is PaymentCanceledException -> MR.strings.billing_stripe_canceled_title.desc()
+            else -> MR.strings.billing_stripe_failed_title.desc()
         }
 
-        fun Throwable.getDialogText(): String = when (this) {
-            is PaymentCanceledException -> L.billing.stripe.canceled.desc()
-            is GeoLocationDisabledException -> L.billing.stripe.locationDisabled()
-            is NfcDisabledException -> L.billing.stripe.nfcDisabled()
-            else -> L.billing.stripe.failed.desc()
+        fun Throwable.getDialogText(): StringDesc = when (this) {
+            is PaymentCanceledException -> MR.strings.billing_stripe_canceled_desc.desc()
+            is GeoLocationDisabledException -> MR.strings.billing_stripe_location_disabled.desc()
+            is NfcDisabledException -> MR.strings.billing_stripe_nfc_disabled.desc()
+            else -> MR.strings.billing_stripe_failed_desc.desc()
         }
 
         subIntent {
@@ -290,10 +296,10 @@ class BillingViewModel internal constructor(
                             onDismiss = {
                                 cancelPayment(paymentIntent)
                             },
-                            primaryButton = DialogState.Button("OK") {
+                            primaryButton = DialogState.Button(MR.strings.dialog_ok.desc()) {
                                 cancelPayment(paymentIntent)
                             },
-                            secondaryButton = DialogState.Button("Retry") {
+                            secondaryButton = DialogState.Button(MR.strings.exceptions_retry.desc()) {
                                 logger.i("Retrying card payment (${paymentIntent.id})")
                                 intent { collectPayment(stripeProvider, paymentIntent) }
                             }
@@ -301,7 +307,7 @@ class BillingViewModel internal constructor(
                     )
                 }
             }.onSuccess {
-                postSideEffect(BillingEffect.Toast(L.billing.stripe.success()))
+                postSideEffect(BillingEffect.Toast(MR.strings.billing_stripe_success.desc()))
                 refreshBillInternal()
             }
         }
@@ -331,9 +337,12 @@ class BillingViewModel internal constructor(
             reduce {
                 state.copy(
                     paymentState = ViewState.Error(
-                        title = L.exceptions.title(),
+                        title = MR.strings.exceptions_title.desc(),
                         text = e.getLocalizedUserMessage(),
-                        primaryButton = DialogState.Button("Refresh", ::refreshBill),
+                        primaryButton = DialogState.Button(
+                            MR.strings.dialog_refresh.desc(),
+                            ::refreshBill
+                        ),
                         onDismiss = ::dismissPaymentState
                     )
                 )

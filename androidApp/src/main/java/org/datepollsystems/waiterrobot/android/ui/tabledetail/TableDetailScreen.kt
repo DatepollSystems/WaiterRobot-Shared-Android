@@ -32,16 +32,14 @@ import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.OrderedItem
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.detail.TableDetailViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.newOrder
-import org.datepollsystems.waiterrobot.shared.generated.localization.noOrder
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
@@ -61,10 +59,13 @@ fun TableDetailScreen(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text(L.tableDetail.title(table.groupName, table.number.toString())) },
+                title = { Text(MR.strings.tableDetail_title(table.groupName, table.number)) },
                 navigationIcon = {
                     IconButton(onClick = navigator::popBackStack) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = MR.strings.navigation_back()
+                        )
                     }
                 },
             )
@@ -85,10 +86,10 @@ fun TableDetailScreen(
                     icon = {
                         Icon(
                             Icons.Filled.Add,
-                            contentDescription = L.tableDetail.newOrder()
+                            contentDescription = MR.strings.tableDetail_newOrder()
                         )
                     },
-                    text = { Text(L.tableDetail.newOrder()) }
+                    text = { Text(MR.strings.tableDetail_newOrder()) }
                 )
             }
         }
@@ -112,7 +113,7 @@ fun TableDetailScreen(
                     if (orderedItems.isNullOrEmpty()) {
                         CenteredText(
                             modifier = Modifier.weight(1f),
-                            text = L.tableDetail.noOrder(table.groupName, table.number.toString()),
+                            text = MR.strings.tableDetail_noOrder(table.groupName, table.number),
                             scrollAble = true
                         )
                     } else {

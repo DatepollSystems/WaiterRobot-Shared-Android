@@ -13,17 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 @Composable
 fun <T : Any> SingleSelectDialog(
-    title: String,
+    title: StringDesc,
     options: List<T>,
     optionId: (T) -> Any,
-    optionText: @Composable (T) -> String,
+    optionText: @Composable (T) -> StringDesc,
     selected: T,
     onSelect: (T) -> Unit,
     onDismissRequest: () -> Unit
@@ -38,7 +40,7 @@ fun <T : Any> SingleSelectDialog(
                 RadioButtonRow(
                     item = option,
                     selected = selected == option,
-                    itemText = optionText,
+                    itemText = { optionText(it)() },
                     onClick = {
                         onSelect(it)
                         onDismissRequest()
@@ -81,7 +83,7 @@ private fun <T : Any> RadioButtonRow(
 private fun SingleSelectDialogPreview() = Preview {
     Column {
         SingleSelectDialog(
-            title = L.settings.general.darkMode.title(),
+            title = MR.strings.settings_general_darkMode_title.desc(),
             options = AppTheme.entries,
             optionId = AppTheme::ordinal,
             optionText = { it.settingsText() },

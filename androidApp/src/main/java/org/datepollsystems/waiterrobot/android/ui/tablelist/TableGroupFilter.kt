@@ -34,15 +34,14 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.toColor
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.TableGroup
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.filter.TableGroupFilterViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.groupFilter
-import org.datepollsystems.waiterrobot.shared.generated.localization.noTableFound
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -53,7 +52,7 @@ fun TableGroupFilterSheet(
     val state by vm.collectAsState()
 
     when (val groups = state.groups) {
-        is Resource.Error -> CenteredText(text = groups.userMessage, scrollAble = false)
+        is Resource.Error -> CenteredText(text = groups.userMessage(), scrollAble = false)
         is Resource.Loading -> LoadingView()
         is Resource.Success -> {
             TableGroupFilter(
@@ -75,14 +74,14 @@ private fun TableGroupFilter(
 ) {
     if (groups.isEmpty()) {
         // Should not happen as open filter is only shown when there are groups
-        CenteredText(text = L.tableList.noTableFound(), scrollAble = false)
+        CenteredText(text = MR.strings.tableList_noTableFound(), scrollAble = false)
     } else {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = L.tableList.groupFilter(),
+                text = MR.strings.tableList_groupFilter(),
                 style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.weight(1f))

@@ -34,20 +34,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.toast
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
 import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingEffect
 import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.keepBill
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.datepollsystems.waiterrobot.shared.generated.localization.total
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
@@ -71,7 +69,7 @@ fun BillingScreen(
 
     vm.handleSideEffects(navigator) {
         when (it) {
-            is BillingEffect.Toast -> Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            is BillingEffect.Toast -> context.toast(it.message, Toast.LENGTH_SHORT)
             BillingEffect.ShowPaymentSheet -> showPaymentSheet = true
         }
     }
@@ -87,17 +85,17 @@ fun BillingScreen(
 
     if (showConfirmGoBack) {
         ConfirmDialog(
-            title = L.billing.notSent.title(),
-            text = L.billing.notSent.desc(),
-            confirmText = L.dialog.closeAnyway(),
+            title = MR.strings.billing_notSent_title.desc(),
+            text = MR.strings.billing_notSent_desc.desc(),
+            confirmText = MR.strings.dialog_closeAnyway.desc(),
             onConfirm = vm::abortBill,
-            cancelText = L.billing.keepBill(),
+            cancelText = MR.strings.billing_keepBill.desc(),
             onCancel = { showConfirmGoBack = false },
         )
     }
 
     ScaffoldView(
-        title = L.billing.title(table.groupName, table.number.toString()),
+        title = MR.strings.billing_title(table.groupName, table.number),
         navigationIcon = {
             IconButton(onClick = goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -114,7 +112,7 @@ fun BillingScreen(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = L.billing.total() + ":",
+                        text = MR.strings.billing_total() + ":",
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.width(16.dp))

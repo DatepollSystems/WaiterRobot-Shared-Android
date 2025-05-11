@@ -54,7 +54,6 @@ android {
 
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        buildToolsVersion = libs.versions.android.buildTools.get()
 
         versionName = version.toString()
         versionCode = run {

@@ -30,18 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.icerock.moko.resources.desc.desc
 import org.datepollsystems.waiterrobot.android.R
 import org.datepollsystems.waiterrobot.android.ui.common.CustomDialog
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.LoginViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.inputLabel
-import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.datepollsystems.waiterrobot.shared.generated.localization.withQrCode
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -87,16 +83,16 @@ fun LoginScreen(
                         )
                     }
             )
-            Text(text = L.login.title(), style = MaterialTheme.typography.headlineMedium)
+            Text(text = MR.strings.login_title(), style = MaterialTheme.typography.headlineMedium)
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
                 textAlign = TextAlign.Center,
-                text = L.login.desc()
+                text = MR.strings.login_desc()
             )
             OutlinedButton(
                 onClick = vm::openScanner
             ) {
-                Text(text = L.login.withQrCode())
+                Text(text = MR.strings.login_withQrCode())
             }
         }
     }
@@ -111,20 +107,20 @@ private fun DebugLoginDialog(
 
     CustomDialog(
         onDismiss = onDismiss,
-        title = L.login.title(),
+        title = MR.strings.login_title.desc(),
         actions = {
             TextButton(onClick = onDismiss) {
-                Text(text = L.dialog.cancel())
+                Text(text = MR.strings.dialog_cancel())
             }
             Button(onClick = { onLoginClick(link) }) {
-                Text(text = L.login.title())
+                Text(text = MR.strings.login_title())
             }
         }
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = L.login.debugDialog.inputLabel()) },
-            placeholder = { Text(text = L.login.debugDialog.placeholder()) },
+            label = { Text(text = MR.strings.login_scanner_debugDialog_inputLabel()) },
+            placeholder = { Text(text = MR.strings.login_scanner_debugDialog_placeholder()) },
             value = link,
             onValueChange = { link = it },
         )

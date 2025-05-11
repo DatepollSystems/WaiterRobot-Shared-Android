@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">waiters.team</string>
+    <string name="app_forceUpdate_title">App Update Required</string>
+    <string name="app_forceUpdate_message">Your installed app version is no longer supported. Please
+        update now.
+    </string>
+    <string name="app_forceUpdate_openStore">Open %s</string>
+    <string name="app_updateAvailable_title">Update available</string>
+    <string name="app_updateAvailable_message">A new version is available. Update now to get the new
+        features and improvements.
+    </string>
+
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_closeAnyway">Close anyway</string>
+    <string name="dialog_clear">Clear</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_on">On</string>
+    <string name="dialog_off">Off</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_refresh">Refresh</string>
+
+    <string name="exceptions_title">Error</string>
+    <string name="exceptions_retry">Retry</string>
+    <string name="exceptions_generic">Something went wrong. Please try again.</string>
+    <string name="exceptions_accountNotActivated">Your account is not activated. Please contact your
+        Organization admin.
+    </string>
+    <string name="exceptions_noLicense">There is no license for this event.</string>
+
+    <string name="navigation_back">Back</string>
+
+    <string name="deeplink_invalid">Invalid link</string>
+    <string name="deeplink_alreadyLoggedIn">Already logged in</string>
+
+    <string name="root_invalidLoginLink_title">Invalid login link</string>
+    <string name="root_invalidLoginLink_desc">The login link is not valid. Ask your organization
+        admin for a new one.
+    </string>
+
+    <string name="login_title">Waiter login</string>
+    <string name="login_desc">Authentication is provided via QR-Code. You should get one from your
+        organization administrator. Scan the code to Login.
+    </string>
+    <string name="login_withQrCode">Login with QR-Code</string>
+    <string name="login_scanner_desc">To login scan the QR-Code you got from your organization
+        administrator.
+    </string>
+    <string name="login_scanner_invalidCode_title">Invalid code</string>
+    <string name="login_scanner_invalidCode_desc">The code is not valid. Ask your oganisation admin
+        for a new one.
+    </string>
+    <string name="login_scanner_debugDialog_inputLabel">Login link</string>
+    <string name="login_scanner_debugDialog_placeholder">https://my.kellner.team/ml/signIn?</string>
+
+    <string name="qrScanner_cameraPermissionRequired">For QR-Code scanning the Camera permission is
+        required!
+    </string>
+    <string name="qrScanner_noCameraFound">Could not find a camera which supports QR-Code scanning.
+        Please aks your organisation admin for a login link.
+    </string>
+    <string name="qrScanner_errorOpeningCamera">Could not open camera.</string>
+
+    <string name="register_name_title">Your name</string>
+    <string name="register_name_desc">Please provide your full name, to register as a waiter for the
+        event.
+    </string>
+    <string name="register_alreadyRegisteredInfo">If you have already registered as a waiter for the
+        event, cancel and ask your organisation administrator for a login code.
+    </string>
+    <string name="register_login">Login</string>
+
+    <string name="switchEvent_title">Switch event</string>
+    <string name="switchEvent_desc">As waiter you can be part of multiple events/locations. Please
+        select which event/location you want to start with.
+    </string>
+    <string name="switchEvent_noEventFound">Could not find any events. Ask your organisation admin
+        to add you to an event.
+    </string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_general_title">General</string>
+    <string name="settings_general_logout_title">Logout from %s</string>
+    <string name="settings_general_logout_desc">Do you really want to logout from '%s'? Once logged
+        out you have to request a new login code from your organisation admin. If you only want to
+        switch the event you can do so in the settings.
+    </string>
+    <string name="settings_general_logout_action">Logout</string>
+    <string name="settings_general_logout_cancel">Keep logged-in</string>
+    <string name="settings_general_darkMode_title">Dark Mode</string>
+    <string name="settings_general_darkMode_useSystem">Use system setting</string>
+    <string name="settings_general_refresh_title">Refresh data</string>
+    <string name="settings_general_refresh_desc">Refresh event data (tables, products, …)</string>
+    <string name="settings_general_refresh_toast">Refreshing data...</string>
+    <string name="settings_payment_title">Payment</string>
+    <string name="settings_payment_skipMoneyBackDialog_title">Skip money back dialog</string>
+    <string name="settings_payment_skipMoneyBackDialog_desc">Do not show the money back dialog in
+        the payment screen.
+    </string>
+    <string name="settings_payment_skipMoneyBackDialog_confirm_desc">Are you sure you want to skip
+        the money back dialog? When enabled the money back dialog will not be shown anymore and
+        clicking on the payment button will directly mark the selected products as paid. Currently
+        this can not be undone.
+    </string>
+    <string name="settings_payment_skipMoneyBackDialog_confirm_action">I understand, skip dialog
+    </string>
+    <string name="settings_payment_selectAllProductsByDefault_title">Select all products by
+        default
+    </string>
+    <string name="settings_payment_selectAllProductsByDefault_desc">When opening the payment screen
+        all products are selected by default.
+    </string>
+    <string name="settings_payment_card_title">Card payment</string>
+    <string name="settings_payment_card_desc">Enable and initialize the card payment module.
+    </string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_about_version_title">App version</string>
+    <string name="settings_about_version_desc">Version %s (%s)</string>
+    <string name="settings_about_privacyPolicy">Privacy Policy</string>
+
+    <string name="stripeInit_title">Initialize card payment</string>
+    <string name="stripeInit_locationDataSharingNotice">The location data may be forwarded to our
+        payment provider Stripe Inc. for payment processing. By continuing, you accept that data for
+        payment processing will be processed by Stripe.
+    </string>
+    <string name="stripeInit_step_start_desc">The event '%s' supports card payments. To accept card
+        payments the payment module must be initialized.
+    </string>
+    <string name="stripeInit_step_start_action">Initialize card payment</string>
+    <string name="stripeInit_step_grantLocationPermission_desc">To ensure secure card payments, the
+        location permission is required.
+    </string>
+    <string name="stripeInit_step_grantLocationPermission_action">Grant location permission</string>
+    <string name="stripeInit_step_enableGeoLocation_desc">To ensure secure card payments, the
+        location service must be enabled.
+    </string>
+    <string name="stripeInit_step_enableGeoLocation_action">Enable location service</string>
+    <string name="stripeInit_step_enableNfc_desc">To accept card payments, the NFC service must be
+        enabled.
+    </string>
+    <string name="stripeInit_step_enableNfc_action">Enable NFC service</string>
+    <string name="stripeInit_step_finished_desc">The card payment module is initialized. You can now
+        accept card payments.
+    </string>
+    <string name="stripeInit_step_finished_action">Let's go</string>
+    <string name="stripeInit_step_error_desc">An error occurred while initializing the card payment
+        module. Please try again.
+    </string>
+    <string name="stripeInit_step_error_action">Retry</string>
+    <string name="stripeInit_error_disabled">Card payments are currently not possible.</string>
+    <string name="stripeInit_error_disabled_forEvent">Card payments are not enabled for this
+        event.
+    </string>
+    <string name="stripeInit_error_location_denied">Location permission denied</string>
+    <string name="stripeInit_error_terminal_init">Initialization of the card payment module
+        failed.
+    </string>
+    <string name="stripeInit_error_reader_connection">Connection to the card payment module of the
+        app failed.
+    </string>
+    <string name="stripeInit_continue_without">Continue without activating card payment</string>
+
+    <string name="tableList_noTableFound">There are no tables for this event.</string>
+    <string name="tableList_groupFilter">Table groups</string>
+
+    <string name="tableDetail_title">Table %s - %s</string>
+    <string name="tableDetail_noOrder">There is currently no unpaid order for table "%s - %s"
+    </string>
+    <string name="tableDetail_newOrder">New Order</string>
+
+    <string name="order_title">%s - %s Order</string>
+    <string name="order_keepOrder">Keep order</string>
+    <string name="order_notSent_title">Order not sent</string>
+    <string name="order_notSent_desc">You have selected items but not sent the order. Do you really
+        want to go back?
+    </string>
+    <string name="order_product_add">Add product</string>
+    <string name="order_product_add_desc">Add a product to the order</string>
+    <string name="order_product_soldOut_title">Product sold out</string>
+    <string name="order_product_soldOut_desc_onAdd">"%s" is sold out. is sold out. It is not added
+        to the order.
+    </string>
+    <string name="order_product_soldOut_desc_onSend">"%s" is sold out. It gets removed from the
+        order. You can edit the order again.
+    </string>
+    <string name="order_product_stockToLow_title">Product stock too low</string>
+    <string name="order_product_stockToLow_desc">There are only %s pieces of "%s" left. Reduce the
+        quantity or remove it from the order.
+    </string>
+    <string name="order_product_not_found_title">Product not found.</string>
+    <string name="order_product_not_found_desc">The product could not be added to the order, as it
+        could not be found.
+    </string>
+    <string name="order_add_note_title">Note for %s</string>
+    <string name="order_add_note_input_label">Product note</string>
+    <string name="order_add_note_input_placeholder">1x without tomato</string>
+    <string name="order_alreadyCreated">Order was already sent.</string>
+    <string name="order_noLicence_title">No License</string>
+    <string name="order_noLicence_desc">There is no active licence for this event. Your organization
+        administrator needs to buy a licence for this event to use this app.
+    </string>
+
+    <string name="productSearch_title">Product search</string>
+    <string name="productSearch_placeholder">Search for a product</string>
+    <string name="productSearch_noProductFound">There are no products for this event.</string>
+    <string name="productSearch_groups_all">All</string>
+
+    <string name="billing_title">%s - %s Bill</string>
+    <string name="billing_keepBill">Keep bill</string>
+    <string name="billing_notSent_title">Bill not sent</string>
+    <string name="billing_notSent_desc">You have selected items but not sent the bill. Do you really
+        want to go back?
+    </string>
+    <string name="billing_noOrder">There is currently no unpaid order for table "%s - %s"</string>
+    <string name="billing_total">Total</string>
+    <string name="billing_change">Change</string>
+    <string name="billing_given">Given</string>
+    <string name="billing_pay_cash">Pay Cash</string>
+    <string name="billing_pay_card">Pay by Card</string>
+    <string name="billing_amountToLowForMethod">The selected payment method requires a minimum
+        amount of %s.
+    </string>
+    <string name="billing_alreadyPaid_title">Already paid</string>
+    <string name="billing_alreadyPaid_desc">Some of the selected products are already paid.</string>
+    <string name="billing_stripe_canceled_title">Card payment canceled</string>
+    <string name="billing_stripe_canceled_desc">The card payment was canceled. You can try again.
+    </string>
+    <string name="billing_stripe_failed_title">Card payment failed</string>
+    <string name="billing_stripe_failed_desc">The card payment failed. You can try again.</string>
+    <string name="billing_stripe_success">Card payment successful</string>
+    <string name="billing_stripe_location_disabled">The location service is disabled. Please enable
+        it to accept card payments.
+    </string>
+    <string name="billing_stripe_nfc_disabled">The NFC service is disabled. Please enable it to
+        accept card payments.
+    </string>
+</resources>

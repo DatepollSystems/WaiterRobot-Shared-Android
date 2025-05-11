@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">kellner.team</string>
+    <string name="app_forceUpdate_title">App Aktualisierung benötigt</string>
+    <string name="app_forceUpdate_message">Deine installierte App Version wird nicht mehr
+        unterstützt. Bitte installiere das update.
+    </string>
+    <string name="app_forceUpdate_openStore">%s öffnen</string>
+    <string name="app_updateAvailable_title">Neue Version verfügbar</string>
+    <string name="app_updateAvailable_message">Eine neue Version ist verfügbar. Aktualisiere jetzt,
+        um die neuen Funktionen und Verbesserungen zu erhalten.
+    </string>
+
+    <string name="dialog_cancel">Abbrechen</string>
+    <string name="dialog_closeAnyway">Trotzdem schließen</string>
+    <string name="dialog_clear">Löschen</string>
+    <string name="dialog_save">Speichern</string>
+    <string name="dialog_on">Ein</string>
+    <string name="dialog_off">Aus</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_refresh">Aktualisieren</string>
+
+    <string name="exceptions_title">Fehler</string>
+    <string name="exceptions_retry">Erneut versuchen</string>
+    <string name="exceptions_generic">Etwas ist schief gelaufen. Bitte versuche es erneut.</string>
+    <string name="exceptions_accountNotActivated">Dein Account ist nicht aktiviert. Bitte wende dich
+        an deinen Organisationsadministrator.
+    </string>
+    <string name="exceptions_noLicense">Für das Event fehlt eine Lizenz.</string>
+
+    <string name="navigation_back">Zurück</string>
+
+    <string name="deeplink_invalid">Ungültiger link</string>
+    <string name="deeplink_alreadyLoggedIn">Bereits angemeldet</string>
+
+    <string name="root_invalidLoginLink_title">Ungültiger login link.</string>
+    <string name="root_invalidLoginLink_desc">Der Login link ist ungültig. Bitte deinen
+        Organisationsadministrator um einen neuen.
+    </string>
+
+    <string name="login_title">Kellner Anmeldung</string>
+    <string name="login_desc">Du kannst dich mittels eines QR-Codes anmelden. Diesen solltes du von
+        deinem Organisationsadministrator bekommen. Scanne den Code um dich anzumelden.
+    </string>
+    <string name="login_withQrCode">Mittels QR-Code anmelden</string>
+    <string name="login_scanner_desc">Um dich anzumelden musst du den QR-Code welchen du von deinem
+        Organisationsadministrator bekommen hast scannen.
+    </string>
+    <string name="login_scanner_invalidCode_title">Ungültiger Code</string>
+    <string name="login_scanner_invalidCode_desc">Der Login link ist ungültig. Bitte deinen
+        Organisationsadministrator um einen neuen.
+    </string>
+    <string name="login_scanner_debugDialog_inputLabel">Anmeldelink</string>
+    <string name="login_scanner_debugDialog_placeholder">https://my.kellner.team/ml/signIn?</string>
+
+    <string name="qrScanner_cameraPermissionRequired">Zum scannen eines QR codes wird die
+        Kameraberechtigung benötigt!
+    </string>
+    <string name="qrScanner_noCameraFound">Es konnte keine Kamera die QR-Codes scannen kann gefunden
+        werden. Bitte deinen Organisationsadministrator dir einen Anmeldelink auszustellen.
+    </string>
+    <string name="qrScanner_errorOpeningCamera">Kamera konnte nicht geöffnet werden.</string>
+
+    <string name="register_name_title">Dein Name</string>
+    <string name="register_name_desc">Bitte gib deinen vollen Namen ein, um dich als Kellner beim
+        Event zu registrieren.
+    </string>
+    <string name="register_alreadyRegisteredInfo">Falls du bereits als Kellner für das Event
+        registriert bist, brich ab und frage deinen Organisationsadministrator nach einem
+        Anmeldecode.
+    </string>
+    <string name="register_login">Anmelden</string>
+
+    <string name="switchEvent_title">Event wechseln</string>
+    <string name="switchEvent_desc">Als Kellner kannst du teil von mehreren Events/Standorten sein.
+        Bitte wähle mit welchem Event/Standort du fortfahren möchtest.
+    </string>
+    <string name="switchEvent_noEventFound">Es konnten keine Events gefunden werden. Bitte deinen
+        Organisationsadministrator dich zu einem Event hinzuzufügen.
+    </string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_general_title">Allgemein</string>
+    <string name="settings_general_logout_title">Von %s abmelden</string>
+    <string name="settings_general_logout_desc">Willst du dich wirklich von '%s' abmelden? Wenn du
+        dich abgemeldet hast musst du einen neuen Anmeldecode von deinem Organisationsadministrator
+        anfordern. Falls du nur das Event wechseln möchtest kannst du das in den Einstellungen
+        machen.
+    </string>
+    <string name="settings_general_logout_action">Abmelden</string>
+    <string name="settings_general_logout_cancel">Angemeldet bleiben</string>
+    <string name="settings_general_darkMode_title">Dunkelmodus</string>
+    <string name="settings_general_darkMode_useSystem">Systemeinstellung verwenden</string>
+    <string name="settings_general_refresh_title">Daten aktualisieren</string>
+    <string name="settings_general_refresh_desc">Eventdaten aktualisieren (Tische, Produkte, …)
+    </string>
+    <string name="settings_general_refresh_toast">Aktualisiere data...</string>
+    <string name="settings_payment_title">Zahlung</string>
+    <string name="settings_payment_skipMoneyBackDialog_title">Rückgelddialog überspringen</string>
+    <string name="settings_payment_skipMoneyBackDialog_desc">Den Rückgelddialog im
+        Zahlungsbildschirm nicht anzeigen.
+    </string>
+    <string name="settings_payment_skipMoneyBackDialog_confirm_desc">Bist du sicher, dass du den
+        Rückgelddialog überspringen möchtest? Wenn aktiviert, wird der Rückgelddialog nicht mehr
+        angezeigt und das Klicken auf den Zahlungsbutton markiert die ausgewählten Produkte direkt
+        als bezahlt. Dies kann derzeit nicht rückgängig gemacht werden.
+    </string>
+    <string name="settings_payment_skipMoneyBackDialog_confirm_action">Ich verstehe, Dialog
+        überspringen
+    </string>
+    <string name="settings_payment_selectAllProductsByDefault_title">Standardmäßig alle Produkte
+        auswählen
+    </string>
+    <string name="settings_payment_selectAllProductsByDefault_desc">Beim Öffnen des
+        Zahlungsbildschirms sind standardmäßig alle Produkte ausgewählt.
+    </string>
+    <string name="settings_payment_card_title">Kartenzahlung</string>
+    <string name="settings_payment_card_desc">Kartenzahlungsmodul aktivieren und initialisieren.
+    </string>
+    <string name="settings_about_title">Über</string>
+    <string name="settings_about_version_title">App Version</string>
+    <string name="settings_about_version_desc">Version %s (%s)</string>
+    <string name="settings_about_privacyPolicy">Datenschutzerklärung</string>
+
+    <string name="stripeInit_title">Kartenzahlungen initialisieren</string>
+    <string name="stripeInit_locationDataSharingNotice">Die Standortdaten werden zur
+        Zahlungsabwicklung gegebenenfalls an unserem Zahlungsanbieter Stripe Inc. weitergeleitet.
+        Durch das Fortfahren akzeptierst du, dass Daten zur Zahlungsabwicklung von Stripe
+        verarbeitet werden.
+    </string>
+    <string name="stripeInit_step_start_desc">Das Event '%s' unterstützt Kartenzahlungen. Um
+        Kartenzahlungen zu akzeptieren, muss das Zahlungsmodul initialisiert werden.
+    </string>
+    <string name="stripeInit_step_start_action">Kartenzahlungen initialisieren</string>
+    <string name="stripeInit_step_grantLocationPermission_desc">Um sichere Kartenzahlungen zu
+        gewährleisten, ist die Standortberechtigung erforderlich.
+    </string>
+    <string name="stripeInit_step_grantLocationPermission_action">Standortberechtigung erteilen
+    </string>
+    <string name="stripeInit_step_enableGeoLocation_desc">Um sichere Kartenzahlungen zu
+        gewährleisten, muss der Standortdienst aktiviert sein.
+    </string>
+    <string name="stripeInit_step_enableGeoLocation_action">Standortdienst aktivieren</string>
+    <string name="stripeInit_step_enableNfc_desc">Um Kartenzahlungen zu akzeptieren, muss der
+        NFC-Dienst aktiviert sein.
+    </string>
+    <string name="stripeInit_step_enableNfc_action">NFC-Dienst aktivieren</string>
+    <string name="stripeInit_step_finished_desc">Das Kartenzahlungsmodul ist initialisiert. Du
+        kannst jetzt Kartenzahlungen akzeptieren.
+    </string>
+    <string name="stripeInit_step_finished_action">Los geht's</string>
+    <string name="stripeInit_step_error_desc">Beim Initialisieren des Kartenzahlungsmoduls ist ein
+        Fehler aufgetreten. Bitte versuche es erneut.
+    </string>
+    <string name="stripeInit_step_error_action">Erneut versuchen</string>
+    <string name="stripeInit_error_disabled">Kartenzahlungen sind derzeit nicht möglich.</string>
+    <string name="stripeInit_error_disabled_forEvent">Kartenzahlungen sind für dieses Event nicht
+        aktiviert.
+    </string>
+    <string name="stripeInit_error_location_denied">Standortberechtigung verweigert</string>
+    <string name="stripeInit_error_terminal_init">Initialisierung des Kartenzahlungsmoduls
+        fehlgeschlagen.
+    </string>
+    <string name="stripeInit_error_reader_connection">Verbindung zum Kartenzahlungsmodul der App
+        konnte nicht hergestellt werden.
+    </string>
+    <string name="stripeInit_continue_without">Ohne aktivierung der Kartenzahlung fortfahren
+    </string>
+
+    <string name="tableList_noTableFound">Für dieses Event sind keine Tische verfügbar.</string>
+    <string name="tableList_groupFilter">Tischgruppen</string>
+
+    <string name="tableDetail_title">Tisch %s - %s</string>
+    <string name="tableDetail_noOrder">Für den Tisch "%s - %s" gibt es zurzeit keine unbezahlte
+        Bestellungen.
+    </string>
+    <string name="tableDetail_newOrder">Neue Bestellung</string>
+
+    <string name="order_title">%s - %s Bestellung</string>
+    <string name="order_keepOrder">Bestellung behalten</string>
+    <string name="order_notSent_title">Bestellung nicht gesendet</string>
+    <string name="order_notSent_desc">Du hast Artikel ausgewählt aber die Bestellung nicht gesendet.
+        Willst du wirklich zurückgehen?
+    </string>
+    <string name="order_product_add">Produkt hinzufügen</string>
+    <string name="order_product_add_desc">Füge ein Produkt zur Bestellung hinzu</string>
+    <string name="order_product_soldOut_title">Produkt ausverkauft</string>
+    <string name="order_product_soldOut_desc_onAdd">"%s" ist ausverkauft. Es wird der Bestellung
+        nicht hinzugefügt.
+    </string>
+    <string name="order_product_soldOut_desc_onSend">"%s" ist ausverkauft. Es wird von der
+        Bestellung entfernt und du kannst die Bestellung noch einmal bearbeiten.
+    </string>
+    <string name="order_product_stockToLow_title">Produktbestand zu niedrig</string>
+    <string name="order_product_stockToLow_desc">Es sind nur noch %s Stück von "%s" übrig. Reduziere
+        die Anzahl oder entferne es aus der Bestellung.
+    </string>
+    <string name="order_product_not_found_title">Produkt nicht gefunden.</string>
+    <string name="order_product_not_found_desc">Das Produkt konnte der Bestellung nicht hinzugefügt
+        werden, da es nicht gefunden werden konnte.
+    </string>
+    <string name="order_add_note_title">Notiz für %s</string>
+    <string name="order_add_note_input_label">Produktnotiz</string>
+    <string name="order_add_note_input_placeholder">1x ohne Tomaten</string>
+    <string name="order_alreadyCreated">Bestellung wurde bereits gesendet.</string>
+
+    <string name="productSearch_title">Produktsuche</string>
+    <string name="productSearch_placeholder">Suche nach einem Produkt</string>
+    <string name="productSearch_noProductFound">Für dieses Event sind keine Produkte verfügbar.
+    </string>
+    <string name="productSearch_groups_all">Alle</string>
+
+    <string name="billing_title">%s - %s Rechnung</string>
+    <string name="billing_keepBill">Rechnung behalten</string>
+    <string name="billing_notSent_title">Rechnung nicht gesendet</string>
+    <string name="billing_notSent_desc">Du hast Artikel ausgewählt aber die Rechnung nicht gesendet.
+        Willst du wirklich zurückgehen?
+    </string>
+    <string name="billing_noOrder">Es gibt derzeit keine offene Rechnung für den Tisch "%s - %s"
+    </string>
+    <string name="billing_total">Summe</string>
+    <string name="billing_change">Rückgeld</string>
+    <string name="billing_given">Gegeben</string>
+    <string name="billing_pay_cash">Bar Bezahlen</string>
+    <string name="billing_pay_card">Kartenzahlung</string>
+    <string name="billing_amountToLowForMethod">Die ausgewählte Zahlungsmethode erfordert einen
+        Mindestbetrag von %s.
+    </string>
+    <string name="billing_alreadyPaid_title">Bereits bezahlt</string>
+    <string name="billing_alreadyPaid_desc">Einige der ausgewählten Produkte sind bereits bezahlt.
+    </string>
+    <string name="billing_stripe_canceled_title">Kartenzahlung abgebrochen</string>
+    <string name="billing_stripe_canceled_desc">Die Kartenzahlung wurde abgebrochen. Du kannst es
+        erneut versuchen.
+    </string>
+    <string name="billing_stripe_failed_title">Kartenzahlung fehlgeschlagen</string>
+    <string name="billing_stripe_failed_desc">Die Kartenzahlung ist fehlgeschlagen. Du kannst es
+        erneut versuchen.
+    </string>
+    <string name="billing_stripe_success">Kartenzahlung erfolgreich</string>
+    <string name="billing_stripe_location_disabled">Der Standortdienst ist deaktiviert. Bitte
+        aktiviere ihn, um Kartenzahlungen zu akzeptieren.
+    </string>
+    <string name="billing_stripe_nfc_disabled">Der NFC-Dienst ist deaktiviert. Bitte aktiviere ihn,
+        um Kartenzahlungen zu akzeptieren.
+    </string>
+</resources>

@@ -1,10 +1,9 @@
 package org.datepollsystems.waiterrobot.shared.features.settings.models
 
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.serialization.Serializable
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.off
-import org.datepollsystems.waiterrobot.shared.generated.localization.on
-import org.datepollsystems.waiterrobot.shared.generated.localization.useSystem
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 @Serializable
 enum class AppTheme {
@@ -12,14 +11,14 @@ enum class AppTheme {
     LIGHT,
     DARK;
 
-    fun settingsText() = when (this) {
-        SYSTEM -> L.settings.general.darkMode.useSystem()
-        LIGHT -> L.dialog.off()
-        DARK -> L.dialog.on()
+    fun settingsText(): StringDesc = when (this) {
+        SYSTEM -> MR.strings.settings_general_darkMode_useSystem.desc()
+        LIGHT -> MR.strings.dialog_off.desc()
+        DARK -> MR.strings.dialog_on.desc()
     }
 
     companion object {
         @Suppress("unused") // Only iOS
-        fun valueList() = values().toList()
+        fun valueList() = entries
     }
 }

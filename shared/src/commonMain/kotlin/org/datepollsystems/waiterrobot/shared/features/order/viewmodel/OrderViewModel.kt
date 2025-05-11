@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.resources.format
 import kotlinx.coroutines.coroutineScope
 import org.datepollsystems.waiterrobot.shared.core.data.remote.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -12,12 +14,7 @@ import org.datepollsystems.waiterrobot.shared.features.product.domain.GetProduct
 import org.datepollsystems.waiterrobot.shared.features.product.domain.RefreshProductGroupsUseCase
 import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Product
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.descOrderSent
-import org.datepollsystems.waiterrobot.shared.generated.localization.generic
-import org.datepollsystems.waiterrobot.shared.generated.localization.ok
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.datepollsystems.waiterrobot.shared.utils.randomUUID
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -94,12 +91,12 @@ class OrderViewModel internal constructor(
                         reduce {
                             state.copy(
                                 orderingState = ViewState.Error(
-                                    L.exceptions.title(),
-                                    L.exceptions.generic(),
+                                    MR.strings.exceptions_title.desc(),
+                                    MR.strings.exceptions_generic.desc(),
                                     onDismiss = ::dismissOrderError,
                                     primaryButton = DialogState.Button(
-                                        L.dialog.ok(),
-                                        ::dismissOrderError
+                                        MR.strings.dialog_ok.desc(),
+                                        ::dismissOrderError,
                                     )
                                 )
                             )
@@ -128,11 +125,11 @@ class OrderViewModel internal constructor(
             reduce {
                 state.copy(
                     orderingState = ViewState.Error(
-                        title = L.order.couldNotFindProduct.title(),
-                        text = L.order.couldNotFindProduct.desc(),
+                        title = MR.strings.order_product_not_found_title.desc(),
+                        text = MR.strings.order_product_not_found_desc.desc(),
                         onDismiss = { removeItem(id) },
                         primaryButton = DialogState.Button(
-                            text = L.dialog.ok(),
+                            text = MR.strings.dialog_ok.desc(),
                             action = { removeItem(id) }
                         )
                     )
@@ -181,11 +178,11 @@ class OrderViewModel internal constructor(
         reduce {
             state.copy(
                 orderingState = ViewState.Error(
-                    title = L.order.productSoldOut.title(),
-                    text = L.order.productSoldOut.descOrderSent(product.name),
+                    title = MR.strings.order_product_soldOut_title.desc(),
+                    text = MR.strings.order_product_soldOut_desc_onSend.format(product.name),
                     onDismiss = { removeItem(product.id) },
                     primaryButton = DialogState.Button(
-                        text = L.dialog.ok(),
+                        text = MR.strings.dialog_ok.desc(),
                         action = { removeItem(product.id) }
                     )
                 )
@@ -198,10 +195,13 @@ class OrderViewModel internal constructor(
         reduce {
             state.copy(
                 orderingState = ViewState.Error(
-                    title = L.order.stockToLow.title(),
-                    text = L.order.stockToLow.desc(remaining.toString(), product.name),
+                    title = MR.strings.order_product_stockToLow_title.desc(),
+                    text = MR.strings.order_product_stockToLow_desc.format(remaining, product.name),
                     onDismiss = ::dismissOrderError,
-                    primaryButton = DialogState.Button(L.dialog.ok(), ::dismissOrderError)
+                    primaryButton = DialogState.Button(
+                        MR.strings.dialog_ok.desc(),
+                        ::dismissOrderError
+                    )
                 )
             )
         }
@@ -211,11 +211,13 @@ class OrderViewModel internal constructor(
         reduce {
             state.copy(
                 orderingState = ViewState.Error(
-                    title = "No License",
-                    text = "There is no active licence for this event. Your organization administrator " +
-                        "needs to buy a licence for this event to use this app.",
+                    title = MR.strings.order_noLicence_title.desc(),
+                    text = MR.strings.order_noLicence_desc.desc(),
                     onDismiss = ::dismissOrderError,
-                    primaryButton = DialogState.Button(L.dialog.ok(), ::dismissOrderError)
+                    primaryButton = DialogState.Button(
+                        MR.strings.dialog_ok.desc(),
+                        ::dismissOrderError
+                    )
                 )
             )
         }

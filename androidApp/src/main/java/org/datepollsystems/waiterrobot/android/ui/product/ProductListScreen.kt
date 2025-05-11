@@ -41,6 +41,7 @@ import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.sectionHeader
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.getContentColor
@@ -50,11 +51,7 @@ import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Grou
 import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Product
 import org.datepollsystems.waiterrobot.shared.features.product.presentation.list.ProductListState
 import org.datepollsystems.waiterrobot.shared.features.product.presentation.list.ProductListViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.allGroups
-import org.datepollsystems.waiterrobot.shared.generated.localization.noProductFound
-import org.datepollsystems.waiterrobot.shared.generated.localization.placeholder
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.koin.androidx.compose.koinViewModel
@@ -97,8 +94,8 @@ private fun ProductList(
             OutlinedTextField(
                 value = state.filter,
                 onValueChange = onFilter,
-                label = { Text(L.productSearch.title()) },
-                placeholder = { Text(L.productSearch.placeholder()) },
+                label = { Text(MR.strings.productSearch_title()) },
+                placeholder = { Text(MR.strings.productSearch_placeholder()) },
                 leadingIcon = {
                     Icon(imageVector = Icons.Filled.Search, "Search product")
                 },
@@ -131,7 +128,10 @@ private fun ProductList(
                 }
                 val productGroups = productGroupsResource.data
                 if (productGroups.isNullOrEmpty()) {
-                    CenteredText(text = L.productSearch.noProductFound(), scrollAble = false)
+                    CenteredText(
+                        text = MR.strings.productSearch_noProductFound(),
+                        scrollAble = false
+                    )
                 } else {
                     val coScope = rememberCoroutineScope()
                     val pagerState = rememberPagerState {
@@ -146,7 +146,7 @@ private fun ProductList(
                         Tab(
                             selected = pagerState.currentPage == 0,
                             onClick = { coScope.launch { pagerState.scrollToPage(0) } },
-                            text = { Text(L.productSearch.allGroups()) }
+                            text = { Text(MR.strings.productSearch_groups_all()) }
                         )
                         productGroups.forEachIndexed { index, productGroup ->
                             val backgroundColor =

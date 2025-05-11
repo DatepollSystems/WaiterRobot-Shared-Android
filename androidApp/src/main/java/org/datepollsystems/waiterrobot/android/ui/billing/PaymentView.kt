@@ -2,7 +2,6 @@ package org.datepollsystems.waiterrobot.android.ui.billing
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,13 +31,10 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingState
 import org.datepollsystems.waiterrobot.shared.features.billing.presentation.ChangeBreakUp
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.change
-import org.datepollsystems.waiterrobot.shared.generated.localization.given
-import org.datepollsystems.waiterrobot.shared.generated.localization.pay
-import org.datepollsystems.waiterrobot.shared.generated.localization.payByCard
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.Money
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
@@ -71,16 +67,19 @@ fun PaymentView(
                     onClick = onContactless,
                     enabled = moneyGivenText.isEmpty() && contactLessState == BillingState.ContactLessState.ENABLED
                 ) {
-                    Icon(Icons.Filled.Contactless, contentDescription = L.billing.payByCard())
+                    Icon(
+                        Icons.Filled.Contactless,
+                        contentDescription = MR.strings.billing_pay_card()
+                    )
                     Spacer(Modifier.width(12.dp))
-                    Text(L.billing.payByCard())
+                    Text(MR.strings.billing_pay_card())
                 }
             }
         }
 
         // TODO add input for tip, divide through n Persons?
         OutlinedTextField(
-            label = { Text(text = L.billing.given()) },
+            label = { Text(text = MR.strings.billing_given()) },
             placeholder = { Text(text = "0.00") },
             singleLine = true,
             modifier = Modifier
@@ -102,13 +101,12 @@ fun PaymentView(
         ExtendedFloatingActionButton(
             modifier = Modifier.fillMaxWidth(0.8f),
             onClick = onPayClick,
-            text = { Text(L.billing.pay()) },
+            text = { Text(MR.strings.billing_pay_cash()) },
             icon = {}
         )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Change(
     change: BillingState.Change?,
@@ -123,7 +121,7 @@ fun Change(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = L.billing.change() + ":",
+                text = MR.strings.billing_change() + ":",
                 style = MaterialTheme.typography.titleLarge
             )
             Text(

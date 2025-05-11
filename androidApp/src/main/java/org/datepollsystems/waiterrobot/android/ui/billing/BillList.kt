@@ -17,12 +17,13 @@ import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.noOpenBill
+import org.datepollsystems.waiterrobot.shared.localization.MR
+
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
 @Composable
@@ -43,7 +44,7 @@ fun ColumnScope.BillList(
 
         if (billItems.isNullOrEmpty()) {
             CenteredText(
-                text = L.billing.noOpenBill(table.groupName, table.number.toString()),
+                text = MR.strings.billing_noOrder(table.groupName, table.number.toString()),
                 scrollAble = true
             )
         } else {

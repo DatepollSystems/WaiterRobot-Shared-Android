@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.data
 
+import dev.icerock.moko.resources.desc.StringDesc
 import org.datepollsystems.waiterrobot.shared.utils.getLocalizedUserMessage
 
 sealed class Resource<T> {
@@ -33,7 +34,7 @@ sealed class Resource<T> {
     }
 
     data class Success<T>(override val data: T) : Resource<T>()
-    data class Error<T>(val userMessage: String, override val data: T? = null) : Resource<T>() {
+    data class Error<T>(val userMessage: StringDesc, override val data: T? = null) : Resource<T>() {
         constructor(
             exception: Throwable,
             data: T? = null

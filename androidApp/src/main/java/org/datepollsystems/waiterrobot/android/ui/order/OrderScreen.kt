@@ -35,23 +35,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
 import org.datepollsystems.waiterrobot.android.ui.product.ProductListScreen
 import org.datepollsystems.waiterrobot.shared.features.order.domain.model.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.order.viewmodel.OrderViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.addProduct
-import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.descAddProduct
-import org.datepollsystems.waiterrobot.shared.generated.localization.keepOrder
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
@@ -88,11 +84,11 @@ fun OrderScreen(
 
     if (showConfirmGoBack) {
         ConfirmDialog(
-            title = L.order.notSent.title(),
-            text = L.order.notSent.desc(),
-            confirmText = L.dialog.closeAnyway(),
+            title = MR.strings.order_notSent_title.desc(),
+            text = MR.strings.billing_notSent_desc.desc(),
+            confirmText = MR.strings.dialog_closeAnyway.desc(),
             onConfirm = vm::abortOrder,
-            cancelText = L.order.keepOrder(),
+            cancelText = MR.strings.order_keepOrder.desc(),
             onCancel = { showConfirmGoBack = false }
         )
     }
@@ -109,7 +105,7 @@ fun OrderScreen(
     }
 
     ScaffoldView(
-        title = L.order.title(table.groupName, table.number.toString()),
+        title = MR.strings.order_title(table.groupName, table.number),
         navigationIcon = {
             IconButton(onClick = goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -128,8 +124,13 @@ fun OrderScreen(
                 }
                 ExtendedFloatingActionButton(
                     onClick = { showProductSheet = true },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = "Add Product") },
-                    text = { Text(L.order.addProduct()) }
+                    icon = {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = MR.strings.order_product_add()
+                        )
+                    },
+                    text = { Text(MR.strings.order_product_add()) }
                 )
             }
         },
@@ -168,7 +169,7 @@ fun OrderScreen(
             if (state.currentOrder.isEmpty()) {
                 CenteredText(
                     modifier = Modifier.weight(1f),
-                    text = L.order.descAddProduct(),
+                    text = MR.strings.order_product_add_desc(),
                     scrollAble = false
                 )
             } else {

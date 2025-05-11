@@ -5,31 +5,32 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import dev.icerock.moko.resources.desc.StringDesc
 
 @Composable
 fun ConfirmDialog(
-    title: String,
-    text: String,
-    confirmText: String,
+    title: StringDesc,
+    text: StringDesc,
+    confirmText: StringDesc,
     onConfirm: () -> Unit,
-    cancelText: String,
+    cancelText: StringDesc,
     onCancel: () -> Unit,
 ) {
     AlertDialog(
         title = {
-            Text(text = title)
+            Text(text = title())
         },
         text = {
-            Text(text = text)
+            Text(text = text())
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(text = confirmText)
+                Text(text = confirmText())
             }
         },
         dismissButton = {
             Button(onClick = onCancel) {
-                Text(cancelText)
+                Text(cancelText())
             }
         },
         onDismissRequest = onCancel

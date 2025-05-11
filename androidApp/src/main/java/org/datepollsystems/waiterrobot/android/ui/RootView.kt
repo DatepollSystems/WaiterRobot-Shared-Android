@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.android.ui
 
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import org.datepollsystems.waiterrobot.android.generated.navigation.NavGraphs
@@ -26,7 +28,8 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
     val navController = navEngine.rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val state by vm.collectAsState()
-    vm.handleSideEffects(navController) { handleSideEffects(it, snackbarHostState) }
+    val context = LocalContext.current
+    vm.handleSideEffects(navController) { handleSideEffects(it, snackbarHostState, context) }
 
     val useDarkTheme = when (state.selectedTheme) {
         AppTheme.SYSTEM -> isSystemInDarkTheme()
@@ -50,9 +53,10 @@ fun RootView(vm: RootViewModel, onAppThemeChange: (AppTheme) -> Unit) {
 
 private suspend fun handleSideEffects(
     effect: RootEffect,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    context: Context,
 ) {
     when (effect) {
-        is RootEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message)
+        is RootEffect.ShowSnackBar -> snackbarHostState.showSnackbar(effect.message.toString(context))
     }
 }

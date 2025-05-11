@@ -1,5 +1,6 @@
 package org.datepollsystems.waiterrobot.shared.core.viewmodel
 
+import dev.icerock.moko.resources.desc.StringDesc
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState.Button
 
 sealed class ViewState {
@@ -7,8 +8,8 @@ sealed class ViewState {
     data object Loading : ViewState()
     data class Error(val dialog: DialogState) : ViewState() {
         constructor(
-            title: String,
-            text: String,
+            title: StringDesc,
+            text: StringDesc,
             onDismiss: () -> Unit,
             primaryButton: Button,
             secondaryButton: Button? = null,

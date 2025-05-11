@@ -3,7 +3,6 @@ package org.datepollsystems.waiterrobot.android.ui.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -18,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.icerock.moko.resources.desc.StringDesc
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CustomDialog(
     properties: DialogProperties = DialogProperties(),
     onDismiss: () -> Unit,
-    title: String,
+    title: StringDesc,
     actions: (@Composable RowScope.() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -36,7 +36,7 @@ fun CustomDialog(
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text(text = title, style = MaterialTheme.typography.headlineSmall)
+                Text(text = title(), style = MaterialTheme.typography.headlineSmall)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
