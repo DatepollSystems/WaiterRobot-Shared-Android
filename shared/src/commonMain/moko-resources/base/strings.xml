@@ -115,7 +115,7 @@
     </string>
     <string name="settings_about_title">About</string>
     <string name="settings_about_version_title">App version</string>
-    <string name="settings_about_version_desc">Version %s (%s)</string>
+    <string name="settings_about_version_desc">Version %1$s (%2$s)</string>
     <string name="settings_about_privacyPolicy">Privacy Policy</string>
 
     <string name="stripeInit_title">Initialize card payment</string>
@@ -163,12 +163,12 @@
     <string name="tableList_noTableFound">There are no tables for this event.</string>
     <string name="tableList_groupFilter">Table groups</string>
 
-    <string name="tableDetail_title">Table %s - %s</string>
-    <string name="tableDetail_noOrder">There is currently no unpaid order for table "%s - %s"
+    <string name="tableDetail_title">Table %1$s - %2$s</string>
+    <string name="tableDetail_noOrder">There is currently no unpaid order for table "%1$s - %2$s"
     </string>
     <string name="tableDetail_newOrder">New Order</string>
 
-    <string name="order_title">%s - %s Order</string>
+    <string name="order_title">%1$s - %2$s Order</string>
     <string name="order_keepOrder">Keep order</string>
     <string name="order_notSent_title">Order not sent</string>
     <string name="order_notSent_desc">You have selected items but not sent the order. Do you really
@@ -184,7 +184,8 @@
         order. You can edit the order again.
     </string>
     <string name="order_product_stockToLow_title">Product stock too low</string>
-    <string name="order_product_stockToLow_desc">There are only %s pieces of "%s" left. Reduce the
+    <string name="order_product_stockToLow_desc">There are only %1$s pieces of "%2$s" left. Reduce
+        the
         quantity or remove it from the order.
     </string>
     <string name="order_product_not_found_title">Product not found.</string>
@@ -205,13 +206,14 @@
     <string name="productSearch_noProductFound">There are no products for this event.</string>
     <string name="productSearch_groups_all">All</string>
 
-    <string name="billing_title">%s - %s Bill</string>
+    <string name="billing_title">%1$s - %2$s Bill</string>
     <string name="billing_keepBill">Keep bill</string>
     <string name="billing_notSent_title">Bill not sent</string>
     <string name="billing_notSent_desc">You have selected items but not sent the bill. Do you really
         want to go back?
     </string>
-    <string name="billing_noOrder">There is currently no unpaid order for table "%s - %s"</string>
+    <string name="billing_noOrder">There is currently no unpaid order for table "%1$s - %2$s"
+    </string>
     <string name="billing_total">Total</string>
     <string name="billing_change">Change</string>
     <string name="billing_given">Given</string>

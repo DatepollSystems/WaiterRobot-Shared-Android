@@ -119,7 +119,7 @@
     </string>
     <string name="settings_about_title">Über</string>
     <string name="settings_about_version_title">App Version</string>
-    <string name="settings_about_version_desc">Version %s (%s)</string>
+    <string name="settings_about_version_desc">Version %1$s (%2$s)</string>
     <string name="settings_about_privacyPolicy">Datenschutzerklärung</string>
 
     <string name="stripeInit_title">Kartenzahlungen initialisieren</string>
@@ -170,13 +170,13 @@
     <string name="tableList_noTableFound">Für dieses Event sind keine Tische verfügbar.</string>
     <string name="tableList_groupFilter">Tischgruppen</string>
 
-    <string name="tableDetail_title">Tisch %s - %s</string>
-    <string name="tableDetail_noOrder">Für den Tisch "%s - %s" gibt es zurzeit keine unbezahlte
+    <string name="tableDetail_title">Tisch %1$s - %2$s</string>
+    <string name="tableDetail_noOrder">Für den Tisch "%1$s - %2$s" gibt es zurzeit keine unbezahlte
         Bestellungen.
     </string>
     <string name="tableDetail_newOrder">Neue Bestellung</string>
 
-    <string name="order_title">%s - %s Bestellung</string>
+    <string name="order_title">%1$s - %2$s Bestellung</string>
     <string name="order_keepOrder">Bestellung behalten</string>
     <string name="order_notSent_title">Bestellung nicht gesendet</string>
     <string name="order_notSent_desc">Du hast Artikel ausgewählt aber die Bestellung nicht gesendet.
@@ -192,7 +192,8 @@
         Bestellung entfernt und du kannst die Bestellung noch einmal bearbeiten.
     </string>
     <string name="order_product_stockToLow_title">Produktbestand zu niedrig</string>
-    <string name="order_product_stockToLow_desc">Es sind nur noch %s Stück von "%s" übrig. Reduziere
+    <string name="order_product_stockToLow_desc">Es sind nur noch %1$s Stück von "%2$s" übrig.
+        Reduziere
         die Anzahl oder entferne es aus der Bestellung.
     </string>
     <string name="order_product_not_found_title">Produkt nicht gefunden.</string>
@@ -210,13 +211,13 @@
     </string>
     <string name="productSearch_groups_all">Alle</string>
 
-    <string name="billing_title">%s - %s Rechnung</string>
+    <string name="billing_title">%1$s - %2$s Rechnung</string>
     <string name="billing_keepBill">Rechnung behalten</string>
     <string name="billing_notSent_title">Rechnung nicht gesendet</string>
     <string name="billing_notSent_desc">Du hast Artikel ausgewählt aber die Rechnung nicht gesendet.
         Willst du wirklich zurückgehen?
     </string>
-    <string name="billing_noOrder">Es gibt derzeit keine offene Rechnung für den Tisch "%s - %s"
+    <string name="billing_noOrder">Es gibt derzeit keine offene Rechnung für den Tisch "%1$s - %2$s"
     </string>
     <string name="billing_total">Summe</string>
     <string name="billing_change">Rückgeld</string>
