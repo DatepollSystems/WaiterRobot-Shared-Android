@@ -52,7 +52,10 @@ import kotlin.coroutines.suspendCoroutine
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun QrCodeScanner(onResult: (Barcode) -> Unit) {
+fun QrCodeScanner(
+    modifier: Modifier = Modifier,
+    onResult: (Barcode) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     val logger = getLogger("QrCodeScanner")
@@ -65,7 +68,7 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
         if (!cameraPermissionState.status.isGranted) cameraPermissionState.launchPermissionRequest()
     }
 
-    Box {
+    Box(modifier) {
         if (errorMessage != null) {
             Text(
                 text = errorMessage!!(),

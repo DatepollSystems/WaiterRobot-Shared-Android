@@ -42,7 +42,7 @@ fun LoginScannerScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            QrCodeScanner { code ->
+            QrCodeScanner(Modifier.weight(1.0f)) { code ->
                 val url = code.url?.url
                     ?: code.displayValue
                     ?: return@QrCodeScanner
