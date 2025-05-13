@@ -23,7 +23,6 @@ import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.localization.MR
-
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
 @Composable

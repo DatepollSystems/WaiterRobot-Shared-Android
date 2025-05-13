@@ -2,5 +2,4 @@ package org.datepollsystems.waiterrobot.shared.features.table.presentation.filte
 
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewModelEffect
 
-class TableGroupFilterEffect : ViewModelEffect {
-}
+class TableGroupFilterEffect : ViewModelEffect

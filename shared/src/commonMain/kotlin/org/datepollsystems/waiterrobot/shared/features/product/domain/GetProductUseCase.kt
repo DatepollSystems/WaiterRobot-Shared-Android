@@ -10,4 +10,3 @@ internal class GetProductUseCase(
 ) : AbstractUseCase() {
     suspend operator fun invoke(id: Long): Product? = productRepository.getProductById(id).first()
 }
-

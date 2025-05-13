@@ -22,4 +22,3 @@ internal class GetProductGroupsUseCase(
             emitAll(productGroupRepository.getProductGroups(event.id, filter))
         }
 }
-

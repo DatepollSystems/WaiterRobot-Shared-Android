@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package org.datepollsystems.waiterrobot.shared.core.di
 
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
