@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -32,26 +33,25 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.android.ui.core.AlertDialogFromState
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.toast
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingEffect
-import org.datepollsystems.waiterrobot.shared.features.billing.viewmodel.BillingViewModel
-import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.closeAnyway
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.keepBill
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
-import org.datepollsystems.waiterrobot.shared.generated.localization.total
+import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingEffect
+import org.datepollsystems.waiterrobot.shared.features.billing.presentation.BillingViewModel
+import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun BillingScreen(
     table: Table,
     navigator: NavController,
@@ -65,44 +65,39 @@ fun BillingScreen(
     val focusRequest = remember { FocusRequester() }
     var showConfirmGoBack by remember { mutableStateOf(false) }
     var showPaymentSheet by remember { mutableStateOf(false) }
-    val paymentSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
+    val paymentSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     vm.handleSideEffects(navigator) {
         when (it) {
-            is BillingEffect.Toast -> Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            is BillingEffect.Toast -> context.toast(it.message, Toast.LENGTH_SHORT)
             BillingEffect.ShowPaymentSheet -> showPaymentSheet = true
         }
     }
 
-    fun goBack() {
+    val goBack: () -> Unit by rememberUpdatedState {
         when {
             state.hasCustomSelection -> showConfirmGoBack = true
             else -> vm.abortBill()
         }
     }
 
-    BackHandler(onBack = ::goBack)
+    BackHandler(onBack = goBack)
 
     if (showConfirmGoBack) {
         ConfirmDialog(
-            title = L.billing.notSent.title(),
-            text = L.billing.notSent.desc(),
-            confirmText = L.dialog.closeAnyway(),
+            title = MR.strings.billing_notSent_title.desc(),
+            text = MR.strings.billing_notSent_desc.desc(),
+            confirmText = MR.strings.dialog_closeAnyway.desc(),
             onConfirm = vm::abortBill,
-            cancelText = L.billing.keepBill(),
+            cancelText = MR.strings.billing_keepBill.desc(),
             onCancel = { showConfirmGoBack = false },
         )
     }
 
-    AlertDialogFromState(state.paymentErrorDialog)
-
     ScaffoldView(
-        state = state,
-        title = L.billing.title(table.groupName, table.number.toString()),
+        title = MR.strings.billing_title(table.groupName, table.number),
         navigationIcon = {
-            IconButton(onClick = ::goBack) {
+            IconButton(onClick = goBack) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
             }
         },
@@ -117,7 +112,7 @@ fun BillingScreen(
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = L.billing.total() + ":",
+                        text = MR.strings.billing_total() + ":",
                         style = MaterialTheme.typography.titleLarge
                     )
                     Spacer(modifier = Modifier.width(16.dp))
@@ -187,7 +182,17 @@ fun BillingScreen(
                 }
             }
         }
-    ) {
-        BillList(table = table, billItems = state.billItems, addAction = vm::addItem)
+    ) { padding ->
+        ViewStateOverlay(
+            modifier = Modifier.padding(padding),
+            state = state.paymentState,
+        ) {
+            BillList(
+                table = table,
+                billItemResource = state.billItems,
+                addAction = vm::addItem,
+                refresh = vm::refreshBill
+            )
+        }
     }
 }

@@ -22,9 +22,9 @@ class LoginViewModel internal constructor(
         try {
             when (val deepLink = DeepLink.createFromUrl(link)) {
                 is DeepLink.Auth.LoginLink -> {
-                    reduce { state.withViewState(ViewState.Loading) }
+                    reduce { state.copy(viewState = ViewState.Loading) }
                     authRepository.loginWaiter(deepLink)
-                    reduce { state.withViewState(ViewState.Idle) }
+                    reduce { state.copy(viewState = ViewState.Idle) }
                 }
 
                 is DeepLink.Auth.RegisterLink -> {

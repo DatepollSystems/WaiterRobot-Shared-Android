@@ -1,5 +1,7 @@
 package org.datepollsystems.waiterrobot.android.ui.settings
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,32 +27,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.icerock.moko.resources.desc.desc
 import org.datepollsystems.waiterrobot.android.ui.common.SingleSelectDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.toast
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsEffect
 import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.SettingsViewModel
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.action
-import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
-import org.datepollsystems.waiterrobot.shared.generated.localization.confirmAction
-import org.datepollsystems.waiterrobot.shared.generated.localization.confirmDesc
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.keepLoggedIn
-import org.datepollsystems.waiterrobot.shared.generated.localization.privacyPolicy
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun SettingsScreen(
     navigator: NavController,
     vm: SettingsViewModel = koinViewModel()
@@ -67,22 +67,22 @@ fun SettingsScreen(
                     showLogoutWarningDialog = false
                     vm.logout()
                 }) {
-                    Text(L.settings.general.logout.action())
+                    Text(MR.strings.settings_general_logout_action())
                 }
             },
             dismissButton = {
                 Button(onClick = { showLogoutWarningDialog = false }) {
-                    Text(L.settings.general.keepLoggedIn())
+                    Text(MR.strings.settings_general_logout_cancel())
                 }
             },
             title = {
                 Text(
-                    text = L.settings.general.logout.title(CommonApp.settings.organisationName)
+                    text = MR.strings.settings_general_logout_title(CommonApp.settings.organisationName)
                 )
             },
             text = {
                 Text(
-                    text = L.settings.general.logout.desc(CommonApp.settings.organisationName),
+                    text = MR.strings.settings_general_logout_desc(CommonApp.settings.organisationName),
                     textAlign = TextAlign.Center
                 )
             }
@@ -92,7 +92,7 @@ fun SettingsScreen(
     var showThemeSelectDialog by remember { mutableStateOf(false) }
     if (showThemeSelectDialog) {
         SingleSelectDialog(
-            title = L.settings.general.darkMode.title(),
+            title = MR.strings.settings_general_darkMode_title.desc(),
             options = AppTheme.entries,
             optionId = AppTheme::ordinal,
             optionText = { it.settingsText() },
@@ -111,16 +111,16 @@ fun SettingsScreen(
                     showConfirmSkipMoneyBackDialog = false
                     vm.toggleSkipMoneyBackDialog(value = true, confirmed = true)
                 }) {
-                    Text(L.settings.payment.skipMoneyBackDialog.confirmAction())
+                    Text(MR.strings.settings_payment_skipMoneyBackDialog_confirm_action())
                 }
             },
             dismissButton = {
                 Button(onClick = { showConfirmSkipMoneyBackDialog = false }) {
-                    Text(L.dialog.cancel())
+                    Text(MR.strings.dialog_cancel())
                 }
             },
-            title = { Text(L.settings.payment.skipMoneyBackDialog.title()) },
-            text = { Text(L.settings.payment.skipMoneyBackDialog.confirmDesc()) }
+            title = { Text(MR.strings.settings_payment_skipMoneyBackDialog_title()) },
+            text = { Text(MR.strings.settings_payment_skipMoneyBackDialog_confirm_desc()) }
         )
     }
 
@@ -131,8 +131,7 @@ fun SettingsScreen(
     }
 
     ScaffoldView(
-        state = state,
-        title = L.settings.title(),
+        title = MR.strings.settings_title(),
         topBarActions = {
             IconButton(onClick = { showLogoutWarningDialog = true }) {
                 Icon(Icons.Filled.Logout, contentDescription = "Logout")
@@ -143,26 +142,44 @@ fun SettingsScreen(
                 Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
             }
         },
-    ) {
+    ) { padding ->
         val uriHandler = LocalUriHandler.current
+        val context = LocalContext.current
 
-        LazyColumn {
-            settingsSection(L.settings.general.title()) {
+        LazyColumn(
+            modifier = Modifier.padding(padding)
+        ) {
+            settingsSection(MR.strings.settings_general_title.desc()) {
                 settingsItem(
-                    icon = { Icon(Icons.Filled.Logout, contentDescription = "Logout") },
-                    title = L.settings.general.logout.action(),
-                    subtitle = "\"${CommonApp.settings.organisationName}\" / \"${CommonApp.settings.waiterName}\"",
+                    icon = {
+                        Icon(
+                            Icons.Filled.Logout,
+                            contentDescription = MR.strings.settings_general_logout_action()
+                        )
+                    },
+                    title = MR.strings.settings_general_logout_action.desc(),
+                    subtitle = with(CommonApp.settings) { "\"$organisationName\" / \"$waiterName\"".desc() },
                     onClick = { showLogoutWarningDialog = true }
                 )
                 settingsItem(
-                    icon = { Icon(Icons.Outlined.Groups, contentDescription = "Switch event") },
-                    title = L.switchEvent.title(),
-                    subtitle = CommonApp.settings.eventName,
+                    icon = {
+                        Icon(
+                            Icons.Outlined.Groups,
+                            contentDescription = MR.strings.switchEvent_title()
+                        )
+                    },
+                    title = MR.strings.switchEvent_title.desc(),
+                    subtitle = CommonApp.settings.eventName.desc(),
                     onClick = vm::switchEvent
                 )
                 settingsItem(
-                    icon = { Icon(Icons.Outlined.DarkMode, contentDescription = "Use dark") },
-                    title = L.settings.general.darkMode.title(),
+                    icon = {
+                        Icon(
+                            Icons.Outlined.DarkMode,
+                            contentDescription = MR.strings.settings_general_darkMode_title()
+                        )
+                    },
+                    title = MR.strings.settings_general_darkMode_title.desc(),
                     subtitle = state.currentAppTheme.settingsText(),
                     onClick = { showThemeSelectDialog = true }
                 )
@@ -173,17 +190,23 @@ fun SettingsScreen(
                             contentDescription = "Refresh data"
                         )
                     },
-                    title = L.settings.general.refresh.title(),
-                    subtitle = L.settings.general.refresh.desc(),
-                    onClick = vm::refreshAll
+                    title = MR.strings.settings_general_refresh_title.desc(),
+                    subtitle = MR.strings.settings_general_refresh_desc.desc(),
+                    onClick = {
+                        context.toast(
+                            MR.strings.settings_general_refresh_toast.desc(),
+                            Toast.LENGTH_SHORT
+                        )
+                        vm.refreshAll()
+                    }
                 )
             }
 
-            settingsSection(L.settings.payment.title()) {
+            settingsSection(MR.strings.settings_payment_title.desc()) {
                 settingsItem(
                     icon = { Icon(Icons.Outlined.CurrencyExchange, contentDescription = null) },
-                    title = L.settings.payment.skipMoneyBackDialog.title(),
-                    subtitle = L.settings.payment.skipMoneyBackDialog.desc(),
+                    title = MR.strings.settings_payment_skipMoneyBackDialog_title.desc(),
+                    subtitle = MR.strings.settings_payment_skipMoneyBackDialog_desc.desc(),
                     action = {
                         Switch(
                             checked = state.skipMoneyBackDialog,
@@ -194,8 +217,8 @@ fun SettingsScreen(
                 )
                 settingsItem(
                     icon = { Icon(Icons.Outlined.SelectAll, contentDescription = null) },
-                    title = L.settings.payment.selectAllProductsByDefault.title(),
-                    subtitle = L.settings.payment.selectAllProductsByDefault.desc(),
+                    title = MR.strings.settings_payment_selectAllProductsByDefault_title.desc(),
+                    subtitle = MR.strings.settings_payment_selectAllProductsByDefault_desc.desc(),
                     action = {
                         Switch(
                             checked = state.paymentSelectAllProductsByDefault,
@@ -209,25 +232,30 @@ fun SettingsScreen(
                         icon = {
                             Icon(
                                 Icons.Outlined.Contactless,
-                                contentDescription = L.settings.payment.cardPayment.title()
+                                contentDescription = MR.strings.settings_payment_card_title()
                             )
                         },
-                        title = L.settings.payment.cardPayment.title(),
-                        subtitle = L.settings.payment.cardPayment.desc(),
+                        title = MR.strings.settings_payment_card_title.desc(),
+                        subtitle = MR.strings.settings_payment_card_desc.desc(),
                         onClick = vm::initializeContactlessPayment
                     )
                 }
             }
 
-            settingsSection(L.settings.about.title()) {
+            settingsSection(MR.strings.settings_about_title.desc()) {
                 settingsItem(
-                    icon = { Icon(Icons.Filled.PrivacyTip, contentDescription = "Privacy") },
-                    title = L.settings.about.privacyPolicy(),
+                    icon = {
+                        Icon(
+                            Icons.Filled.PrivacyTip,
+                            contentDescription = MR.strings.settings_about_privacyPolicy()
+                        )
+                    },
+                    title = MR.strings.settings_about_privacyPolicy.desc(),
                     onClick = { uriHandler.openUri(CommonApp.privacyPolicyUrl) }
                 )
                 settingsItem(
                     icon = { Icon(Icons.Filled.Info, contentDescription = "App info") },
-                    title = L.settings.about.version.title(),
+                    title = MR.strings.settings_about_version_title.desc(),
                     subtitle = state.versionString
                 )
             }

@@ -1,6 +1,5 @@
 package org.datepollsystems.waiterrobot.android.ui.settings
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,25 +34,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.action
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.privacyPolicy
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 fun LazyListScope.settingsItem(
     modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
-    title: String,
-    subtitle: String? = null,
+    title: StringDesc,
+    subtitle: StringDesc? = null,
     action: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null
 ) = settingsItem(
     modifier = modifier,
     icon = icon,
-    title = { Text(title) },
-    subtitle = subtitle?.let { { Text(subtitle) } },
+    title = { Text(title()) },
+    subtitle = subtitle?.let { { Text(subtitle()) } },
     action = action,
     onClick = onClick
 )
@@ -139,15 +137,14 @@ private fun RowScope.SettingsTitle(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.settingsSection(
-    text: String,
+    text: StringDesc,
     modifier: Modifier = Modifier,
     items: LazyListScope.() -> Unit
 ) {
     stickyHeader {
         Text(
-            text = text,
+            text = text(),
             style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.primary),
             modifier = modifier
                 .fillMaxWidth()
@@ -162,31 +159,41 @@ fun LazyListScope.settingsSection(
 private fun SettingsPreview() = Preview {
     var selected by remember { mutableStateOf(false) }
     LazyColumn {
-        settingsSection(L.settings.general.title()) {
+        settingsSection(MR.strings.settings_general_title.desc()) {
             settingsItem(
-                icon = { Icon(Icons.Filled.Logout, contentDescription = "Logout") },
-                title = L.settings.general.logout.action(),
-                subtitle = "\"My Org\" / \"My Event\"",
+                icon = {
+                    Icon(
+                        Icons.Filled.Logout,
+                        contentDescription = MR.strings.settings_general_logout_action()
+                    )
+                },
+                title = MR.strings.settings_general_logout_action.desc(),
+                subtitle = "\"My Org\" / \"My Event\"".desc(),
                 onClick = { }
             )
             settingsItem(
-                icon = { Icon(Icons.Outlined.Groups, contentDescription = "Switch event") },
-                title = L.switchEvent.title(),
-                subtitle = "My Event",
+                icon = {
+                    Icon(
+                        Icons.Outlined.Groups,
+                        contentDescription = MR.strings.switchEvent_title()
+                    )
+                },
+                title = MR.strings.switchEvent_title.desc(),
+                subtitle = "My Event".desc(),
                 onClick = {}
             )
             settingsItem(
-                title = L.settings.general.refresh.title(),
-                subtitle = L.settings.general.refresh.desc(),
+                title = MR.strings.settings_general_refresh_title.desc(),
+                subtitle = MR.strings.settings_general_refresh_desc.desc(),
                 onClick = {}
             )
         }
 
-        settingsSection(L.settings.payment.title()) {
+        settingsSection(MR.strings.settings_payment_title.desc()) {
             settingsItem(
                 icon = { Icon(Icons.Outlined.CurrencyExchange, contentDescription = null) },
-                title = L.settings.payment.skipMoneyBackDialog.title(),
-                subtitle = L.settings.payment.skipMoneyBackDialog.desc(),
+                title = MR.strings.settings_payment_skipMoneyBackDialog_title.desc(),
+                subtitle = MR.strings.settings_payment_skipMoneyBackDialog_desc.desc(),
                 action = {
                     Switch(checked = selected, onCheckedChange = { selected = !selected })
                 },
@@ -196,25 +203,30 @@ private fun SettingsPreview() = Preview {
                 icon = {
                     Icon(
                         Icons.Outlined.Contactless,
-                        contentDescription = L.settings.payment.cardPayment.title()
+                        contentDescription = MR.strings.settings_payment_card_title()
                     )
                 },
-                title = L.settings.payment.cardPayment.title(),
-                subtitle = L.settings.payment.cardPayment.desc(),
+                title = MR.strings.settings_payment_card_title.desc(),
+                subtitle = MR.strings.settings_payment_card_desc.desc(),
                 onClick = { }
             )
         }
 
-        settingsSection(L.settings.about.title()) {
+        settingsSection(MR.strings.settings_about_title.desc()) {
             settingsItem(
-                icon = { Icon(Icons.Filled.PrivacyTip, contentDescription = "Privacy") },
-                title = L.settings.about.privacyPolicy(),
+                icon = {
+                    Icon(
+                        Icons.Filled.PrivacyTip,
+                        contentDescription = MR.strings.settings_about_privacyPolicy()
+                    )
+                },
+                title = MR.strings.settings_about_privacyPolicy.desc(),
                 onClick = { }
             )
             settingsItem(
                 icon = { Icon(Icons.Filled.Info, contentDescription = "App info") },
-                title = L.settings.about.version.title(),
-                subtitle = "Version 9.9.9 (123456789)"
+                title = MR.strings.settings_about_version_title.desc(),
+                subtitle = "Version 9.9.9 (123456789)".desc()
             )
         }
     }

@@ -7,13 +7,14 @@ import dev.icerock.moko.permissions.RequestCanceledException
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeException
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.StripeException
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel.StripeInitializationState.Step
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.subIntent
 
 class StripeInitializationViewModel internal constructor(
     private val stripe: StripeProvider,
@@ -23,10 +24,7 @@ class StripeInitializationViewModel internal constructor(
 ) {
     private lateinit var locationId: String
 
-    override suspend fun SimpleSyntax<
-        StripeInitializationState,
-        NavOrViewModelEffect<StripeInitializationEffect>
-        >.onCreate() {
+    override suspend fun onCreate() = subIntent {
         setLocationId()
     }
 

@@ -15,18 +15,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.android.ui.scanner.QrCodeScanner
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.scanner.LoginScannerViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun LoginScannerScreen(
     vm: LoginScannerViewModel = koinViewModel(),
     navigator: NavController
@@ -42,7 +42,7 @@ fun LoginScannerScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            QrCodeScanner { code ->
+            QrCodeScanner(Modifier.weight(1.0f)) { code ->
                 val url = code.url?.url
                     ?: code.displayValue
                     ?: return@QrCodeScanner
@@ -53,14 +53,14 @@ fun LoginScannerScreen(
             Text(
                 modifier = Modifier.padding(vertical = 20.dp),
                 textAlign = TextAlign.Center,
-                text = L.login.scanner.desc()
+                text = MR.strings.login_scanner_desc()
             )
 
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = vm::goBack
             ) {
-                Text(text = L.dialog.cancel())
+                Text(text = MR.strings.dialog_cancel())
             }
         }
     }

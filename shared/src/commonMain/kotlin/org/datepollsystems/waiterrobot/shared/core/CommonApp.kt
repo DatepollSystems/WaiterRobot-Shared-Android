@@ -1,8 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.core
 
-import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.authProvider
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
-import io.ktor.client.plugins.pluginOrNull
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.User
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedClient
 import org.datepollsystems.waiterrobot.shared.core.di.initKoin
 import org.datepollsystems.waiterrobot.shared.core.di.injectLoggerForClass
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
@@ -23,9 +22,9 @@ import org.datepollsystems.waiterrobot.shared.core.sentry.sentryBeforeSendEvent
 import org.datepollsystems.waiterrobot.shared.core.sentry.setTag
 import org.datepollsystems.waiterrobot.shared.core.settings.SharedSettings
 import org.datepollsystems.waiterrobot.shared.features.auth.api.AuthApi
-import org.datepollsystems.waiterrobot.shared.features.billing.repository.StripeProvider
+import org.datepollsystems.waiterrobot.shared.features.billing.domain.repository.StripeProvider
 import org.datepollsystems.waiterrobot.shared.features.settings.models.AppTheme
-import org.datepollsystems.waiterrobot.shared.features.switchevent.models.Event
+import org.datepollsystems.waiterrobot.shared.features.switchevent.domain.model.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.dsl.KoinAppDeclaration
@@ -143,10 +142,7 @@ object CommonApp : KoinComponent {
         // Clear the tokens from the client, so that they get reloaded.
         val apiClients = getKoin().getAll<AuthorizedClient>()
         apiClients.forEach {
-            it.delegate.pluginOrNull(Auth)
-                ?.providers
-                ?.filterIsInstance<BearerAuthProvider>()
-                ?.forEach(BearerAuthProvider::clearToken)
+            it.delegate.authProvider<BearerAuthProvider>()?.clearToken()
         }
     }
 

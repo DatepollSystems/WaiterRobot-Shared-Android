@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
@@ -12,12 +13,10 @@ plugins {
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.touchlab.kmmbridge)
     alias(libs.plugins.touchlab.skie)
-    alias(libs.plugins.kmmresources)
     alias(libs.plugins.realm)
+    alias(libs.plugins.moko.resources)
 }
 
-val generatedLocalizationRoot: String =
-    File(project.layout.buildDirectory.asFile.get(), "generated/localizations").absolutePath
 val iosFrameworkName = "shared"
 
 group = project.property("SHARED_GROUP") as String
@@ -46,7 +45,10 @@ kotlin {
 
     // needed to export kotlin documentation in objective-c headers
     targets.withType<KotlinNativeTarget> {
-        compilations["main"].kotlinOptions.freeCompilerArgs += "-Xexport-kdoc"
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            freeCompilerArgs.add("-Xexport-kdoc")
+        }
     }
 
     applyDefaultHierarchyTemplate()
@@ -55,12 +57,10 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCRefinement")
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+            languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitExperimental")
         }
 
         commonMain {
-            // Include the generated localization source
-            kotlin.srcDir("$generatedLocalizationRoot/commonMain/kotlin")
-
             dependencies {
                 // Logger
                 api(libs.touchlab.kermit)
@@ -72,6 +72,9 @@ kotlin {
                 api(libs.orbit.core) // MVI
                 api(libs.moko.mvvm) // ViewModelScope
                 implementation(libs.touchlab.skie.annotations)
+
+                // Localization
+                api(libs.moko.resources)
 
                 // Permissions
                 api(libs.moko.permissions)
@@ -106,9 +109,6 @@ kotlin {
         }
 
         androidMain {
-            // Include the generated localization source
-            kotlin.srcDir("$generatedLocalizationRoot/androidMain/kotlin")
-
             dependencies {
                 // Dependency injection
                 api(libs.koin.android)
@@ -119,9 +119,6 @@ kotlin {
         }
 
         iosMain {
-            // Include the generated localization source
-            kotlin.srcDir("$generatedLocalizationRoot/iosMain/kotlin")
-
             dependencies {
                 // Ktor (HTTP client)
                 implementation(libs.ktor.client.darwin)
@@ -140,24 +137,12 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
-
-    // Include the generated localization string resources
-    sourceSets["main"].res.srcDir("$generatedLocalizationRoot/androidMain/res")
 }
 
 addGithubPackagesRepository()
 kmmbridge {
     mavenPublishArtifacts()
     spm()
-}
-
-kmmResourcesConfig {
-    androidApplicationId.set(sharedNamespace) // appId of the shared module
-    packageName.set("$sharedNamespace.generated.localization")
-    defaultLanguage.set("en")
-    input.set(File(project.projectDir, "localization.yml"))
-    output.set(project.projectDir)
-    srcFolder.set(generatedLocalizationRoot) // place the generated files in the build folder
 }
 
 buildkonfig {
@@ -167,22 +152,11 @@ buildkonfig {
     }
 }
 
+multiplatformResources {
+    resourcesPackage.set("$sharedNamespace.localization")
+}
+
 tasks {
-    val generateLocalizationsTask = named("generateLocalizations")
-
-    // Plutil generates the localizations for ios
-    val plutil = named("executePlutil") {
-        dependsOn(generateLocalizationsTask)
-    }
-
-    // Generate the localizations for all ios targets
-    listOf("IosX64", "IosArm64", "IosSimulatorArm64").forEach { arch ->
-        // Ensure that localizations are up to date on compile
-        named("compileKotlin$arch") {
-            dependsOn(plutil)
-        }
-    }
-
     afterEvaluate {
         // Link the Sentry framework to the iOS targets
         val action = Action<KotlinNativeTarget> target@{
@@ -212,45 +186,6 @@ tasks {
         kotlin.targets.withType<KotlinNativeTarget>()
             .matching { it.konanTarget.family.isAppleFamily }
             .all(action)
-
-        // Copy the generated iOS localizations to the framework and set some task dependencies
-        listOf("Release", "Debug").forEach { buildType ->
-            named("assembleShared${buildType}XCFramework") {
-                dependsOn(generateLocalizationsTask)
-                doLast {
-                    listOf("ios-arm64", "ios-arm64_x86_64-simulator").forEach { arch ->
-                        copy {
-                            from("$generatedLocalizationRoot/commonMain/resources/ios")
-                            into(
-                                File(
-                                    project.layout.buildDirectory.asFile.get(),
-                                    "XCFrameworks/${buildType.lowercase()}/" +
-                                        "$iosFrameworkName.xcframework/$arch/$iosFrameworkName.framework"
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-            listOf("X64", "Arm64", "SimulatorArm64").forEach { arch ->
-                findByName("skiePackageCustomSwift${buildType}FrameworkIos$arch")?.apply {
-                    dependsOn(generateLocalizationsTask)
-                }
-                findByName("skieProcessSwiftSourcesIos$arch")?.apply {
-                    dependsOn(generateLocalizationsTask)
-                }
-            }
-        }
-
-        // Make sure that the localizations are up to date for release
-        named("androidReleaseSourcesJar") {
-            dependsOn(generateLocalizationsTask)
-        }
-    }
-
-    // Make sure that the localizations are always up to date
-    named("preBuild") {
-        dependsOn(named("generateLocalizations"))
     }
 }
 

@@ -5,10 +5,10 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedApi
-import org.datepollsystems.waiterrobot.shared.core.data.api.AuthorizedClient
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.BillResponseDto
-import org.datepollsystems.waiterrobot.shared.features.billing.api.models.PayBillRequestDto
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedApi
+import org.datepollsystems.waiterrobot.shared.core.data.remote.AuthorizedClient
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.BillResponseDto
+import org.datepollsystems.waiterrobot.shared.features.billing.data.remote.dto.PayBillRequestDto
 import org.datepollsystems.waiterrobot.shared.features.stripe.api.models.PaymentIntent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

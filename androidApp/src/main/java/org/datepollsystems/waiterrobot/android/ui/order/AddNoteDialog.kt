@@ -16,16 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.format
 import org.datepollsystems.waiterrobot.android.ui.common.CustomDialog
 import org.datepollsystems.waiterrobot.android.ui.core.Preview
-import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
-import org.datepollsystems.waiterrobot.shared.generated.localization.clear
-import org.datepollsystems.waiterrobot.shared.generated.localization.inputLabel
-import org.datepollsystems.waiterrobot.shared.generated.localization.inputPlaceholder
-import org.datepollsystems.waiterrobot.shared.generated.localization.save
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.shared.features.order.domain.model.OrderItem
+import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Product
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.euro
 
 @Composable
@@ -34,23 +31,23 @@ fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?
 
     CustomDialog(
         onDismiss = onDismiss,
-        title = L.order.addNoteDialog.title(item.product.name),
+        title = MR.strings.order_add_note_title.format(item.product.name),
         actions = {
             TextButton(onClick = onDismiss) {
-                Text(text = L.dialog.cancel())
+                Text(text = MR.strings.dialog_cancel())
             }
             TextButton(onClick = { onSave(null) }) {
-                Text(text = L.dialog.clear())
+                Text(text = MR.strings.dialog_clear())
             }
             Button(onClick = { onSave(note) }) {
-                Text(text = L.dialog.save())
+                Text(text = MR.strings.dialog_save())
             }
         }
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = L.order.addNoteDialog.inputLabel()) },
-            placeholder = { Text(text = L.order.addNoteDialog.inputPlaceholder()) },
+            label = { Text(text = MR.strings.order_add_note_input_label()) },
+            placeholder = { Text(text = MR.strings.order_add_note_input_placeholder()) },
             value = note,
             onValueChange = { note = it.take(120) },
             minLines = 3,
@@ -72,7 +69,7 @@ fun AddNoteDialog(item: OrderItem, onDismiss: () -> Unit, onSave: (note: String?
 private fun AddNoteDialogPreview() = Preview {
     AddNoteDialog(
         item = OrderItem(
-            product = org.datepollsystems.waiterrobot.shared.features.order.models.Product(
+            product = Product(
                 id = 1,
                 name = "Beer",
                 price = 4.euro,

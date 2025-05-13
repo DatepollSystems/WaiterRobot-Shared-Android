@@ -27,13 +27,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.retry
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
 @Composable
 fun ErrorBar(
     modifier: Modifier = Modifier,
-    message: String,
+    message: StringDesc,
     retryAction: (() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -55,7 +56,7 @@ fun ErrorBar(
     ) {
         Text(
             modifier = Modifier.weight(0.65f),
-            text = message,
+            text = message(),
             maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onErrorContainer,
@@ -69,7 +70,7 @@ fun ErrorBar(
                 onClick = retryAction
             ) {
                 Text(
-                    text = L.exceptions.retry(),
+                    text = MR.strings.exceptions_retry(),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     maxLines = maxLines
@@ -84,5 +85,5 @@ fun ErrorBar(
 @PreviewFontScale
 @Composable
 private fun ErrorBarPreview() = Preview {
-    ErrorBar(message = "Some exception message. Please try again.", retryAction = {})
+    ErrorBar(message = "Some exception message. Please try again.".desc(), retryAction = {})
 }

@@ -29,19 +29,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
-import org.datepollsystems.waiterrobot.android.ui.core.view.View
-import org.datepollsystems.waiterrobot.shared.features.switchevent.viewmodel.SwitchEventViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.action
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.noEventFound
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
+import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
+import org.datepollsystems.waiterrobot.shared.core.data.Resource
+import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun SwitchEventScreen(
     navigator: NavController,
     vm: SwitchEventViewModel = koinViewModel()
@@ -50,8 +51,8 @@ fun SwitchEventScreen(
 
     vm.handleSideEffects(navigator)
 
-    Scaffold(snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) }) {
-        Column(modifier = Modifier.padding(it)) {
+    Scaffold(snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) }) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
             // Surface wrapper container is needed as otherwise the PullRefreshIndicator would be
             // on top of this part of the view
             Surface(modifier = Modifier.zIndex(1f)) {
@@ -67,7 +68,7 @@ fun SwitchEventScreen(
                             .aspectRatio(1f)
                     )
                     Text(
-                        text = L.switchEvent.desc(),
+                        text = MR.strings.switchEvent_desc(),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(15.dp)
                     )
@@ -76,37 +77,42 @@ fun SwitchEventScreen(
 
             HorizontalDivider(thickness = 2.dp)
 
-            View(
-                state = state,
+            RefreshableView(
                 modifier = Modifier.weight(1f),
-                onRefresh = vm::loadEvents
+                loading = state.events is Resource.Loading && state.events.data != null,
+                onRefresh = vm::loadEvents,
             ) {
-                if (state.events.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .verticalScroll(rememberScrollState()) // Needed for Refreshable view
-                    ) {
-                        Text(
-                            text = L.switchEvent.noEventFound(),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp)
-                        )
-                    }
+                val events = state.events.data
+                if (state.events is Resource.Loading && events == null) {
+                    LoadingView()
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(state.events) { event ->
-                            Box(
+                    if (events.isNullOrEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState()) // Needed for Refreshable view
+                        ) {
+                            Text(
+                                text = MR.strings.switchEvent_noEventFound(),
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .clickable { vm.onEventSelected(event) }
-                                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                            ) {
-                                Event(event)
+                                    .fillMaxWidth()
+                                    .padding(20.dp)
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(events, key = { it.id }) { event ->
+                                Box(
+                                    modifier = Modifier
+                                        .clickable { vm.onEventSelected(event) }
+                                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                                ) {
+                                    Event(event)
+                                }
+                                HorizontalDivider()
                             }
-                            HorizontalDivider()
                         }
                     }
                 }
@@ -120,7 +126,7 @@ fun SwitchEventScreen(
                 TextButton(
                     onClick = vm::logout,
                 ) {
-                    Text(L.settings.general.logout.action())
+                    Text(MR.strings.settings_general_logout_action())
                 }
             }
         }

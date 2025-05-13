@@ -1,46 +1,41 @@
 package org.datepollsystems.waiterrobot.shared.utils
 
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.resources.format
 import kotlinx.coroutines.CancellationException
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
-import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
+import org.datepollsystems.waiterrobot.shared.core.data.remote.ApiException
 import org.datepollsystems.waiterrobot.shared.core.di.getLogger
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.accountNotActivated
-import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyCreated
-import org.datepollsystems.waiterrobot.shared.generated.localization.amountToLow
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.disabled
-import org.datepollsystems.waiterrobot.shared.generated.localization.disabledForEvent
-import org.datepollsystems.waiterrobot.shared.generated.localization.generic
-import org.datepollsystems.waiterrobot.shared.generated.localization.message
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 
-fun Throwable.getLocalizedUserMessage(): String = when (this) {
+fun Throwable.getLocalizedUserMessage(): StringDesc = when (this) {
     is ApiException -> this.getLocalizedUserMessage()
     is CancellationException -> {
         CommonApp.getLogger("ExceptionMessageMapper").w(this) {
             "Probably caught a CancellationException. CancellationException must not be caught. " +
                 "Otherwise structured concurrency does not work correctly."
         }
-        L.exceptions.generic()
+        MR.strings.exceptions_generic.desc()
     }
 
-    else -> L.exceptions.generic()
+    else -> MR.strings.exceptions_generic.desc()
 }
 
-internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
-    is ApiException.AccountNotActivated -> L.exceptions.accountNotActivated()
-    is ApiException.AppVersionTooOld -> L.app.forceUpdate.message()
-    is ApiException.CredentialsIncorrect -> L.root.invalidLoginLink.desc()
-    is ApiException.ProductSoldOut -> L.order.productSoldOut.title()
-    is ApiException.WaiterCreateTokenIncorrect -> L.login.invalidCode.desc()
-    is ApiException.WaiterTokenIncorrect -> L.login.invalidCode.desc()
-    is ApiException.BillAmountTooLow -> L.billing.amountToLow(minAmount.cent.toString())
-    is ApiException.StripeDisabled -> L.stripeInit.error.disabled()
-    is ApiException.StripeNotActivated -> L.stripeInit.error.disabledForEvent()
-    is ApiException.ProductStockToLow -> L.order.stockToLow.title()
-    is ApiException.OrderAlreadySubmitted -> L.order.alreadyCreated()
-    is ApiException.BillProductsAlreadyPayed -> L.billing.productsAlreadyPayed.desc()
+internal fun ApiException.getLocalizedUserMessage(): StringDesc = when (this) {
+    is ApiException.AccountNotActivated -> MR.strings.exceptions_accountNotActivated.desc()
+    is ApiException.AppVersionTooOld -> MR.strings.app_forceUpdate_message.desc()
+    is ApiException.CredentialsIncorrect -> MR.strings.root_invalidLoginLink_desc.desc()
+    is ApiException.ProductSoldOut -> MR.strings.order_product_soldOut_title.desc()
+    is ApiException.WaiterCreateTokenIncorrect -> MR.strings.login_scanner_invalidCode_desc.desc()
+    is ApiException.WaiterTokenIncorrect -> MR.strings.login_scanner_invalidCode_desc.desc()
+    is ApiException.BillAmountTooLow -> MR.strings.billing_amountToLowForMethod.format(minAmount.cent)
+    is ApiException.StripeDisabled -> MR.strings.stripeInit_error_disabled.desc()
+    is ApiException.StripeNotActivated -> MR.strings.stripeInit_error_disabled_forEvent.desc()
+    is ApiException.ProductStockToLow -> MR.strings.order_product_stockToLow_title.desc()
+    is ApiException.OrderAlreadySubmitted -> MR.strings.order_alreadyCreated.desc()
+    is ApiException.BillProductsAlreadyPayed -> MR.strings.billing_alreadyPaid_desc.desc()
+    is ApiException.NoLicence -> MR.strings.exceptions_noLicense.desc()
 
     // Unknown exceptions or exceptions that should normally not happen
     is ApiException.Generic,
@@ -49,5 +44,5 @@ internal fun ApiException.getLocalizedUserMessage(): String = when (this) {
     is ApiException.NotFound,
     is ApiException.EntityAlreadyExists,
     is ApiException.ServiceUnavailable,
-    is ApiException.Unauthorized -> L.exceptions.generic()
+    is ApiException.Unauthorized -> MR.strings.exceptions_generic.desc()
 }

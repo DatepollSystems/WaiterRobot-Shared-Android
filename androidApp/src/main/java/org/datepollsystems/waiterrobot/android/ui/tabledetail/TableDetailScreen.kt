@@ -27,26 +27,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.android.ui.core.view.RefreshableView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.features.table.models.OrderedItem
-import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.features.table.viewmodel.detail.TableDetailViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.newOrder
-import org.datepollsystems.waiterrobot.shared.generated.localization.noOrder
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.features.table.domain.model.OrderedItem
+import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
+import org.datepollsystems.waiterrobot.shared.features.table.presentation.detail.TableDetailViewModel
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun TableDetailScreen(
     table: Table,
     vm: TableDetailViewModel = koinViewModel { parametersOf(table) },
@@ -60,17 +59,20 @@ fun TableDetailScreen(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text(L.tableDetail.title(table.groupName, table.number.toString())) },
+                title = { Text(MR.strings.tableDetail_title(table.groupName, table.number)) },
                 navigationIcon = {
                     IconButton(onClick = navigator::popBackStack) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = MR.strings.navigation_back()
+                        )
                     }
                 },
             )
         },
         floatingActionButton = {
             Column(horizontalAlignment = Alignment.End) {
-                if (!state.orderedItemsResource.data.isNullOrEmpty()) {
+                if (!state.orderedItems.data.isNullOrEmpty()) {
                     FloatingActionButton(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         onClick = vm::openBillingScreen
@@ -84,25 +86,25 @@ fun TableDetailScreen(
                     icon = {
                         Icon(
                             Icons.Filled.Add,
-                            contentDescription = L.tableDetail.newOrder()
+                            contentDescription = MR.strings.tableDetail_newOrder()
                         )
                     },
-                    text = { Text(L.tableDetail.newOrder()) }
+                    text = { Text(MR.strings.tableDetail_newOrder()) }
                 )
             }
         }
     ) {
         RefreshableView(
             modifier = Modifier.padding(it),
-            loading = state.orderedItemsResource is Resource.Loading && state.orderedItemsResource.data != null,
+            loading = state.orderedItems is Resource.Loading && state.orderedItems.data != null,
             onRefresh = vm::refreshOrder,
         ) {
-            if (state.orderedItemsResource is Resource.Loading && state.orderedItemsResource.data == null) {
+            if (state.orderedItems is Resource.Loading && state.orderedItems.data == null) {
                 LoadingView()
             } else {
                 Column {
-                    val res = state.orderedItemsResource
-                    val orderedItems = state.orderedItemsResource.data
+                    val res = state.orderedItems
+                    val orderedItems = state.orderedItems.data
 
                     if (res is Resource.Error) {
                         ErrorBar(message = res.userMessage, retryAction = vm::refreshOrder)
@@ -111,7 +113,7 @@ fun TableDetailScreen(
                     if (orderedItems.isNullOrEmpty()) {
                         CenteredText(
                             modifier = Modifier.weight(1f),
-                            text = L.tableDetail.noOrder(table.groupName, table.number.toString()),
+                            text = MR.strings.tableDetail_noOrder(table.groupName, table.number),
                             scrollAble = true
                         )
                     } else {

@@ -1,62 +1,41 @@
 package org.datepollsystems.waiterrobot.shared.features.order.viewmodel
 
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.resources.format
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.datepollsystems.waiterrobot.shared.core.data.Resource
-import org.datepollsystems.waiterrobot.shared.core.data.api.ApiException
-import org.datepollsystems.waiterrobot.shared.core.navigation.NavOrViewModelEffect
+import org.datepollsystems.waiterrobot.shared.core.data.remote.ApiException
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
-import org.datepollsystems.waiterrobot.shared.features.order.models.OrderItem
-import org.datepollsystems.waiterrobot.shared.features.order.models.Product
-import org.datepollsystems.waiterrobot.shared.features.order.repository.OrderRepository
-import org.datepollsystems.waiterrobot.shared.features.order.repository.ProductRepository
-import org.datepollsystems.waiterrobot.shared.features.table.models.Table
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.descOrderSent
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.DialogState
+import org.datepollsystems.waiterrobot.shared.core.viewmodel.ViewState
+import org.datepollsystems.waiterrobot.shared.features.order.data.OrderRepositoryImpl
+import org.datepollsystems.waiterrobot.shared.features.order.domain.model.OrderItem
+import org.datepollsystems.waiterrobot.shared.features.product.domain.GetProductUseCase
+import org.datepollsystems.waiterrobot.shared.features.product.domain.RefreshProductGroupsUseCase
+import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Product
+import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.extensions.emptyToNull
 import org.datepollsystems.waiterrobot.shared.utils.randomUUID
-import org.orbitmvi.orbit.syntax.simple.SimpleContext
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.subIntent
 
+@OptIn(OrbitExperimental::class)
 @Suppress("TooManyFunctions")
 class OrderViewModel internal constructor(
-    private val productRepository: ProductRepository,
-    private val orderRepository: OrderRepository,
+    private val getProductUseCase: GetProductUseCase,
+    private val refreshProductGroupsUseCase: RefreshProductGroupsUseCase,
+    private val orderRepository: OrderRepositoryImpl,
     private val table: Table,
-    private val initialItemId: Long?
+    private val initialItemId: Long?,
 ) : AbstractViewModel<OrderState, OrderEffect>(OrderState()) {
 
     private var currentOrderId = randomUUID()
 
-    override suspend fun SimpleSyntax<OrderState, NavOrViewModelEffect<OrderEffect>>.onCreate() {
+    override suspend fun onCreate() = subIntent {
         coroutineScope {
-            launch { productRepository.listen() }
-            launch {
-                productRepository.flow.collect { resource ->
-                    reduce {
-                        state.copy(
-                            productGroups = if (state.filter.isEmpty()) {
-                                resource
-                            } else {
-                                resource.map { allProductGroups ->
-                                    allProductGroups?.map { group ->
-                                        val filteredProducts = group.products.filter {
-                                            it.name.contains(state.filter, ignoreCase = true)
-                                        }
-                                        // Keep groups with no products so that the tabs do not change
-                                        group.copy(products = filteredProducts)
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-
             if (initialItemId != null) {
                 addItem(initialItemId, 1)
             }
@@ -66,72 +45,71 @@ class OrderViewModel internal constructor(
     fun addItem(product: Product, amount: Int) = addItem(product.id, amount)
 
     fun addItemNote(item: OrderItem, note: String?) = intent {
-        @Suppress("NAME_SHADOWING")
-        val note = note?.trim().emptyToNull()
-
-        // Adding a note to non existing orderItem is not possible
-        val newItem = item.copy(note = note)
+        val newItem = item.copy(note = note?.trim().emptyToNull())
 
         reduce {
             state.copy(
-                _currentOrder = Resource.Success(
-                    state._currentOrder.dataOrEmpty.plus(newItem.product.id to newItem)
-                )
+                _currentOrder = state._currentOrder.plus(newItem.product.id to newItem)
             )
         }
     }
 
     fun sendOrder() = intent {
-        reduce {
-            state.copy(
-                _currentOrder = Resource.Loading(state._currentOrder.data ?: emptyMap())
-            )
-        }
+        reduce { state.copy(orderingState = ViewState.Loading) }
 
-        val order = state.currentOrder.data
-        if (order == null) {
-            reduce {
-                state.copy(
-                    _currentOrder = Resource.Error(
-                        "Empty order", // TODO translate
-                        state._currentOrder.data ?: emptyMap()
-                    )
-                )
+        val order = state.currentOrder
+        orderRepository.sendOrder(table, order, currentOrderId)
+            .onSuccess {
+                currentOrderId = randomUUID()
+                navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
             }
-            return@intent
-        }
+            .onFailure { e ->
+                when (e) {
+                    is ApiException.ProductSoldOut -> {
+                        val soldOutProduct = order.first { it.product.id == e.productId }.product
+                        productSoldOut(soldOutProduct)
+                    }
 
-        try {
-            orderRepository.sendOrder(table, order, currentOrderId)
-            currentOrderId = randomUUID()
+                    is ApiException.ProductStockToLow -> {
+                        val stockToLowProduct = order.first { it.product.id == e.productId }.product
+                        if (e.remaining <= 0) {
+                            productSoldOut(stockToLowProduct)
+                        } else {
+                            stockToLow(stockToLowProduct, e.remaining)
+                        }
+                    }
 
-            reduce { state.copy(_currentOrder = Resource.Success(emptyMap())) }
-            navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
-        } catch (e: ApiException.ProductSoldOut) {
-            val soldOutProduct = order.first { it.product.id == e.productId }.product
-            reduce { productSoldOut(soldOutProduct) }
-        } catch (e: ApiException.ProductStockToLow) {
-            val stockToLowProduct = order.first { it.product.id == e.productId }.product
-            if (e.remaining <= 0) {
-                reduce { productSoldOut(stockToLowProduct) }
-            } else {
-                reduce { stockToLow(stockToLowProduct, e.remaining) }
+                    is ApiException.NoLicence -> noLicence()
+
+                    is ApiException.OrderAlreadySubmitted -> {
+                        logger.w("Order was already submitted")
+                        navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
+                    }
+
+                    else -> {
+                        logger.e(e) { "Failed to send order" }
+                        reduce {
+                            state.copy(
+                                orderingState = ViewState.Error(
+                                    MR.strings.exceptions_title.desc(),
+                                    MR.strings.exceptions_generic.desc(),
+                                    onDismiss = ::dismissOrderError,
+                                    primaryButton = DialogState.Button(
+                                        MR.strings.dialog_ok.desc(),
+                                        ::dismissOrderError,
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
             }
-        } catch (_: ApiException.OrderAlreadySubmitted) {
-            logger.w("Order was already submitted")
-            reduce { state.copy(_currentOrder = Resource.Success(emptyMap())) }
-            navigator.popUpTo(Screen.TableDetailScreen(table), inclusive = false)
-        }
     }
 
     @Suppress("unused") // used on iOS
     fun removeAllOfProduct(productId: Long) = intent {
         reduce {
-            state.copy(
-                _currentOrder = Resource.Success(
-                    state._currentOrder.dataOrEmpty.minus(productId)
-                )
-            )
+            state.copy(_currentOrder = state._currentOrder.minus(productId))
         }
     }
 
@@ -140,15 +118,20 @@ class OrderViewModel internal constructor(
     }
 
     fun addItem(id: Long, amount: Int) = intent {
-        val product = productRepository.getProductById(id)
+        val product = getProductUseCase(id)
 
         if (product == null) {
             logger.w("Tried to add product with id '$id' but could not find the product.")
             reduce {
                 state.copy(
-                    _currentOrder = Resource.Error(
-                        L.order.couldNotFindProduct.desc(),
-                        state._currentOrder.dataOrEmpty.minus(id)
+                    orderingState = ViewState.Error(
+                        title = MR.strings.order_product_not_found_title.desc(),
+                        text = MR.strings.order_product_not_found_desc.desc(),
+                        onDismiss = { removeItem(id) },
+                        primaryButton = DialogState.Button(
+                            text = MR.strings.dialog_ok.desc(),
+                            action = { removeItem(id) }
+                        )
                     )
                 )
             }
@@ -157,61 +140,95 @@ class OrderViewModel internal constructor(
 
         if (product.soldOut) {
             logger.w("Tried to add product (id: $id) which is already sold out.")
-            reduce { productSoldOut(product) }
+            productSoldOut(product)
             return@intent
         }
 
         reduce {
-            val item = state._currentOrder.dataOrEmpty[id] ?: product.toNewOrderItem()
+            val item = state._currentOrder[id] ?: product.toNewOrderItem()
             val newAmount = item.amount + amount
 
             val newOrder = if (newAmount <= 0) {
-                state._currentOrder.dataOrEmpty.minus(product.id)
+                state._currentOrder.minus(product.id)
             } else {
                 val newItem = item.copy(amount = newAmount)
-                state._currentOrder.dataOrEmpty.plus(newItem.product.id to newItem)
+                state._currentOrder.plus(newItem.product.id to newItem)
             }
+            state.copy(_currentOrder = newOrder)
+        }
+    }
+
+    private fun dismissOrderError() {
+        intent {
+            reduce { state.copy(orderingState = ViewState.Idle) }
+        }
+    }
+
+    private fun removeItem(id: Long) = intent {
+        reduce {
             state.copy(
-                _currentOrder = Resource.Success(newOrder),
-                filter = ""
+                _currentOrder = state._currentOrder.minus(id),
+                orderingState = ViewState.Idle
             )
         }
-        productRepository.requery()
     }
 
-    private fun SimpleContext<OrderState>.productSoldOut(product: Product): OrderState {
+    private suspend fun productSoldOut(product: Product) = subIntent {
         refreshProducts()
-        return state.copy(
-            _currentOrder = Resource.Error(
-                L.order.productSoldOut.descOrderSent(product.name),
-                state._currentOrder.dataOrEmpty.minus(product.id)
+        reduce {
+            state.copy(
+                orderingState = ViewState.Error(
+                    title = MR.strings.order_product_soldOut_title.desc(),
+                    text = MR.strings.order_product_soldOut_desc_onSend.format(product.name),
+                    onDismiss = { removeItem(product.id) },
+                    primaryButton = DialogState.Button(
+                        text = MR.strings.dialog_ok.desc(),
+                        action = { removeItem(product.id) }
+                    )
+                )
             )
-        )
+        }
     }
 
-    private fun SimpleContext<OrderState>.stockToLow(product: Product, remaining: Int): OrderState {
+    private suspend fun stockToLow(product: Product, remaining: Int) = subIntent {
         refreshProducts()
-        return state.copy(
-            _currentOrder = Resource.Error(
-                L.order.stockToLow.desc(remaining.toString(), product.name),
-                state._currentOrder.dataOrEmpty
+        reduce {
+            state.copy(
+                orderingState = ViewState.Error(
+                    title = MR.strings.order_product_stockToLow_title.desc(),
+                    text = MR.strings.order_product_stockToLow_desc.format(remaining, product.name),
+                    onDismiss = ::dismissOrderError,
+                    primaryButton = DialogState.Button(
+                        MR.strings.dialog_ok.desc(),
+                        ::dismissOrderError
+                    )
+                )
             )
-        )
+        }
     }
 
-    fun filterProducts(filter: String) = intent {
-        reduce { state.copy(filter = filter) } // TODO can we move the filter to the repository?
-        productRepository.requery()
+    private suspend fun noLicence() = subIntent {
+        reduce {
+            state.copy(
+                orderingState = ViewState.Error(
+                    title = MR.strings.order_noLicence_title.desc(),
+                    text = MR.strings.order_noLicence_desc.desc(),
+                    onDismiss = ::dismissOrderError,
+                    primaryButton = DialogState.Button(
+                        MR.strings.dialog_ok.desc(),
+                        ::dismissOrderError
+                    )
+                )
+            )
+        }
     }
 
     fun refreshProducts() = intent {
-        productRepository.refresh()
+        refreshProductGroupsUseCase()
     }
 
     private fun Product.toNewOrderItem(): OrderItem {
         require(!soldOut) { "Product is sold out, not allowed to add to an Order" }
         return OrderItem(product = this, amount = 0, note = null)
     }
-
-    private val Resource<Map<Long, OrderItem>>.dataOrEmpty get() = this.data ?: emptyMap()
 }

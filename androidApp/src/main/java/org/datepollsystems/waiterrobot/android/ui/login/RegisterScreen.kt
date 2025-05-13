@@ -25,21 +25,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.view.View
 import org.datepollsystems.waiterrobot.shared.features.auth.viewmodel.register.RegisterViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.alreadyRegisteredInfo
-import org.datepollsystems.waiterrobot.shared.generated.localization.cancel
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.login
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.datepollsystems.waiterrobot.shared.utils.DeepLink
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun RegisterScreen(
     vm: RegisterViewModel = koinViewModel(),
     navigator: NavController,
@@ -65,13 +62,13 @@ fun RegisterScreen(
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                text = L.register.name.desc()
+                text = MR.strings.register_name_desc()
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(text = L.register.name.title()) }
+                label = { Text(text = MR.strings.register_name_title()) }
             )
 
             Row(
@@ -81,13 +78,13 @@ fun RegisterScreen(
                     modifier = Modifier.weight(1f),
                     onClick = vm::cancel
                 ) {
-                    Text(L.dialog.cancel())
+                    Text(MR.strings.dialog_cancel())
                 }
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
                     onClick = { vm.onRegister(name, registerLink) }
                 ) {
-                    Text(L.register.login())
+                    Text(MR.strings.register_login())
                 }
             }
 
@@ -98,7 +95,7 @@ fun RegisterScreen(
                 Icon(Icons.Filled.Info, contentDescription = "Register information")
                 Text(
                     textAlign = TextAlign.Start,
-                    text = L.register.alreadyRegisteredInfo()
+                    text = MR.strings.register_alreadyRegisteredInfo()
                 )
             }
         }

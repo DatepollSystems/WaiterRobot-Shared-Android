@@ -43,23 +43,20 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.tasks.Task
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.util.PermissionsControllerBindEffect
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel.StripeInitializationState
 import org.datepollsystems.waiterrobot.shared.features.stripe.viewmodel.StripeInitializationViewModel
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.action
-import org.datepollsystems.waiterrobot.shared.generated.localization.continueWithoutStripe
-import org.datepollsystems.waiterrobot.shared.generated.localization.desc
-import org.datepollsystems.waiterrobot.shared.generated.localization.locationDataSharingNotice
-import org.datepollsystems.waiterrobot.shared.generated.localization.title
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import org.koin.androidx.compose.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-@Destination
+@Destination<RootGraph>
 fun StripeInitializationScreen(
     navigator: NavController,
     vm: StripeInitializationViewModel = koinViewModel()
@@ -75,11 +72,14 @@ fun StripeInitializationScreen(
         snackbarHost = { SnackbarHost(LocalSnackbarHostState.current) },
         topBar = {
             TopAppBar(
-                title = { Text(L.stripeInit.title()) },
+                title = { Text(MR.strings.stripeInit_title()) },
                 navigationIcon = {
                     if (navigator.previousBackStackEntry != null) {
                         IconButton(onClick = { navigator.popBackStack() }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                contentDescription = MR.strings.navigation_back()
+                            )
                         }
                     }
                 }
@@ -109,12 +109,12 @@ fun StripeInitializationScreen(
                 when (val step = state.step) {
                     StripeInitializationState.Step.Start -> {
                         Text(
-                            text = L.stripeInit.step.start.desc(event?.name ?: "UNKNOWN"),
+                            text = MR.strings.stripeInit_step_start_desc(event?.name ?: "UNKNOWN"),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
                         Text(
-                            text = L.stripeInit.locationDataSharingNotice(),
+                            text = MR.strings.stripeInit_locationDataSharingNotice(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodySmall,
@@ -123,13 +123,13 @@ fun StripeInitializationScreen(
                             onClick = vm::startInitialization,
                             enabled = !state.isLoading
                         ) {
-                            Text(L.stripeInit.step.start.action())
+                            Text(MR.strings.stripeInit_step_start_action())
                         }
                     }
 
                     StripeInitializationState.Step.GrantLocationPermission -> {
                         Text(
-                            text = L.stripeInit.step.grantLocationPermission.desc(),
+                            text = MR.strings.stripeInit_step_grantLocationPermission_desc(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
@@ -137,7 +137,7 @@ fun StripeInitializationScreen(
                             onClick = vm::grantLocationPermission,
                             enabled = !state.isLoading
                         ) {
-                            Text(L.stripeInit.step.grantLocationPermission.action())
+                            Text(MR.strings.stripeInit_step_grantLocationPermission_action())
                         }
                     }
 
@@ -154,7 +154,7 @@ fun StripeInitializationScreen(
                         }
                         val context: Context = LocalContext.current
                         Text(
-                            text = L.stripeInit.step.enableGeoLocation.desc(),
+                            text = MR.strings.stripeInit_step_enableGeoLocation_desc(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
@@ -172,7 +172,7 @@ fun StripeInitializationScreen(
                                 }
                             }
                         ) {
-                            Text(L.stripeInit.step.enableGeoLocation.action())
+                            Text(MR.strings.stripeInit_step_enableGeoLocation_action())
                         }
                     }
 
@@ -183,7 +183,7 @@ fun StripeInitializationScreen(
                             vm.enableNfc()
                         }
                         Text(
-                            text = L.stripeInit.step.enableNfc.desc(),
+                            text = MR.strings.stripeInit_step_enableNfc_desc(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
@@ -193,18 +193,18 @@ fun StripeInitializationScreen(
                                 launcher.launch(Intent(Settings.ACTION_NFC_SETTINGS))
                             }
                         ) {
-                            Text(L.stripeInit.step.enableNfc.action())
+                            Text(MR.strings.stripeInit_step_enableNfc_action())
                         }
                     }
 
                     is StripeInitializationState.Step.Error -> {
                         Text(
-                            text = L.stripeInit.step.error.desc(),
+                            text = MR.strings.stripeInit_step_error_desc(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
                         Text(
-                            text = step.description,
+                            text = step.description(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
@@ -213,26 +213,26 @@ fun StripeInitializationScreen(
                                 enabled = !state.isLoading,
                                 onClick = vm::startInitialization
                             ) {
-                                Text(L.stripeInit.step.error.action())
+                                Text(MR.strings.stripeInit_step_error_action())
                             }
                         }
                     }
 
                     StripeInitializationState.Step.Finished -> {
                         Text(
-                            text = L.stripeInit.step.finished.desc(),
+                            text = MR.strings.stripeInit_step_finished_desc(),
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
                         Button(onClick = { vm.onContinueClick(skipInit = false) }) {
-                            Text(L.stripeInit.step.finished.action())
+                            Text(MR.strings.stripeInit_step_finished_action())
                         }
                     }
                 }
 
                 if (state.step != StripeInitializationState.Step.Finished) {
                     TextButton(onClick = { vm.onContinueClick(skipInit = true) }) {
-                        Text(L.stripeInit.continueWithoutStripe())
+                        Text(MR.strings.stripeInit_continue_without())
                     }
                 }
             }

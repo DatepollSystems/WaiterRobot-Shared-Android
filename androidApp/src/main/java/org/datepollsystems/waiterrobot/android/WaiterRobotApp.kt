@@ -8,15 +8,12 @@ import org.datepollsystems.waiterrobot.android.stripe.Stripe
 import org.datepollsystems.waiterrobot.android.stripe.StripeTokenProvider
 import org.datepollsystems.waiterrobot.shared.core.CommonApp
 import org.datepollsystems.waiterrobot.shared.core.OS
-import org.datepollsystems.waiterrobot.shared.generated.localization.localizationContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 class WaiterRobotApp : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        localizationContext = this
 
         val phoneModel = Build.MANUFACTURER.replaceFirstChar { it.uppercaseChar() } + " " +
             Build.MODEL.replaceFirstChar { it.uppercaseChar() }

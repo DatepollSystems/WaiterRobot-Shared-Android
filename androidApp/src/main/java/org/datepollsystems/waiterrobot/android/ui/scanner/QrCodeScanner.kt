@@ -7,6 +7,8 @@ import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
@@ -28,22 +30,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.mlkit.vision.barcode.common.Barcode
+import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.util.QrCodeAnalyzer
 import org.datepollsystems.waiterrobot.android.util.getLogger
-import org.datepollsystems.waiterrobot.shared.generated.localization.L
-import org.datepollsystems.waiterrobot.shared.generated.localization.cameraPermissionRequired
-import org.datepollsystems.waiterrobot.shared.generated.localization.errorOpeningCamera
-import org.datepollsystems.waiterrobot.shared.generated.localization.noCameraFound
+import org.datepollsystems.waiterrobot.shared.localization.MR
 import java.util.concurrent.Executors
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
@@ -51,12 +52,15 @@ import kotlin.coroutines.suspendCoroutine
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun QrCodeScanner(onResult: (Barcode) -> Unit) {
+fun QrCodeScanner(
+    modifier: Modifier = Modifier,
+    onResult: (Barcode) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     val logger = getLogger("QrCodeScanner")
 
-    var errorMessage: String? by remember { mutableStateOf(null) }
+    var errorMessage: StringResource? by remember { mutableStateOf(null) }
 
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
     LaunchedEffect(true) {
@@ -64,16 +68,16 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
         if (!cameraPermissionState.status.isGranted) cameraPermissionState.launchPermissionRequest()
     }
 
-    Box {
+    Box(modifier) {
         if (errorMessage != null) {
             Text(
-                text = errorMessage!!,
+                text = errorMessage!!(),
                 textAlign = TextAlign.Center,
                 color = Color.Red
             )
         } else if (!cameraPermissionState.status.isGranted) {
             Text(
-                text = L.qrScanner.cameraPermissionRequired(),
+                text = MR.strings.qrScanner_cameraPermissionRequired(),
                 textAlign = TextAlign.Center,
                 color = Color.Red
             )
@@ -87,10 +91,17 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
                         clipToOutline = true
                     }
                     val previewUseCase = Preview.Builder().build()
-                        .apply { setSurfaceProvider(previewView.surfaceProvider) }
+                        .apply { surfaceProvider = previewView.surfaceProvider }
 
                     val analysisUseCase = ImageAnalysis.Builder()
-                        .setTargetResolution(Size(previewView.width, previewView.height))
+                        .setResolutionSelector(
+                            ResolutionSelector.Builder().setResolutionStrategy(
+                                ResolutionStrategy(
+                                    Size(previewView.width, previewView.height),
+                                    ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                                )
+                            ).build()
+                        )
                         // Do not process every frame only keep the latest
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build()
@@ -112,7 +123,7 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
                         try {
                             val cameraProvider = context.getCameraProvider()
                             if (!cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)) {
-                                errorMessage = L.qrScanner.noCameraFound()
+                                errorMessage = MR.strings.qrScanner_noCameraFound
                                 return@launch
                             }
 
@@ -130,7 +141,7 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
-                            errorMessage = L.qrScanner.errorOpeningCamera()
+                            errorMessage = MR.strings.qrScanner_errorOpeningCamera
                             logger.e(e) { "Failed to open camera" }
                         }
                     }
@@ -165,6 +176,7 @@ fun QrCodeScanner(onResult: (Barcode) -> Unit) {
 suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->
     ProcessCameraProvider.getInstance(this).also { cameraProvider ->
         cameraProvider.addListener({
+            @Suppress("BlockingMethodInNonBlockingContext")
             continuation.resume(cameraProvider.get())
         }, ContextCompat.getMainExecutor(this))
     }
