@@ -158,7 +158,7 @@ fun SettingsScreen(
                         )
                     },
                     title = MR.strings.settings_general_logout_action.desc(),
-                    subtitle = "\"${CommonApp.settings.organisationName}\" / \"${CommonApp.settings.waiterName}\"".desc(),
+                    subtitle = with(CommonApp.settings) { "\"$organisationName\" / \"$waiterName\"".desc() },
                     onClick = { showLogoutWarningDialog = true }
                 )
                 settingsItem(
