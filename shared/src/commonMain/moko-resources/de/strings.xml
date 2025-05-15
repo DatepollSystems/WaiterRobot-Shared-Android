@@ -94,7 +94,7 @@
     <string name="settings_general_refresh_title">Daten aktualisieren</string>
     <string name="settings_general_refresh_desc">Eventdaten aktualisieren (Tische, Produkte, …)
     </string>
-    <string name="settings_general_refresh_toast">Aktualisiere data...</string>
+    <string name="settings_general_refresh_toast">Aktualisiere Daten...</string>
     <string name="settings_payment_title">Zahlung</string>
     <string name="settings_payment_skipMoneyBackDialog_title">Rückgelddialog überspringen</string>
     <string name="settings_payment_skipMoneyBackDialog_desc">Den Rückgelddialog im
