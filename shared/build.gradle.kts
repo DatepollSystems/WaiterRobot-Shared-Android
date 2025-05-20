@@ -40,6 +40,7 @@ kotlin {
             isStatic = false
             freeCompilerArgs += "-Xobjc-generics"
             export(libs.sentry)
+            export(libs.moko.resources)
         }
     }
 
