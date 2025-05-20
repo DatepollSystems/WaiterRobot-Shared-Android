@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
-import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 
 @Composable
 fun OrderListItem(

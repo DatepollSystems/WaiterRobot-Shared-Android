@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.datepollsystems.waiterrobot.android.ui.core.Preview
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.android.util.bestContrastColor
 import org.datepollsystems.waiterrobot.android.util.desaturateOnDarkMode
 import org.datepollsystems.waiterrobot.android.util.getContentColor

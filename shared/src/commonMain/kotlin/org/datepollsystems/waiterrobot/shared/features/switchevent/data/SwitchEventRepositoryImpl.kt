@@ -25,6 +25,7 @@ internal class SwitchEventRepositoryImpl(
                 endDate = it.endDate,
                 city = it.city,
                 organisationId = it.organisationId,
+                isDemo = it.isDemo,
                 stripeSettings = if (it.stripeEnabled && it.stripeLocationId != null) {
                     Event.StripeSettings.Enabled(it.stripeLocationId, it.stripeMinAmount ?: 0)
                 } else {

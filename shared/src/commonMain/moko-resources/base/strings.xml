@@ -77,6 +77,7 @@
     <string name="switchEvent_noEventFound">Could not find any events. Ask your organisation admin
         to add you to an event.
     </string>
+    <string name="switchEvent_demoEvent">Demo</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_general_title">General</string>
@@ -162,6 +163,9 @@
 
     <string name="tableList_noTableFound">There are no tables for this event.</string>
     <string name="tableList_groupFilter">Table groups</string>
+    <string name="tableList_demoEventWarning">Warning: This is a demo event.\nOrders will not be
+        printed completely.
+    </string>
 
     <string name="tableDetail_title">Table %1$s - %2$s</string>
     <string name="tableDetail_noOrder">There is currently no unpaid order for table "%1$s - %2$s"

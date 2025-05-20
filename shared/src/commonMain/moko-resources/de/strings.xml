@@ -78,6 +78,7 @@
     <string name="switchEvent_noEventFound">Es konnten keine Events gefunden werden. Bitte deinen
         Organisationsadministrator dich zu einem Event hinzuzufügen.
     </string>
+    <string name="switchEvent_demoEvent">Demo</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="settings_general_title">Allgemein</string>
@@ -169,6 +170,9 @@
 
     <string name="tableList_noTableFound">Für dieses Event sind keine Tische verfügbar.</string>
     <string name="tableList_groupFilter">Tischgruppen</string>
+    <string name="tableList_demoEventWarning">Warnung: Demo-Event ausgewählt.\nBestellungen werden
+        nicht komplett gedruckt.
+    </string>
 
     <string name="tableDetail_title">Tisch %1$s - %2$s</string>
     <string name="tableDetail_noOrder">Für den Tisch "%1$s - %2$s" gibt es zurzeit keine unbezahlte

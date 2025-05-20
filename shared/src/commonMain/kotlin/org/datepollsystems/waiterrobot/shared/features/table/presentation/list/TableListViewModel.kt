@@ -1,6 +1,7 @@
 package org.datepollsystems.waiterrobot.shared.features.table.presentation.list
 
 import kotlinx.coroutines.launch
+import org.datepollsystems.waiterrobot.shared.core.data.EventProvider
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.core.navigation.Screen
 import org.datepollsystems.waiterrobot.shared.core.viewmodel.AbstractViewModel
@@ -21,11 +22,17 @@ class TableListViewModel internal constructor(
     private val hasHiddenGroupsUseCase: HasHiddenGroupsUseCase,
     private val refreshTableGroupsUseCase: RefreshTableGroupsUseCase,
     private val updateTablesWithOpenOrdersUseCase: UpdateTablesWithOpenOrdersUseCase,
+    private val eventProvider: EventProvider
 ) : AbstractViewModel<TableListState, TableListEffect>(TableListState()) {
 
     override suspend fun onCreate() = subIntent {
         repeatOnSubscription {
             launch { refreshTablesInternal() }
+            launch {
+                eventProvider.flow.collect {
+                    reduce { state.copy(isDemoEvent = it?.isDemo ?: false) }
+                }
+            }
             launch {
                 getGroupedTablesUseCase().collect {
                     reduce { state.copy(tableGroups = it) }

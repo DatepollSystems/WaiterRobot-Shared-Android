@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.format
 import org.datepollsystems.waiterrobot.android.ui.common.CustomDialog
-import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.shared.features.order.domain.model.OrderItem
 import org.datepollsystems.waiterrobot.shared.features.product.domain.model.Product
 import org.datepollsystems.waiterrobot.shared.localization.MR

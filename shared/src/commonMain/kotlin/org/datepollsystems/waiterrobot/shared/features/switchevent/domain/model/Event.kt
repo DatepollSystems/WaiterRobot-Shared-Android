@@ -13,6 +13,7 @@ data class Event(
     val city: String,
     val organisationId: Long,
     val stripeSettings: StripeSettings,
+    val isDemo: Boolean = false,
 ) {
     @Serializable
     sealed class StripeSettings {

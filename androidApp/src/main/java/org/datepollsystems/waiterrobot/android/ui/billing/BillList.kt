@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.common.SwipeableListItem
 import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
-import org.datepollsystems.waiterrobot.android.ui.core.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.view.LoadingView
 import org.datepollsystems.waiterrobot.shared.core.data.Resource
 import org.datepollsystems.waiterrobot.shared.features.billing.domain.model.BillItem

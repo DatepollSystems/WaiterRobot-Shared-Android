@@ -29,16 +29,19 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.desc.StringDesc
 import dev.icerock.moko.resources.desc.desc
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.shared.localization.MR
 
 @Composable
 fun ErrorBar(
     modifier: Modifier = Modifier,
     message: StringDesc,
+    initialLines: Int = 2,
     retryAction: (() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val maxLines = remember(expanded) { if (expanded) Int.MAX_VALUE else 2 }
+    val maxLines =
+        remember(expanded, initialLines) { if (expanded) Int.MAX_VALUE else initialLines }
     Row(
         modifier = modifier
             .fillMaxWidth()

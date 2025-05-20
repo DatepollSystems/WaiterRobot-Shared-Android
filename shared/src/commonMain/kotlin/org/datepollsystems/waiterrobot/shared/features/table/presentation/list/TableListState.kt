@@ -10,7 +10,8 @@ import kotlin.native.ObjCName
 data class TableListState(
     @HiddenFromObjC
     val tableGroups: Resource<List<GroupedTables>> = Resource.Loading(),
-    val hasHiddenGroups: Boolean = false
+    val hasHiddenGroups: Boolean = false,
+    val isDemoEvent: Boolean = false
 ) : ViewModelState {
 
     @Suppress("unused") // iOS only
