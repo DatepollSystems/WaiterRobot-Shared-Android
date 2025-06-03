@@ -14,6 +14,7 @@ import org.datepollsystems.waiterrobot.shared.utils.cent
 import org.datepollsystems.waiterrobot.shared.utils.euro
 import org.datepollsystems.waiterrobot.shared.utils.sumOf
 import kotlin.math.abs
+import kotlin.native.HiddenFromObjC
 import kotlin.native.ObjCName
 
 data class BillingState(
@@ -24,6 +25,7 @@ data class BillingState(
     internal val _billItems: Resource<Map<Long, BillItem>> = Resource.Loading(),
 ) : ViewModelState {
 
+    @HiddenFromObjC
     val billItems: Resource<List<BillItem>> by _billItems.asListResource()
 
     @Suppress("unused") // iOS only
