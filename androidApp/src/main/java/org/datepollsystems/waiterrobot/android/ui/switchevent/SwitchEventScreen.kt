@@ -30,6 +30,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import org.datepollsystems.waiterrobot.android.ui.core.ErrorBar
 import org.datepollsystems.waiterrobot.android.ui.core.LocalSnackbarHostState
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.invoke
@@ -77,15 +78,19 @@ fun SwitchEventScreen(
 
             HorizontalDivider(thickness = 2.dp)
 
+            val eventResource = state.events
             RefreshableView(
                 modifier = Modifier.weight(1f),
-                loading = state.events is Resource.Loading && state.events.data != null,
+                loading = eventResource is Resource.Loading && eventResource.data != null,
                 onRefresh = vm::loadEvents,
             ) {
-                val events = state.events.data
-                if (state.events is Resource.Loading && events == null) {
+                val events = eventResource.data
+                if (eventResource is Resource.Loading && events == null) {
                     LoadingView()
                 } else {
+                    if (eventResource is Resource.Error) {
+                        ErrorBar(message = eventResource.userMessage, retryAction = vm::loadEvents)
+                    }
                     if (events.isNullOrEmpty()) {
                         Box(
                             modifier = Modifier
