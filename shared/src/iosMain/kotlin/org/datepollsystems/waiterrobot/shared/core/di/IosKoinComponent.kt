@@ -11,6 +11,7 @@ import org.datepollsystems.waiterrobot.shared.features.settings.viewmodel.Settin
 import org.datepollsystems.waiterrobot.shared.features.switchevent.presentation.SwitchEventViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.domain.model.Table
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.detail.TableDetailViewModel
+import org.datepollsystems.waiterrobot.shared.features.table.presentation.filter.TableGroupFilterViewModel
 import org.datepollsystems.waiterrobot.shared.features.table.presentation.list.TableListViewModel
 import org.datepollsystems.waiterrobot.shared.root.presentation.RootViewModel
 import org.koin.core.component.KoinComponent
@@ -26,6 +27,7 @@ object IosKoinComponent : KoinComponent {
     fun loginScannerVM() = get<LoginScannerViewModel>()
     fun switchEventVM() = get<SwitchEventViewModel>()
     fun tableListVM() = get<TableListViewModel>()
+    fun tableGroupFilterVM() = get<TableGroupFilterViewModel>()
     fun tableDetailVM(table: Table) = get<TableDetailViewModel> { parametersOf(table) }
     fun orderVM(table: Table, initialItemId: Long?) =
         get<OrderViewModel> { parametersOf(table, initialItemId) }
