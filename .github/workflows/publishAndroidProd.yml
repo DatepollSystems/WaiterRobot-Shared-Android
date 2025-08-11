@@ -85,7 +85,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "<${{ steps.create_gh_release.outputs.url }}|See what's new>"
+                  "text": "<${{ steps.create_gh_release.outputs.url }}|See what'\''s new>"
                 }
               }
             ]
