@@ -78,11 +78,10 @@ fun ProductList(
                         productGroups.forEachIndexed { index, productGroup ->
                             val backgroundColor =
                                 productGroup.color.toColor()?.desaturateOnDarkMode()
-                            val textColor =
-                                backgroundColor?.getContentColor() ?: Color.Companion.Unspecified
+                            val textColor = backgroundColor?.getContentColor() ?: Color.Unspecified
                             Tab(
-                                modifier = Modifier.Companion.background(
-                                    backgroundColor ?: Color.Companion.Unspecified
+                                modifier = Modifier.background(
+                                    backgroundColor ?: Color.Unspecified
                                 ),
                                 selected = pagerState.currentPage == index + 1,
                                 onClick = { coScope.launch { pagerState.scrollToPage(index + 1) } },
@@ -146,7 +145,7 @@ fun ProductList(
 private fun ProductLazyVerticalGrid(
     content: LazyGridScope.() -> Unit
 ) = LazyVerticalGrid(
-    modifier = Modifier.Companion.fillMaxSize(),
+    modifier = Modifier.fillMaxSize(),
     columns = GridCells.Adaptive(100.dp),
     contentPadding = PaddingValues(10.dp),
     verticalArrangement = Arrangement.spacedBy(10.dp),
