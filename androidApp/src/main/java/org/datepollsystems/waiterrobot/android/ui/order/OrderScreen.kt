@@ -39,6 +39,7 @@ import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
 import org.datepollsystems.waiterrobot.android.ui.core.invoke
+import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
 import org.datepollsystems.waiterrobot.android.ui.product.ProductList
@@ -229,52 +230,51 @@ private fun OrderScreen(
 
 @Preview
 @Composable
-private fun OrderScreen2Preview() =
-    org.datepollsystems.waiterrobot.android.ui.core.preview.Preview {
-        OrderScreen(
-            Table(1L, 1, "Outside", false),
-            OrderState(
-                _currentOrder = mapOf(
-                    1L to OrderItem(
-                        Product(1L, "Beer 0.5", 480.cent, false, null, emptyList(), 1),
-                        3,
-                        null
-                    ),
-                    2L to OrderItem(
-                        Product(2L, "Beer 0.33", 350.cent, false, null, emptyList(), 1),
-                        3,
-                        "not too cold"
+private fun OrderScreenPreview() = Preview {
+    OrderScreen(
+        Table(1L, 1, "Outside", false),
+        OrderState(
+            _currentOrder = mapOf(
+                1L to OrderItem(
+                    Product(1L, "Beer 0.5", 480.cent, false, null, emptyList(), 1),
+                    3,
+                    null
+                ),
+                2L to OrderItem(
+                    Product(2L, "Beer 0.33", 350.cent, false, null, emptyList(), 1),
+                    3,
+                    "not too cold"
+                )
+            )
+        ),
+        ProductListState(
+            productGroups = Resource.Success(
+                (0..3).map { group ->
+                    GroupedProducts(
+                        group.toLong(),
+                        "Group $group",
+                        group,
+                        null,
+                        products = (0..4).map {
+                            Product(
+                                group * 100L + it,
+                                "Product $it",
+                                it.euro + (it.cent / 10 * 10),
+                                false,
+                                null,
+                                emptyList(),
+                                it
+                            )
+                        }
                     )
-                )
-            ),
-            ProductListState(
-                productGroups = Resource.Success(
-                    (0..3).map { group ->
-                        GroupedProducts(
-                            group.toLong(),
-                            "Group $group",
-                            group,
-                            null,
-                            products = (0..4).map {
-                                Product(
-                                    group * 100L + it,
-                                    "Product $it",
-                                    it.euro + (it.cent / 10 * 10),
-                                    false,
-                                    null,
-                                    emptyList(),
-                                    it
-                                )
-                            }
-                        )
-                    }
-                )
-            ),
-            addAction = { _, _ -> },
-            refresh = {},
-            abort = {},
-            addNote = { _, _ -> },
-            send = {},
-            clearFilter = {}
-        )
-    }
+                }
+            )
+        ),
+        addAction = { _, _ -> },
+        refresh = {},
+        abort = {},
+        addNote = { _, _ -> },
+        send = {},
+        clearFilter = {}
+    )
+}

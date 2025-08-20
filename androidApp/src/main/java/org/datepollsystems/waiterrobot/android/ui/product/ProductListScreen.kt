@@ -52,7 +52,7 @@ fun ProductSearchScreen(
 }
 
 @Composable
-fun ProductSearch(
+private fun ProductSearch(
     state: ProductListState,
     onSelect: (Product) -> Unit,
     onFilter: (String) -> Unit,
