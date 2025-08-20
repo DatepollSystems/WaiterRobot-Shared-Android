@@ -95,7 +95,10 @@ fun ProductList(
                     HorizontalPager(pagerState) { pageIndex ->
                         if (pageIndex == 0) {
                             if (productGroups.all { it.products.isEmpty() }) {
-                                CenteredText(text = "No products", scrollAble = false)
+                                CenteredText(
+                                    text = MR.strings.productSearch_noProductFound(),
+                                    scrollAble = false
+                                )
                             } else {
                                 ProductLazyVerticalGrid {
                                     productGroups.forEach { productGroup ->
@@ -120,7 +123,10 @@ fun ProductList(
                             }
                         } else {
                             if (productGroups[pageIndex - 1].products.isEmpty()) {
-                                CenteredText(text = "No products", scrollAble = false)
+                                CenteredText(
+                                    text = MR.strings.productSearch_noProductFound(),
+                                    scrollAble = false
+                                )
                             } else {
                                 ProductLazyVerticalGrid {
                                     val productGroup = productGroups[pageIndex - 1]
