@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
+import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
@@ -192,7 +193,7 @@ private fun OrderScreen(
             state = orderState.orderingState
         ) {
             Column {
-                Surface(Modifier.weight(1f, fill = true)) {
+                Surface(Modifier.weight(0.4f, fill = true)) {
                     if (orderState.currentOrder.isEmpty()) {
                         CenteredText(
                             modifier = Modifier.weight(1f),
@@ -220,7 +221,7 @@ private fun OrderScreen(
                 HorizontalDivider(thickness = 5.dp)
 
                 ProductList(
-                    Modifier.weight(1f, fill = true),
+                    Modifier.weight(0.6f, fill = true),
                     state = productState,
                     onSelect = { addAction(it.id, 1) },
                     refresh = refresh,
