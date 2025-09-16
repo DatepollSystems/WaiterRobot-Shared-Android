@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -38,7 +39,6 @@ import kotlinx.coroutines.launch
 import org.datepollsystems.waiterrobot.android.ui.common.CenteredText
 import org.datepollsystems.waiterrobot.android.ui.core.ConfirmDialog
 import org.datepollsystems.waiterrobot.android.ui.core.handleSideEffects
-import org.datepollsystems.waiterrobot.android.ui.core.invoke
 import org.datepollsystems.waiterrobot.android.ui.core.preview.Preview
 import org.datepollsystems.waiterrobot.android.ui.core.view.ScaffoldView
 import org.datepollsystems.waiterrobot.android.ui.core.view.ViewStateOverlay
@@ -145,6 +145,7 @@ private fun OrderScreen(
             }
         },
         bottomBar = {
+            // TODO @FS: Replace with FlexibleBottomAppBar when available (https://m3.material.io/components/toolbars/overview)?
             BottomAppBar(
                 actions = {
                     IconButton(onClick = { showProductSheet = true }) {
@@ -166,6 +167,7 @@ private fun OrderScreen(
                     onDismissRequest = { showProductSheet = false },
                     sheetState = productSearchSheetState,
                     dragHandle = null,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     contentWindowInsets = { WindowInsets.statusBars }
                 ) {
                     ProductSearchScreen(
