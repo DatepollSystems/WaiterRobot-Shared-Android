@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> ## This repository has moved
+>
+> Development of the kellner.team (formerly WaiterRobot) clients continues at **[kellner-team/clients](https://github.com/kellner-team/clients)**.
+
+---
+
 <p align="center">
     <img alt="kellner.team logo" src="documentation/wr-square-rounded.png" style="width:200px; border-radius: 15px;"/><br>    
 </p>
